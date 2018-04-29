@@ -25,7 +25,7 @@ namespace GitHubBatchIssueUpdater
             int olderThanDays = int.Parse(GetValueConfigOrInput("Days", "How many days without activity having issues will be closed (number)"));
             var closingComment = ReadCommentFromTxt(olderThanDays);
 
-            var client = new GitHubClient(new ProductHeaderValue("my-issue-batch-updater"));
+            var client = new GitHubClient(new ProductHeaderValue("issue-fixer"));
             var basicAuth = new Credentials(userId, userPwd);
             client.Credentials = basicAuth;
 
@@ -36,10 +36,13 @@ namespace GitHubBatchIssueUpdater
             var issuesForOctokit = await client.Issue.GetAllForRepository(org, repositoryToUpdate);
             foreach (var item in issuesForOctokit)
             {
-                // Skip issues with specific label
-                if (item.Labels.Any(i => i.Name == labelException))
-                {
-                    continue;
+                // Skip issues with specific label if value provided
+                if (!string.IsNullOrEmpty(labelException))
+                { 
+                    if (item.Labels.Any(i => i.Name == labelException))
+                    {
+                        continue;
+                    }
                 }
 
                 if (item.UpdatedAt < DateTime.Now.AddDays(olderThanDays * -1))
@@ -59,6 +62,7 @@ namespace GitHubBatchIssueUpdater
                 }
 
             }
+
             Console.WriteLine("---");
             Console.ReadKey();
         }
