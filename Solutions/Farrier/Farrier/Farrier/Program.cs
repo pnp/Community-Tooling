@@ -2,6 +2,9 @@
 using CommandLine;
 using NLog;
 using Farrier.Helpers;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Farrier
 {
@@ -17,15 +20,13 @@ namespace Farrier
                 //TEMPORARY DEFAULT VALUES
                 if (System.Diagnostics.Debugger.IsAttached && args.Length == 0)
                 {
-                    //args = new string[] { "-c", @"Samples/ListFormatting/Playground.xml", "--listtokens" };
+                    args = "forge".Split();
                 }
 
-                //Verb routing and option parsing
-                /*exitcode = CommandLine.Parser.Default.ParseArguments<FarrierOptions>(args)
-                    .MapResult(
-                        (FarrierOptions opts) => { return PerformOperation(opts); },
-                        _ => { return ExitCode.Failure; });*/
-                exitcode = PerformOperation();
+                Parser.Default.ParseArguments(args, LoadVerbs())
+                    .WithParsed(PerformOperation);
+
+                exitcode = ExitCode.Success;
             }
             catch (Exception e)
             {
@@ -36,9 +37,34 @@ namespace Farrier
             Environment.Exit((int)exitcode);
         }
 
-        public static ExitCode PerformOperation()
+        private static Type[] LoadVerbs()
         {
-            return ExitCode.Success;
+            return Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t.GetCustomAttribute<VerbAttribute>() != null).ToArray();
         }
+
+        private static void PerformOperation(object obj)
+        {
+            switch(obj)
+            {
+                case InspectOptions i:
+                    RunInspect(i);
+                    break;
+                case ForgeOptions f:
+                    RunForge(f);
+                    break;
+            }
+
+            void RunInspect(InspectOptions options)
+            {
+                logger.Info("Inspecting!");
+            }
+
+            void RunForge(ForgeOptions options)
+            {
+                logger.Info("Forging!");
+            }
+        }
+
     }
 }
