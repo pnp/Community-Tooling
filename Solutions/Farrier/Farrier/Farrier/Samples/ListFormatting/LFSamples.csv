@@ -1,0 +1,84 @@
+﻿Type,Name,Link,Author,Actions,Operators,SP2019,Categories,Tokens,ColumnTypes
+View,alternating-rowclass,view-samples/alternating-rowclass,Chris Kent,,Modulus %,,Decoration,rowIndex,General
+View,birthday-format,view-samples/birthday-format,April Dunham,,,,Cards|Dynamic Links|Icons,currentWeb|now,Date/Time|General|Picture
+View,bulletin-board-format,view-samples/bulletin-board-format,Chris Kent,defaultClick,toLocaleDateString,,Cards|Icons,,General
+View,choice-conditional-format,view-samples/choice-conditional-format,Eric Skaggs,defaultClick,,,Status / Progress,,General
+Column,color-based-smiley-face,column-samples/color-based-smiley-face,Siddharth Vaghasia,,,Y,Icons|Status / Progress,,General
+View,column-graph-format,view-samples/column-graph-format,Anoop Tatti,,,,Charts|Icons,rowIndex,General|Yes/No|Number
+View,contact-card-format,view-samples/contact-card-format,Chris Kent,defaultClick|delete|editProps|share,,,Cards|Dynamic Links|Icons|Maps|People,currentWeb,General|Picture
+View,contenttype-format,view-samples/contenttype-format,Chris Kent,defaultClick,,,Tiles,currentWeb,ContentType|General
+Column,currency-symbol-concatenation,column-samples/currency-symbol-concatenation,S Merchant,,,Y,,,Number
+View,date-conditional-format,view-samples/date-conditional-format,Lincoln DeMaris,,,,Severity,now,Date/Time
+Column,date-range-format,column-samples/date-range-format,SharePoint Team,,,Y,Status / Progress,now,Date/Time|General
+Column,date-range-rag,column-samples/date-range-rag,Christopher Parker,,Number,Y,Severity|Status / Progress,now,Date/Time|General
+Column,date-range-rag/days-left,column-samples/date-range-rag,Joe Ayre,,Number,,Severity|Status / Progress,now,Date/Time|General
+View,document-library,view-samples/document-library,SharePoint Team,defaultClick|editProps|executeFlow,toLocaleString|toLocaleDateString,,Cards|Document Library|Flow|Icons|Status / Progress,,Date/Time|General|Yes/No
+View,document-library-thumbnails,view-samples/document-library-thumbnails,Ravi Chandra,,,,Document Library|Tiles,currentWeb,ContentType
+Column,file-thumbnail,column-samples/file-thumbnail,Chris Kent,,,,Document Library|Decoration,thumbnail,General
+Column,generic-centered-content,column-samples/generic-centered-content,Chris Kent,,,Y,Decoration,,General
+Column,generic-hyperlink-thumbnail,column-samples/generic-hyperlink-thumbnail,Josef Lahmer,,,Y,Document Library,,General
+Column,generic-hyperlink-values,column-samples/generic-hyperlink-values,SharePoint Team,,,Y,Dynamic Links,,General
+View,generic-numeric-average-comparison,view-samples/generic-numeric-average-comparison,David Warner II,,toString,,Cards,,General|Number
+Column,generic-project-management/risk-level-change-status,column-samples/generic-project-management,S Merchant,,,Y,Status / Progress|Trending,,General
+Column,generic-project-management/risk-score,column-samples/generic-project-management,S Merchant,,,Y,Status / Progress,,Number
+Column,generic-project-management/ryg-status,column-samples/generic-project-management,S Merchant,,,Y,Status / Progress,,General
+View,generic-risk-score-format,view-samples/generic-risk-score-format,S Merchant,,,,Status / Progress,,Number
+Column,generic-rowactions/defaultClick,column-samples/generic-rowactions,Chris Kent,defaultClick,,Y,Icons,,General
+Column,generic-rowactions/delete,column-samples/generic-rowactions,Chris Kent,delete,,Y,Icons,,General
+Column,generic-rowactions/editProps,column-samples/generic-rowactions,Chris Kent,editProps,,Y,Icons,,General
+Column,generic-rowactions/executeFlow,column-samples/generic-rowactions,Chris Kent,executeFlow,,,Flow|Icons,,General
+Column,generic-rowactions/share,column-samples/generic-rowactions,Chris Kent,share,,Y,Icons,,General
+View,generic-ryg-status-format,view-samples/generic-ryg-status-format,S Merchant,,,,Status / Progress,,General
+Column,generic-socialpic,column-samples/generic-socialpic,David Warner II,,,Y,Dynamic Links|Social Media,,General
+Column,generic-start-flow,column-samples/generic-start-flow,Yannick Borghmans,executeFlow,,,Flow|Icons,,General
+Column,generic-start-flow-conditionally,column-samples/generic-start-flow-conditionally,Chris Kent,executeFlow,,,Flow|Icons|Status / Progress,,General
+Column,generic-staticmap,column-samples/generic-staticmap,Chris Kent,,,Y,Dynamic Links|Maps,,General
+Column,generic-svgicon-format,column-samples/generic-svgicon-format,Chris Kent,,,Y,Icons|SVG,,General
+View,generic-tile-format,view-samples/generic-tile-format,S Merchant,,,,Cards|Icons|Tiles,,General|Hyperlink|Yes/No
+Column,generic-twitterpic,column-samples/generic-twitterpic,Chris Kent,,,Y,Dynamic Links|Social Media,,General
+Column,location-address,column-samples/location-address,Chris Kent,,,,Dynamic Links|Maps,,Location
+Column,multi-choice-foreach,column-samples/multi-choice-foreach,Chris Kent,,forEach,,Decoration,,Multi-Choice
+Column,multi-choice-icons,column-samples/multi-choice-icons,Chris Kent,,indexOf|join,,Icons|Decoration,,Multi-Choice
+View,multi-line-view,view-samples/multi-line-view,Lincoln DeMaris,defaultClick,,,Cards,me,General|Person
+Column,multi-person-currentuser,column-samples/multi-person-currentuser,Chris Kent,,indexOf|join,,People,me,Multi-Person
+View,multi-person-currentuser-rowclass,view-samples/multi-person-currentuser-rowclass,Chris Kent,,indexOf|join,,People,me,Multi-Person
+Column,multi-person-facepile,column-samples/multi-person-facepile,Chris Kent,,forEach|join|length|loopIndex|toString,,People,,Multi-Person
+Column,number-abs-tolerance-comparison,column-samples/number-abs-tolerance-comparison,David Warner II,,abs,,Icons|Trending,,Number
+Column,number-conditional-format,column-samples/number-conditional-format,SharePoint Team,,,Y,Icons|Severity,,Number
+Column,number-data-bar,column-samples/number-data-bar,SharePoint Team,,,Y,Charts|Status / Progress,,Number
+Column,number-data-bar/percent-data-bar,column-samples/number-data-bar,Chris Kent,,,Y,Charts|Status / Progress,,Number
+Column,number-icon-progressbar,column-samples/number-icon-progressbar,Julien Seguin,,,,Icons|Status / Progress,,Number
+Column,number-piechart,column-samples/number-piechart,Aaron Miao,,cos|sin,Y,Charts|SVG,,Number
+Column,number-quiz-smiley-face,column-samples/number-quiz-smiley-face,Matt Maher,,,Y,Icons,,Number
+Column,number-trending-icon,column-samples/number-trending-icon,SharePoint Team,,,Y,Icons|Trending,,Number
+Column,number-trending-icon/with-differences,column-samples/number-trending-icon,David Warner II,,,Y,Icons|Trending,,Number
+Column,number-using-modulo-publish,column-samples/number-using-modulo-publish,Paul Bullock,,Modulus %|Number,,Icons|Severity|Status / Progress,,Number
+Column,person-currentuser,column-samples/person-currentuser,Chris Kent,,,Y,People,me,Person
+View,person-currentuser-rowclass,view-samples/person-currentuser-rowclass,Chris Kent,,,,People,me,Person
+Column,person-mailto,column-samples/person-mailto,SharePoint Team,,,Y,Dynamic Links|Icons,,Person
+Column,person-roundimage-format,column-samples/person-roundimage-format,Chris Kent,,,Y,People,,Person
+Column,picture-roundimage-format,column-samples/picture-roundimage-format,Chris Kent,,,Y,Decoration,,Picture
+View,planner-inspired-task-card,view-samples/planner-inspired-task-card,April Dunham,defaultClick|delete,,,Cards|Icons|Tiles,now,Date/Time|General|Person
+View,profile-card,view-samples/profile-card,Ejaz Hussain,,,,Cards|Dynamic Links|Icons|People|Social Media|Tiles,currentWeb,General|Hyperlink|Person|Picture
+View,resource-catalog,view-samples/resource-catalog,SharePoint Team,,toLocaleDateString,,Dynamic Links|Icons|Status / Progress,currentWeb,General|Person|Yes/No
+View,retail-account,view-samples/retail-account,SharePoint Team,defaultClick,Number,,Dynamic Links|Icons|Status / Progress,,Currency|Location|Person|Yes/No
+View,rota-css-table,view-samples/rota-css-table,Ariel Kropp,,join,,Cards,,General|Multi-Choice
+Column,text-bing-map,column-samples/text-bing-map,April Dunham,,,,Dynamic Links|Maps,,General
+View,text-conditional-format,view-samples/text-conditional-format,Lincoln DeMaris,,,,Severity|Status / Progress,,General
+Column,text-conditional-format,column-samples/text-conditional-format,SharePoint Team,,,Y,Icons|Severity|Status / Progress,,General
+Column,text-contains,column-samples/text-contains,Chris Kent,,indexOf|toLowerCase,,Text Conditional,,General
+Column,text-isbn-image,column-samples/text-isbn-image,Aaron Miao,,,Y,Dynamic Links,,General
+Column,text-local-image,column-samples/text-local-image,Chris Kent,,,,Dynamic Links,currentWeb,General
+Column,text-local-image/hardcoded-image,column-samples/text-local-image,Chris Kent,,,Y,Dynamic Links,,General
+Column,text-local-image/relative-image,column-samples/text-local-image,Chris Kent,,,Y,Dynamic Links,,General
+Column,text-local-link,column-samples/text-local-link,Chris Kent,,,,Dynamic Links,currentWeb,General
+Column,text-local-link/hardcoded-link,column-samples/text-local-link,Chris Kent,,,Y,Dynamic Links,,General
+Column,text-local-link/relative-link,column-samples/text-local-link,Chris Kent,,,Y,Dynamic Links,,General
+Column,text-ryg-status-indicator,column-samples/text-ryg-status-indicator,Travis Lingenfelder,,,Y,Status / Progress,,General
+Column,text-startswith-callingcodes,column-samples/text-startswith-callingcodes,Chris Kent,,indexOf,,Text Conditional,,General
+Column,text-strikethrough,column-samples/text-strikethrough,Chris Kent,,,Y,Status / Progress,,General|Yes/No
+Column,text-wrap-format,column-samples/text-wrap-format,Aaron Miao,,,Y,Decoration,,General
+View,twitter-format,view-samples/twitter-format,April Dunham,,,,Icons|Social Media,,Date/Time|General|Hyperlink|Number
+Column,yesno-checkbox,column-samples/yesno-checkbox,Chris Kent,,,Y,Icons|Status / Progress,,Yes/No
+Column,yesno-checkmark,column-samples/yesno-checkmark,Travis Lingenfelder,,,Y,Icons|Status / Progress,,Yes/No
+Column,yesno-checkmark-format,column-samples/yesno-checkmark-format,Aaron Miao,,,Y,Icons|Severity|Status / Progress,,Yes/No

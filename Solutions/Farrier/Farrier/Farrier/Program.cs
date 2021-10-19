@@ -5,6 +5,8 @@ using Farrier.Helpers;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
+using Farrier.Parser;
+using Farrier.Forge;
 
 namespace Farrier
 {
@@ -20,10 +22,11 @@ namespace Farrier
                 //TEMPORARY DEFAULT VALUES
                 if (System.Diagnostics.Debugger.IsAttached && args.Length == 0)
                 {
-                    args = "forge".Split();
+                    args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
+                    //args = "inspect -c lfsample.xml".Split();
                 }
 
-                Parser.Default.ParseArguments(args, LoadVerbs())
+                CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())
                     .WithParsed(PerformOperation);
 
                 exitcode = ExitCode.Success;
@@ -63,6 +66,19 @@ namespace Farrier
             void RunForge(ForgeOptions options)
             {
                 logger.Info("Forging!");
+                logger.Debug("Param: blueprint={0}", options.Blueprint);
+                logger.Debug("Param: outputpath={0}", options.OutputPath);
+                logger.Debug("Param: tokens={0}", options.Tokens);
+                logger.Debug("Param: listtokens={0}", options.ListTokens);
+                logger.Debug("Param: skipxmlformattingfix={0}", options.SkipXMLFormattingFix);
+
+                var log = new LogRouter((e, s) => logger.Error(e, s),
+                                        s => logger.Warn(s),
+                                        s => logger.Info(s),
+                                        s => logger.Debug(s));
+
+                var f = new Forger(options, log);
+                f.Forge();
             }
         }
 
