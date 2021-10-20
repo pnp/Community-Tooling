@@ -7,12 +7,17 @@ using System.Linq;
 using System.Collections.Generic;
 using Farrier.Parser;
 using Farrier.Forge;
+using Farrier.RoundUp;
 
 namespace Farrier
 {
     class Program
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static LogRouter log = new LogRouter((e, s) => logger.Error(e, s),
+                                        s => logger.Warn(s),
+                                        s => logger.Info(s),
+                                        s => logger.Debug(s));
 
         static void Main(string[] args)
         {
@@ -56,6 +61,9 @@ namespace Farrier
                 case ForgeOptions f:
                     RunForge(f);
                     break;
+                case RoundUpOptions r:
+                    RunRoundUp(r);
+                    break;
             }
 
             void RunInspect(InspectOptions options)
@@ -72,11 +80,6 @@ namespace Farrier
                 logger.Debug("Param: listtokens={0}", options.ListTokens);
                 logger.Debug("Param: skipxmlformattingfix={0}", options.SkipXMLFormattingFix);
 
-                var log = new LogRouter((e, s) => logger.Error(e, s),
-                                        s => logger.Warn(s),
-                                        s => logger.Info(s),
-                                        s => logger.Debug(s));
-
                 var f = new Forger(options.Blueprint,
                                    options.OutputPath,
                                    TokenManager.IEnumerableToDictionary(options.Tokens),
@@ -84,6 +87,20 @@ namespace Farrier
                                    options.SkipXMLFormattingFix, 
                                    log);
                 f.Forge();
+            }
+
+            void RunRoundUp(RoundUpOptions options)
+            {
+                logger.Info("Rounding Up!");
+                logger.Debug("Param: map={0}", options.Map);
+                logger.Debug("Param: outputpath={0}", options.OutputPath);
+                logger.Debug("Param: jsonpath={0}", options.JSONPath);
+
+                var w = new Wrangler(options.Map,
+                                     options.OutputPath,
+                                     options.JSONPath,
+                                     log);
+                w.RoundUp();
             }
         }
 
