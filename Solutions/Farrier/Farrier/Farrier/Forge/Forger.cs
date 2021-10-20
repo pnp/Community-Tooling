@@ -13,14 +13,18 @@ namespace Farrier.Forge
     {
         private LogRouter _log;
 
-        private ForgeOptions _options;
         private FunctionResolver _functionResolver;
         private TokenManager _rootTokens;
         private XmlHelper _xmlHelper;
 
+        private string _blueprint;
+        private string _outputpath;
+        private bool _listTokens;
+        private bool _skipXMLFormattingFix;
+
         private Dictionary<string, string> _templates;
 
-        public Forger(ForgeOptions options, LogRouter log = null)
+        public Forger(string blueprint, string outputpath = "", Dictionary<string, string> tokens = null, bool ListTokens = false, bool SkipXMLFormattingFix = false, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -29,14 +33,17 @@ namespace Farrier.Forge
 
             _templates = new Dictionary<string, string>();
 
-            _options = options;
+            _blueprint = blueprint;
+            _outputpath = outputpath;
+            _listTokens = ListTokens;
+            _skipXMLFormattingFix = SkipXMLFormattingFix;
 
             _functionResolver = new FunctionResolver(log:_log);
             _rootTokens = newTokenManager();
-            _xmlHelper = new XmlHelper(_options.SkipXMLFormattingFix);
+            _xmlHelper = new XmlHelper(_skipXMLFormattingFix);
 
             // Add any tokens passed in the options
-            _rootTokens.AddTokens(options.Tokens);
+            _rootTokens.AddTokens(tokens);
         }
 
         public void Forge()
@@ -44,10 +51,10 @@ namespace Farrier.Forge
             try
             {
                 var doc = new XmlDocument();
-                doc.Load(_options.Blueprint);
+                doc.Load(_blueprint);
 
                 _rootTokens.AddTokens(doc.SelectSingleNode("//tokens"));
-                if (_options.ListTokens)
+                if (_listTokens)
                     _rootTokens.LogTokens();
 
                 LoadTemplates(doc.SelectSingleNode("//templates"));
@@ -69,7 +76,7 @@ namespace Farrier.Forge
             }
             catch (Exception ex)
             {
-                _log.Error(ex, $"Error Forging Files using blueprint: \"{_options.Blueprint}\"");
+                _log.Error(ex, $"Error Forging Files using blueprint: \"{_blueprint}\"");
             }
         }
 
@@ -108,7 +115,7 @@ namespace Farrier.Forge
                 XmlAttribute outputAttribute = fileNode.Attributes["output"];
                 if (outputAttribute != null && !String.IsNullOrEmpty(outputAttribute.Value))
                 {
-                    string outputpath = Path.Combine(_options.OutputPath, _rootTokens.DecodeString(outputAttribute.Value));
+                    string outputpath = Path.Combine(_outputpath, _rootTokens.DecodeString(outputAttribute.Value));
                     string outputfilename = Path.GetFileName(outputpath);
                     string outputfilenamewithoutextension = Path.GetFileNameWithoutExtension(outputfilename);
 
@@ -119,7 +126,7 @@ namespace Farrier.Forge
                     fileTokens.AddToken("OutputFilenameNoExtension", outputfilenamewithoutextension);
 
                     _log.Info($"Processing file: {outputpath}...");
-                    if (_options.ListTokens)
+                    if (_listTokens)
                         fileTokens.LogTokens();
 
                     StringBuilder fileContent = new StringBuilder();
@@ -146,7 +153,7 @@ namespace Farrier.Forge
 
                     string finalContent = fileContent.ToString();
 
-                    if (!_options.SkipXMLFormattingFix)
+                    if (!_skipXMLFormattingFix)
                     {
                         //remove final newline
                         finalContent = finalContent.TrimEnd();
@@ -190,7 +197,7 @@ namespace Farrier.Forge
                     if (csvAttribute == null || String.IsNullOrEmpty(csvAttribute.Value))
                         throw new Exception("csv attribute is missing from loop!");
 
-                    string csvPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(_options.Blueprint), csvAttribute.Value));
+                    string csvPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(_blueprint), csvAttribute.Value));
                     if (!File.Exists(csvPath))
                         throw new Exception("Unable to find csv file at " + csvPath);
 

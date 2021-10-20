@@ -154,7 +154,7 @@ namespace Farrier.Parser
             }
         }
 
-        private Dictionary<string, string> IEnumerableToDictionary(IEnumerable<string> strings)
+        public static Dictionary<string, string> IEnumerableToDictionary(IEnumerable<string> strings)
         {
             var dictionary = new Dictionary<string, string>();
 

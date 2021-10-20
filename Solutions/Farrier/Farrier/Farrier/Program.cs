@@ -77,7 +77,12 @@ namespace Farrier
                                         s => logger.Info(s),
                                         s => logger.Debug(s));
 
-                var f = new Forger(options, log);
+                var f = new Forger(options.Blueprint,
+                                   options.OutputPath,
+                                   TokenManager.IEnumerableToDictionary(options.Tokens),
+                                   options.ListTokens,
+                                   options.SkipXMLFormattingFix, 
+                                   log);
                 f.Forge();
             }
         }
