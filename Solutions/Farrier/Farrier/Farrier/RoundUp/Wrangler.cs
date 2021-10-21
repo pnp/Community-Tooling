@@ -14,9 +14,10 @@ namespace Farrier.RoundUp
 
         private string _map;
         private string _outputpath;
-        private string _jsonfilepath;
+        private string _startpath;
+        private string _jsonfilepattern;
 
-        public Wrangler(string map, string outputpath = "", string jsonfilepath = "*.json", LogRouter log = null)
+        public Wrangler(string map, string outputpath = "", string startpath = "", string jsonfilepattern = "*.json", LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -25,14 +26,26 @@ namespace Farrier.RoundUp
 
             _map = map;
             _outputpath = outputpath;
-            _jsonfilepath = jsonfilepath;
+            if (!String.IsNullOrEmpty(startpath))
+                _startpath = startpath;
+            else
+                _startpath = Directory.GetCurrentDirectory();
+            _jsonfilepattern = jsonfilepattern;
         }
 
         public void RoundUp()
         {
             try
             {
-
+                var startingDirectory = new DirectoryInfo(_startpath);
+                var jsonFilePattern = Path.GetFileName(_jsonfilepattern);
+                var jsonFiles = startingDirectory.GetFiles(_jsonfilepattern, new EnumerationOptions() { RecurseSubdirectories = true });
+                
+                _log.Info($"Found {jsonFiles.Length} JSON file{(jsonFiles.Length > 1 ? "s" : "")} to round up");
+                foreach(var jsonFile in jsonFiles)
+                {
+                    _log.Debug($"  Found {jsonFile.FullName}");
+                }
             }
             catch (Exception ex)
             {

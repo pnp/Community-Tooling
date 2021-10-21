@@ -14,11 +14,15 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="CsvHelper" Version="27.1.1" />
+    <PackageReference Include="JsonPath.Net" Version="0.1.13" />
     <PackageReference Include="NLog" Version="4.7.9" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\ListFormatting\LFAssetMap.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Samples\ListFormatting\LFSamples.csv">

@@ -27,8 +27,10 @@ namespace Farrier
                 //TEMPORARY DEFAULT VALUES
                 if (System.Diagnostics.Debugger.IsAttached && args.Length == 0)
                 {
-                    args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
+                    //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
                     //args = "inspect -c lfsample.xml".Split();
+                    args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json".Split();
+                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())
@@ -73,12 +75,12 @@ namespace Farrier
 
             void RunForge(ForgeOptions options)
             {
-                logger.Info("Forging!");
-                logger.Debug("Param: blueprint={0}", options.Blueprint);
-                logger.Debug("Param: outputpath={0}", options.OutputPath);
-                logger.Debug("Param: tokens={0}", options.Tokens);
-                logger.Debug("Param: listtokens={0}", options.ListTokens);
-                logger.Debug("Param: skipxmlformattingfix={0}", options.SkipXMLFormattingFix);
+                log.Info("Forging!");
+                log.Debug($"Param: blueprint={options.Blueprint}");
+                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: tokens={options.Tokens}");
+                log.Debug($"Param: listtokens={options.ListTokens}");
+                log.Debug($"Param: skipxmlformattingfix={options.SkipXMLFormattingFix}");
 
                 var f = new Forger(options.Blueprint,
                                    options.OutputPath,
@@ -91,14 +93,16 @@ namespace Farrier
 
             void RunRoundUp(RoundUpOptions options)
             {
-                logger.Info("Rounding Up!");
-                logger.Debug("Param: map={0}", options.Map);
-                logger.Debug("Param: outputpath={0}", options.OutputPath);
-                logger.Debug("Param: jsonfilepath={0}", options.JSONFilePath);
+                log.Info("Rounding Up!");
+                log.Debug($"Param: map={options.Map}");
+                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: startpath={options.StartPath}");
+                log.Debug($"Param: jsonfilepattern={options.JSONFilePattern}");
 
                 var w = new Wrangler(options.Map,
                                      options.OutputPath,
-                                     options.JSONFilePath,
+                                     options.StartPath,
+                                     options.JSONFilePattern,
                                      log);
                 w.RoundUp();
             }
