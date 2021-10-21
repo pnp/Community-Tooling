@@ -29,7 +29,7 @@ namespace Farrier
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
                     //args = "inspect -c lfsample.xml".Split();
-                    args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json".Split();
+                    args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite".Split();
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }
 
@@ -96,13 +96,29 @@ namespace Farrier
                 log.Info("Rounding Up!");
                 log.Debug($"Param: map={options.Map}");
                 log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: outputfilename={options.OutputFilename}");
                 log.Debug($"Param: startpath={options.StartPath}");
                 log.Debug($"Param: jsonfilepattern={options.JSONFilePattern}");
+                log.Debug($"Param: listjsonfiles={options.ListJSONFiles}");
+                log.Debug($"Param: tokens={options.Tokens}");
+                log.Debug($"Param: listtokens={options.ListTokens}");
+                log.Debug($"Param: overwrite={options.Overwrite}");
+                log.Debug($"Param: skipheaders={options.SkipHeaders}");
+                log.Debug($"Param: firstonly={options.FirstOnly}");
+                log.Debug($"Param: multivalueseparator={options.MultiValueSeparator}");
 
                 var w = new Wrangler(options.Map,
                                      options.OutputPath,
+                                     options.OutputFilename,
                                      options.StartPath,
                                      options.JSONFilePattern,
+                                     options.ListJSONFiles,
+                                     TokenManager.IEnumerableToDictionary(options.Tokens),
+                                     options.ListTokens,
+                                     options.Overwrite,
+                                     options.SkipHeaders,
+                                     options.FirstOnly,
+                                     options.MultiValueSeparator,
                                      log);
                 w.RoundUp();
             }

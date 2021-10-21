@@ -54,12 +54,7 @@ namespace Farrier.Parser
             int rowIndex = 0;
             foreach (DataRow row in rows)
             {
-                var tokens = new TokenManager(fr, start, end, columnStart, columnEnd, log);
-
-                foreach (DataColumn col in cols)
-                {
-                    tokens.AddToken(col.ColumnName, row[col].ToString(), true);
-                }
+                var tokens = TokenizeRow(row, cols, fr, start, end, columnStart, columnEnd, log);
 
                 tokens.AddToken("ItemIndex", rowIndex.ToString());
                 tokens.AddToken("IsFirstItem", (rowIndex == 0) ? "true" : "false");
@@ -70,6 +65,18 @@ namespace Farrier.Parser
             }
 
             return rowTokens;
+        }
+
+        public static TokenManager TokenizeRow(DataRow row, DataColumnCollection cols, FunctionResolver fr, string start = "@@", string end = "@@", string columnStart = "[", string columnEnd = "]", LogRouter log = null)
+        {
+            var tokens = new TokenManager(fr, start, end, columnStart, columnEnd, log);
+
+            foreach (DataColumn col in cols)
+            {
+                tokens.AddToken(col.ColumnName, row[col].ToString(), true);
+            }
+
+            return tokens;
         }
 
 
