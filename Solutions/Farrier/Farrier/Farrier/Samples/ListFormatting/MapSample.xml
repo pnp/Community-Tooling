@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Map>
+  <tokens>
+    <token name="fun" value="Wowee!"/>
+  </tokens>
+
+  <column name="Name" path="$.[0].reponame" transform="$UPPER(@@currentvalue@@)"/>
+  <column name="Type" path="$.[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value"/>
+  <column name="Whatever" path="" transform="hello"/>
+  <column name="Combo" path="" transform="@@[Name]@@!"/>
+</Map>

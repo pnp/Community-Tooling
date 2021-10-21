@@ -1,5 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
 <Map>
+  <columns>
+    <column name="Type" path="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value"/>
+    <column name="Name" path="$[0].reponame"/>
+    <column name="Title" path="$[0].title"/>
+    <column name="Link" path="$[0].url"/>
+    <column name="Author" path="$.[0].authors.[*].name"/>
+    <column name="Actions"/>
+    <column name="Operators"/>
+    <column name="SP2019"
+            path="$.[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value"
+            transform="$WHEN($CONTAINS(@@currentvalue@@,#2019),#Y)"/>
+    <column name="Categories" path="$.[0].metadata.[?(@.key=='LIST-CATEGORY')].value"/>
+    <column name="Tokens"/>
+    <column name="ColumnTypes" path="$.[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value"/>
+  </columns>
   
+  <orderby>
+    <sortcolumn name="Type" direction="descending"/>
+    <sortcolumn name="Name"/>
+  </orderby>
 </Map>
