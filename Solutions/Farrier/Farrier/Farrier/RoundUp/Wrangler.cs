@@ -14,9 +14,9 @@ namespace Farrier.RoundUp
 
         private string _map;
         private string _outputpath;
-        private string _jsonpath;
+        private string _jsonfilepath;
 
-        public Wrangler(string map, string outputpath = "", string jsonpath = "*.json", LogRouter log = null)
+        public Wrangler(string map, string outputpath = "", string jsonfilepath = "*.json", LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -25,7 +25,7 @@ namespace Farrier.RoundUp
 
             _map = map;
             _outputpath = outputpath;
-            _jsonpath = jsonpath;
+            _jsonfilepath = jsonfilepath;
         }
 
         public void RoundUp()

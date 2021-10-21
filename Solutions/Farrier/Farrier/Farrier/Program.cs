@@ -94,11 +94,11 @@ namespace Farrier
                 logger.Info("Rounding Up!");
                 logger.Debug("Param: map={0}", options.Map);
                 logger.Debug("Param: outputpath={0}", options.OutputPath);
-                logger.Debug("Param: jsonpath={0}", options.JSONPath);
+                logger.Debug("Param: jsonfilepath={0}", options.JSONFilePath);
 
                 var w = new Wrangler(options.Map,
                                      options.OutputPath,
-                                     options.JSONPath,
+                                     options.JSONFilePath,
                                      log);
                 w.RoundUp();
             }
