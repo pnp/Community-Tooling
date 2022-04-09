@@ -21,7 +21,10 @@ namespace Farrier.Helpers
         [Option('o', Required = false, Default = "", HelpText = "The directory where results should be written, written locally when unspecified")]
         public string OutputPath { get; set; }
   
-        //[Option('t', Required = false, Separator = ',', Min = 2, HelpText = "Comma separated list of token key followed by value for when you want dynamic tokens not specified in the ruleset")]
-        //public IEnumerable<string> Tokens { get; set; }
+        [Option('t', Required = false, Separator = ',', Min = 2, HelpText = "Comma separated list of token key followed by value for when you want dynamic tokens not specified in the ruleset")]
+        public IEnumerable<string> Tokens { get; set; }
+
+        [Option(Required = false, Default = false, HelpText = "Add to have all token values listed during processing (helpful for debugging)")]
+        public bool ListTokens { get; set; }
     }
 }

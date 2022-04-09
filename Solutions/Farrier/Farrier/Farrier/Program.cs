@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Farrier.Parser;
 using Farrier.Forge;
 using Farrier.RoundUp;
+using Farrier.Inspect;
 
 namespace Farrier
 {
@@ -28,8 +29,8 @@ namespace Farrier
                 if (System.Diagnostics.Debugger.IsAttached && args.Length == 0)
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
-                    //args = "inspect -c lfsample.xml".Split();
-                    args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite".Split();
+                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "Assets_Exists", "-s", @"D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-icon-overlay" };
+                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite".Split();
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }
 
@@ -71,6 +72,21 @@ namespace Farrier
             void RunInspect(InspectOptions options)
             {
                 logger.Info("Inspecting!");
+                log.Debug($"Param: ruleset={options.RuleSet}");
+                log.Debug($"Param: startingpath={options.StartingPath}");
+                log.Debug($"Param: rule={options.Rule}");
+                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: tokens={options.Tokens}");
+                log.Debug($"Param: listtokens={options.ListTokens}");
+
+                var i = new Inspector(options.RuleSet,
+                                      options.StartingPath,
+                                      options.Rule,
+                                      options.OutputPath,
+                                      TokenManager.IEnumerableToDictionary(options.Tokens),
+                                      options.ListTokens,
+                                      log);
+                i.Inspect();
             }
 
             void RunForge(ForgeOptions options)

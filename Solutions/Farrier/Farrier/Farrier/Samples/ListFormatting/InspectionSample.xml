@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<inspection>
+  <tokens>
+    <token name="fun" value="wowee!"/>
+  </tokens>
+
+  <rules>
+    <rule name="SampleContents" description="Validates the folders/files for a given sample">
+      <tokens>
+        <token name="whatever" value="$UPPER(@@fun@@)"/>
+      </tokens>
+      <conditions>
+        <fileexists relativepath=""/>
+      </conditions>
+    </rule>
+
+    <rule name="README_Exists" description="Verifies the README.md file exists">
+      <conditions>
+        <fileexists path="README.md"/>
+        <fileexists path="README.md" matchcase="true" warn="true"/>
+      </conditions>
+    </rule>
+
+    <rule name="Assets_Exists" description="Verifies the assets folder exists">
+      <conditions>
+        <folderexists path="assets"/>
+        <folderexists path="assets" matchcase="true" warn="true"/>
+      </conditions>
+    </rule>
+  </rules>
+</inspection>
