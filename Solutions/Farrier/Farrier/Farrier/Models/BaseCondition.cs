@@ -22,6 +22,8 @@ namespace Farrier.Models
                         return FileExistsCondition.FromNode(conditionNode);
                     case "folderexists":
                         return FolderExistsCondition.FromNode(conditionNode);
+                    case "run":
+                        return RunCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
@@ -39,7 +41,7 @@ namespace Farrier.Models
             this.errors = new List<string>();
         }
 
-        public abstract bool IsValid(TokenManager tokens, string prefix = "", string startingpath = "");
+        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, int prefix = 0, string startingpath = "");
 
         public readonly string type;
         public readonly bool IsWarning;

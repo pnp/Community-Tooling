@@ -96,26 +96,26 @@ namespace Farrier.Inspect
             }
         }
 
-        private bool RunRule(string ruleName, string prefix = "", InspectionRule parentRule = null)
+        private bool RunRule(string ruleName, int prefix = 0, InspectionRule parentRule = null)
         {
             if(_rules.ContainsKey(ruleName))
             {
                 var rule = _rules[ruleName];
-                var result = rule.Run(_rootTokens, true, prefix, _startingpath, parentRule);
-                _log.Info($"{prefix}Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}");
-                if(rule.Warnings.Count > 0)
+                var result = rule.Run(_rootTokens, RunRule, true, prefix, _startingpath, parentRule);
+                _log.Info($"Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix);
+                foreach (var warning in rule.Warnings)
                 {
-                    _log.Warn($"{prefix}  Warnings: {String.Join(", ", rule.Warnings)}");
+                    _log.Warn($"Warning: {warning}", prefix+1);
                 }
-                if(rule.Errors.Count > 0)
+                foreach (var error in rule.Errors)
                 {
-                    _log.Warn($"{prefix}  Errors: {String.Join(", ", rule.Errors)}");
+                    _log.Error($"Error: {error}", prefix+1);
                 }
                 return result;
             }
             else
             {
-                _log.Warn($"{prefix}Rule {ruleName} not found!");
+                _log.Warn($"Rule {ruleName} not found!", prefix+1);
                 return false;
             }
         }

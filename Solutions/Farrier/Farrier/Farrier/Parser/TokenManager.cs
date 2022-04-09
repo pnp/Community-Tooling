@@ -124,11 +124,11 @@ namespace Farrier.Parser
             }
         }
 
-        public void LogTokens(string prefix = "")
+        public void LogTokens(int prefix = 0)
         {
             foreach(var token in _tokens)
             {
-                _log.Debug($"{prefix}Token: {token.Key} = \"{token.Value}\"");
+                _log.Debug($"Token: {token.Key} = \"{token.Value}\"", prefix);
             }
         }
 

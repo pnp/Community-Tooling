@@ -32,7 +32,7 @@ namespace Farrier.Models
             }
         }
 
-        public override bool IsValid(TokenManager tokens, string prefix = "", string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, int prefix = 0, string startingpath = "")
         {
 
             if(_subConditions.Count == 0)
@@ -42,7 +42,7 @@ namespace Farrier.Models
 
             foreach (var condition in _subConditions)
             {
-                var result = condition.IsValid(tokens, prefix, startingpath);
+                var result = condition.IsValid(tokens, runRule, prefix, startingpath);
 
                 //bubble up any warnings or errors
                 this.warnings.AddRange(condition.Warnings);

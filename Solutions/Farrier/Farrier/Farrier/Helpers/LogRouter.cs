@@ -34,24 +34,34 @@ namespace Farrier.Helpers
                 _logDebug = logDebug;
         }
 
-        public void Error(Exception ex, string message)
+        public void Error(Exception ex, string message, int prefix = 0)
         {
-            _logError(ex, message);
+            _logError(ex, _getPrefix(prefix) + message);
         }
 
-        public void Info(string message)
+        public void Error(string message, int prefix = 0)
         {
-            _logInfo(message);
+            _logError(null, _getPrefix(prefix) + message);
         }
 
-        public void Debug(string message)
+        public void Info(string message, int prefix = 0)
         {
-            _logDebug(message);
+            _logInfo(_getPrefix(prefix) + message);
         }
 
-        public void Warn(string message)
+        public void Debug(string message, int prefix = 0)
         {
-            _logWarn(message);
+            _logDebug(_getPrefix(prefix) + message);
+        }
+
+        public void Warn(string message, int prefix = 0)
+        {
+            _logWarn(_getPrefix(prefix) + message);
+        }
+
+        private string _getPrefix(int count)
+        {
+            return new string(' ', count);
         }
     }
 }

@@ -28,5 +28,12 @@
         <folderexists path="assets" matchcase="true" warn="true"/>
       </conditions>
     </rule>
+
+    <rule name="VerifySampleFiles" description="Makes sure base files exist">
+      <conditions>
+        <run rule="README_Exists"/>
+        <run rule="Assets_Exists"/>
+      </conditions>
+    </rule>
   </rules>
 </inspection>

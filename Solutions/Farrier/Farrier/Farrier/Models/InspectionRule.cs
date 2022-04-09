@@ -55,15 +55,15 @@ namespace Farrier.Models
             this.errors = new List<string>();
         }
 
-        public bool Run(Dictionary<string, string> ruleTokens, TokenManager rootTokens, bool listTokens = false, string prefix = "", string startingpath = "", InspectionRule parentRule = null)
+        public bool Run(Dictionary<string, string> ruleTokens, TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
             _tokensDictionary = ruleTokens;
-            return Run(rootTokens, listTokens, prefix, startingpath, parentRule);
+            return Run(rootTokens, runRule, listTokens, prefix, startingpath, parentRule);
         }
 
-        public bool Run(TokenManager rootTokens, bool listTokens = false, string prefix = "", string startingpath = "", InspectionRule parentRule = null)
+        public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
-            _log.Info($"{prefix}Running rule {Name}");
+            _log.Info($"Running rule {Name}",prefix);
 
             //Process tokens (done here so that parent token values can be evaluated on the fly)
             if (parentRule != null)
@@ -84,12 +84,12 @@ namespace Farrier.Models
             }
 
             if (listTokens)
-                tokens.LogTokens(prefix);
+                tokens.LogTokens(prefix+1);
 
             //Add conditions (always starts with an And condition)
             var rootCondition = AndCondition.FromNode(_conditionsNode);
 
-            var result = rootCondition.IsValid(tokens, prefix, startingpath);
+            var result = rootCondition.IsValid(tokens, runRule, prefix, startingpath);
             this.warnings.AddRange(rootCondition.Warnings);
             this.errors.AddRange(rootCondition.Errors);
             
@@ -101,7 +101,7 @@ namespace Farrier.Models
                 }
                 else
                 {
-                    //this.errors.Add(tokens.DecodeString(rootCondition.FailureMessage));
+                    this.errors.Add(tokens.DecodeString(rootCondition.FailureMessage));
                     return false;
                 }
             }
