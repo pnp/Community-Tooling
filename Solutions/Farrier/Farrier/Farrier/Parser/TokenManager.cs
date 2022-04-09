@@ -80,32 +80,32 @@ namespace Farrier.Parser
         }
 
 
-        public void AddToken(string key, string value, bool asColumn = false)
+        public void AddToken(string key, string value, bool asColumn = false, params TokenManager[] additionalTokens)
         {
             string tokenKey = buildKey(key, asColumn);
             if(!_tokens.ContainsKey(tokenKey))
             {
-                _tokens.Add(tokenKey, DecodeString(value));
+                _tokens.Add(tokenKey, DecodeString(value, false, additionalTokens));
             }
         }
 
-        public void AddTokens(IEnumerable<string> strings, bool asColumns = false)
+        public void AddTokens(IEnumerable<string> strings, bool asColumns = false, params TokenManager[] additionalTokens)
         {
-            AddTokens(IEnumerableToDictionary(strings), asColumns);
+            AddTokens(IEnumerableToDictionary(strings), asColumns, additionalTokens);
         }
 
-        public void AddTokens(Dictionary<string, string> dictionary, bool asColumns = false)
+        public void AddTokens(Dictionary<string, string> dictionary, bool asColumns = false, params TokenManager[] additionalTokens)
         {
             if (dictionary != null && dictionary.Count > 0)
             {
                 foreach (var entry in dictionary)
                 {
-                    AddToken(entry.Key, entry.Value, asColumns);
+                    AddToken(entry.Key, entry.Value, asColumns, additionalTokens);
                 }
             }
         }
 
-        public void AddTokens(XmlNode tokensNode, bool asColumns = false)
+        public void AddTokens(XmlNode tokensNode, bool asColumns = false, params TokenManager[] additionalTokens)
         {
             if (tokensNode != null && tokensNode.ChildNodes.Count > 0)
             {
@@ -117,18 +117,18 @@ namespace Farrier.Parser
                         XmlAttribute valueAttribute = tokenNode.Attributes["value"];
                         if (nameAttribute != null && !String.IsNullOrEmpty(nameAttribute.Value) && valueAttribute != null && !String.IsNullOrEmpty(valueAttribute.Value))
                         {
-                            AddToken(nameAttribute.Value, valueAttribute.Value, asColumns);
+                            AddToken(nameAttribute.Value, valueAttribute.Value, asColumns, additionalTokens);
                         }
                     }
                 }
             }
         }
 
-        public void LogTokens()
+        public void LogTokens(string prefix = "")
         {
             foreach(var token in _tokens)
             {
-                _log.Debug($"Token: {token.Key} = \"{token.Value}\"");
+                _log.Debug($"{prefix}Token: {token.Key} = \"{token.Value}\"");
             }
         }
 
