@@ -89,7 +89,7 @@ namespace Farrier.Models
             //Add conditions (always starts with an And condition)
             var rootCondition = AndCondition.FromNode(_conditionsNode);
 
-            var result = rootCondition.IsValid(tokens, runRule, prefix, startingpath);
+            var result = rootCondition.IsValid(tokens, runRule, this, prefix, startingpath);
             this.warnings.AddRange(rootCondition.Warnings);
             this.errors.AddRange(rootCondition.Errors);
             

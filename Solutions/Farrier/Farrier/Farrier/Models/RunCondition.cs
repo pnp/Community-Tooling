@@ -20,9 +20,9 @@ namespace Farrier.Models
             RuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, int prefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
-            return runRule(tokens.DecodeString(RuleName), prefix+1);
+            return runRule(tokens.DecodeString(RuleName), prefix+1, parentRule);
         }
 
         public readonly string RuleName;

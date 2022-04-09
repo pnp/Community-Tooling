@@ -41,7 +41,7 @@ namespace Farrier.Models
             this.errors = new List<string>();
         }
 
-        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, int prefix = 0, string startingpath = "");
+        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "");
 
         public readonly string type;
         public readonly bool IsWarning;
