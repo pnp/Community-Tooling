@@ -22,7 +22,16 @@ namespace Farrier.Models
 
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
-            return runRule(tokens.DecodeString(RuleName), prefix+1, parentRule);
+            var rName = tokens.DecodeString(RuleName);
+            var result = runRule(rName, prefix+1, parentRule);
+            if(!result)
+            {
+                if (String.IsNullOrEmpty(this.failuremessage))
+                {
+                    this.failuremessage = $"Child rule \"{rName}\" failed";
+                }
+            }
+            return result;
         }
 
         public readonly string RuleName;

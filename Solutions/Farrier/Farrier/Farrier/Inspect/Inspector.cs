@@ -101,21 +101,22 @@ namespace Farrier.Inspect
             if(_rules.ContainsKey(ruleName))
             {
                 var rule = _rules[ruleName];
-                var result = rule.Run(_rootTokens, RunRule, true, prefix, _startingpath, parentRule);
-                _log.Info($"Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix);
+                var result = rule.Run(_rootTokens, RunRule, _listTokens, prefix, _startingpath, parentRule);
+                _log.Info($"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix + 1);
                 foreach (var warning in rule.Warnings)
                 {
-                    _log.Warn($"Warning: {warning}", prefix+1);
+                    _log.Warn($"Warning: {warning}", prefix+2);
                 }
                 foreach (var error in rule.Errors)
                 {
-                    _log.Error($"Error: {error}", prefix+1);
+                    _log.Error($"Error: {error}", prefix+2);
                 }
+                
                 return result;
             }
             else
             {
-                _log.Warn($"Rule {ruleName} not found!", prefix+1);
+                _log.Warn($"Rule {ruleName} not found!", prefix);
                 return false;
             }
         }

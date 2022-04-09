@@ -63,7 +63,7 @@ namespace Farrier.Models
 
         public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
-            _log.Info($"Running rule {Name}",prefix);
+            _log.Info($"Running rule \"{Name}\"...",prefix);
 
             //Process tokens (done here so that parent token values can be evaluated on the fly)
             if (parentRule != null)
@@ -101,7 +101,10 @@ namespace Farrier.Models
                 }
                 else
                 {
-                    this.errors.Add(tokens.DecodeString(rootCondition.FailureMessage));
+                    if(this.errors.Count == 0)
+                    {
+                        this.errors.Add(tokens.DecodeString(rootCondition.FailureMessage));
+                    }
                     return false;
                 }
             }
