@@ -15,10 +15,10 @@ namespace Farrier.Models
         {
             if (columnNode != null)
             {
-                var xmlHelper = new XmlHelper();
-                Name = xmlHelper.XmlAttributeToString(columnNode.Attributes["name"]);
-                Path = xmlHelper.XmlAttributeToString(columnNode.Attributes["path"]);
-                Transform = xmlHelper.XmlAttributeToString(columnNode.Attributes["transform"]);
+                //var xmlHelper = new XmlHelper();
+                Name = XmlHelper.XmlAttributeToString(columnNode.Attributes["name"]);
+                Path = XmlHelper.XmlAttributeToString(columnNode.Attributes["path"]);
+                Transform = XmlHelper.XmlAttributeToString(columnNode.Attributes["transform"]);
             }
         }
 

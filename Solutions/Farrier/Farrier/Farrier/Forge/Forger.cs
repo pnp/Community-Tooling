@@ -15,7 +15,6 @@ namespace Farrier.Forge
 
         private FunctionResolver _functionResolver;
         private TokenManager _rootTokens;
-        private XmlHelper _xmlHelper;
 
         private string _blueprint;
         private string _outputpath;
@@ -40,7 +39,6 @@ namespace Farrier.Forge
 
             _functionResolver = new FunctionResolver(log:_log);
             _rootTokens = newTokenManager();
-            _xmlHelper = new XmlHelper(_skipXMLFormattingFix);
 
             // Add any tokens passed in the options
             _rootTokens.AddTokens(tokens);
@@ -96,8 +94,8 @@ namespace Farrier.Forge
                 {
                     if (templateNode.NodeType == XmlNodeType.Element)
                     {
-                        string templateName = _xmlHelper.XmlAttributeToString(templateNode.Attributes["name"]);
-                        string template = _xmlHelper.CleanXMLFormatting(templateNode.InnerText, 6);
+                        string templateName = XmlHelper.XmlAttributeToString(templateNode.Attributes["name"]);
+                        string template = XmlHelper.CleanXMLFormatting(templateNode.InnerText, 6, _skipXMLFormattingFix);
 
                         if (!String.IsNullOrEmpty(templateName))
                         {
@@ -201,13 +199,13 @@ namespace Farrier.Forge
                     if (!File.Exists(csvPath))
                         throw new Exception("Unable to find csv file at " + csvPath);
 
-                    string orderBy = _xmlHelper.XmlAttributeToString(loopNode.Attributes["orderBy"]);
-                    bool orderDesc = _xmlHelper.XmlAttributeToBool(loopNode.Attributes["orderDesc"]);
-                    string groupBy = _xmlHelper.XmlAttributeToString(loopNode.Attributes["groupBy"]);
-                    bool groupOrderBySize = _xmlHelper.XmlAttributeToString(loopNode.Attributes["groupOrder"]) == "size";
-                    bool groupDesc = _xmlHelper.XmlAttributeToBool(loopNode.Attributes["groupDesc"]);
-                    string filter = _xmlHelper.XmlAttributeToString(loopNode.Attributes["filter"]);
-                    string groupSeparator = _xmlHelper.XmlAttributeToString(loopNode.Attributes["groupSeparator"]);
+                    string orderBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["orderBy"]);
+                    bool orderDesc = XmlHelper.XmlAttributeToBool(loopNode.Attributes["orderDesc"]);
+                    string groupBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupBy"]);
+                    bool groupOrderBySize = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupOrder"]) == "size";
+                    bool groupDesc = XmlHelper.XmlAttributeToBool(loopNode.Attributes["groupDesc"]);
+                    string filter = XmlHelper.XmlAttributeToString(loopNode.Attributes["filter"]);
+                    string groupSeparator = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupSeparator"]);
 
                     LoopData loopData = new LoopData(csvPath, orderBy, orderDesc, groupBy, groupOrderBySize, groupDesc, filter, groupSeparator, log: _log);
 
@@ -278,7 +276,7 @@ namespace Farrier.Forge
         {
             if (contentNode != null)
             {
-                string templateName = _xmlHelper.XmlAttributeToString(contentNode.Attributes["template"]);
+                string templateName = XmlHelper.XmlAttributeToString(contentNode.Attributes["template"]);
                 if (!String.IsNullOrEmpty(templateName))
                 {
                     templateName = _rootTokens.DecodeString(templateName, false, additionalTokens);
@@ -289,7 +287,7 @@ namespace Farrier.Forge
                 }
                 else
                 {
-                    return _xmlHelper.CleanXMLFormatting(contentNode.InnerText, leadingSpacesToTrim);
+                    return XmlHelper.CleanXMLFormatting(contentNode.InnerText, leadingSpacesToTrim, _skipXMLFormattingFix);
                 }
             }
             return "";

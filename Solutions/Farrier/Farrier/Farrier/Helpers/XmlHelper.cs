@@ -5,30 +5,25 @@ using System.Xml;
 
 namespace Farrier.Helpers
 {
-    class XmlHelper
+    static class XmlHelper
     {
-        private bool _skipFormattingFix;
-        public XmlHelper(bool skipFormattingFix = true)
-        {
-            _skipFormattingFix = skipFormattingFix;
-        }
-        public string XmlAttributeToString(XmlAttribute attr)
+        public static string XmlAttributeToString(XmlAttribute attr)
         {
             if (attr == null)
                 return String.Empty;
             return attr.Value;
         }
 
-        public bool XmlAttributeToBool(XmlAttribute attr)
+        public static bool XmlAttributeToBool(XmlAttribute attr)
         {
             if (attr == null)
                 return false;
             return attr.Value.ToLower() == "true";
         }
 
-        public string CleanXMLFormatting(string innerText, int leadingSpacesToTrim)
+        public static string CleanXMLFormatting(string innerText, int leadingSpacesToTrim, bool skipFormattingFix = true)
         {
-            if (!_skipFormattingFix)
+            if (!skipFormattingFix)
             {
                 StringBuilder sb = new StringBuilder();
                 var lines = innerText.Split(Environment.NewLine);

@@ -122,12 +122,11 @@ namespace Farrier.RoundUp
                     XmlNodeList sortColumnNodes = doc.SelectNodes("//sortcolumn");
                     if(sortColumnNodes != null && sortColumnNodes.Count > 0)
                     {
-                        var xmlHelper = new XmlHelper();
                         var sort = new List<string>();
                         foreach(XmlNode sortColumnNode in sortColumnNodes)
                         {
-                            var sortName = xmlHelper.XmlAttributeToString(sortColumnNode.Attributes["name"]);
-                            var sortDirection = xmlHelper.XmlAttributeToString(sortColumnNode.Attributes["direction"]);
+                            var sortName = XmlHelper.XmlAttributeToString(sortColumnNode.Attributes["name"]);
+                            var sortDirection = XmlHelper.XmlAttributeToString(sortColumnNode.Attributes["direction"]);
                             if(!String.IsNullOrEmpty(sortName))
                             {
                                 sort.Add(sortName + (sortDirection == "descending" ? " desc" : ""));
