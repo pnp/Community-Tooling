@@ -38,6 +38,12 @@ namespace Farrier.Parser
             AddToken("Now", DateTime.Now.ToString("F"));
         }
 
+        public void Reset()
+        {
+            _tokens = new Dictionary<string, string>();
+            AddToken("Now", DateTime.Now.ToString("F"));
+        }
+
         public TokenManager(TokenManager baseTokens)
         {
             TOKENSTART = baseTokens.TOKENSTART;
@@ -206,6 +212,37 @@ namespace Farrier.Parser
             {
                 return TOKENSTART + key + TOKENEND;
             }
+        }
+
+        private string stripKey(string rawKey)
+        {
+            if (rawKey.StartsWith(TOKENSTART))
+            {
+                rawKey = rawKey.Substring(TOKENSTART.Length);
+                if (rawKey.StartsWith(COLUMNSTART))
+                {
+                    rawKey = rawKey.Substring(COLUMNSTART.Length);
+                }
+            }
+            if (rawKey.EndsWith(TOKENEND))
+            {
+                rawKey = rawKey.Substring(0, rawKey.Length - TOKENEND.Length);
+                if (rawKey.EndsWith(COLUMNEND))
+                {
+                    rawKey = rawKey.Substring(0, rawKey.Length - COLUMNEND.Length);
+                }
+            }
+            return rawKey;
+        }
+
+        public Dictionary<string, string> CleanTokens()
+        {
+            var cleanTokens = new Dictionary<string, string>();
+            foreach (var token in _tokens)
+            {
+                cleanTokens.Add(stripKey(token.Key), token.Value);
+            }
+            return cleanTokens;
         }
 
         public static Dictionary<string, string> IEnumerableToDictionary(IEnumerable<string> strings)

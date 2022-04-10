@@ -26,11 +26,10 @@ namespace Farrier.Models
             Description = description;
 
             tokens = new TokenManager(new FunctionResolver(), log: _log);
-            tokens.AddToken("RuleName", name);
             this.messages = new List<Message>();
         }
 
-        public InspectionRule(XmlNode ruleNode, LogRouter log = null)
+        public InspectionRule(TokenManager rootTokens, XmlNode ruleNode, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -41,8 +40,7 @@ namespace Farrier.Models
             Name = XmlHelper.XmlAttributeToString(ruleNode.Attributes["name"]);
             Description = XmlHelper.XmlAttributeToString(ruleNode.Attributes["description"]);
 
-            tokens = new TokenManager(new FunctionResolver(), log: _log);
-            tokens.AddToken("RuleName", Name);
+            tokens = new TokenManager(rootTokens);
 
             _tokensNode = ruleNode.SelectSingleNode("tokens");
 
@@ -63,24 +61,27 @@ namespace Farrier.Models
         public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
             _log.Info($"Running rule \"{Name}\"...",prefix);
+            tokens.Reset();
 
             //Process tokens (done here so that parent token values can be evaluated on the fly)
             if (parentRule != null)
             {
                 tokens.AddToken("ParentRuleName", parentRule.Name);
-                if(_tokensNode != null)
-                    tokens.AddTokens(_tokensNode, false, rootTokens, parentRule.tokens);
                 if (_tokensDictionary != null)
                     tokens.AddTokens(_tokensDictionary, false, rootTokens, parentRule.tokens);
+                if (_tokensNode != null)
+                    tokens.AddTokens(_tokensNode, false, rootTokens, parentRule.tokens);
             }
             else
             {
                 tokens.AddToken("ParentRuleName", "");
-                if (_tokensNode != null)
-                    tokens.AddTokens(_tokensNode, false, rootTokens);
                 if (_tokensDictionary != null)
                     tokens.AddTokens(_tokensDictionary, false, rootTokens);
+                if (_tokensNode != null)
+                    tokens.AddTokens(_tokensNode, false, rootTokens);
             }
+
+            tokens.NestToken("RuleName", Name);
 
             if (listTokens)
                 tokens.LogTokens(prefix+1);

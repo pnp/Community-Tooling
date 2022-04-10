@@ -51,6 +51,8 @@ namespace Farrier.Models.Conditions
             {
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", folder.Name);
+                foreachTokens.NestToken("ContainerPath", directory.FullName);
+                foreachTokens.NestToken("ContainerName", directory.Name);
                 messages.Add(Message.Info($"Processing folder {folder.Name}...",messagePrefix));
 
                 foreach (var condition in _subConditions)

@@ -42,6 +42,9 @@ namespace Farrier.Inspect
 
             // Add any tokens passed in the options
             _rootTokens.AddTokens(tokens);
+
+            // Add default tokens
+            _rootTokens.AddToken("StartingPath", startingpath);
         }
 
         public void Inspect()
@@ -64,7 +67,7 @@ namespace Farrier.Inspect
                     _rules = new Dictionary<string, InspectionRule>();
                     foreach (XmlNode ruleNode in ruleNodes)
                     {
-                        var rule = new InspectionRule(ruleNode, log: _log);
+                        var rule = new InspectionRule(_rootTokens, ruleNode, log: _log);
                         if(String.IsNullOrEmpty(_rule))
                         {
                             //When not specified, the first rule is used
@@ -96,12 +99,12 @@ namespace Farrier.Inspect
             }
         }
 
-        private bool RunRule(string ruleName, int prefix = 0, InspectionRule parentRule = null)
+        private bool RunRule(string ruleName, Dictionary<string, string> ruleTokens = null, int prefix = 0, InspectionRule parentRule = null)
         {
             if(_rules.ContainsKey(ruleName))
             {
                 var rule = _rules[ruleName];
-                var result = rule.Run(_rootTokens, RunRule, _listTokens, prefix, _startingpath, parentRule);
+                var result = rule.Run(ruleTokens, _rootTokens, RunRule, _listTokens, prefix, _startingpath, parentRule);
                 _log.Info($"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix + 1);
                 foreach(var message in rule.Messages)
                 {

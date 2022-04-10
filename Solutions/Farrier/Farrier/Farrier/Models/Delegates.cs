@@ -4,5 +4,5 @@ using System.Text;
 
 namespace Farrier.Models
 {
-    delegate bool DelRunRule(string ruleName, int prefix, InspectionRule parentRule = null);
+    delegate bool DelRunRule(string ruleName, Dictionary<string, string> ruleTokens = null, int prefix = 0, InspectionRule parentRule = null);
 }

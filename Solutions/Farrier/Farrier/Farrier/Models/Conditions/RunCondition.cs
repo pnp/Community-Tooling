@@ -24,7 +24,7 @@ namespace Farrier.Models.Conditions
         {
             this.messages = new List<Message>();
             var rName = tokens.DecodeString(RuleName);
-            var result = runRule(rName, prefix+1, parentRule);
+            var result = runRule(rName, tokens.CleanTokens(), prefix+1, parentRule);
             if(!result)
             {
                 if (String.IsNullOrEmpty(this.failuremessage))

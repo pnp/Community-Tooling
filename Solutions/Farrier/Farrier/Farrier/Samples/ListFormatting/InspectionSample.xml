@@ -22,7 +22,7 @@
       </conditions>
     </rule>
 
-    <rule name="Assets_Exists" description="Verifies the assets folder exists">
+    <rule name="AssetsFolder_Exists" description="Verifies the assets folder exists">
       <conditions>
         <folderexists path="assets"/>
         <folderexists path="assets" matchcase="true" warn="true"/>
@@ -36,22 +36,36 @@
       </conditions>
     </rule>
 
-    <rule name="Folders" description="">
+    <rule name="ValidateSample" description="">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
+        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
+        <token name="AssetsPath" value="@@FolderPath@@\assets"/>
+        <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
+      </tokens>
+      <conditions>
+        <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
+        <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
+        <fileexists path="@@READMEPath@@" failuremessage="README not found! (@@SampleKey@@)"/>
+        <fileexists path="@@READMEPath@@" matchcase="true" warn="true"/>
+        <folderexists path="@@AssetsPath@@" failuremessage="assets folder missing! (@@SampleKey@@)"/>
+        <folderexists path="@@AssetsPath@@" matchcase="true" warn="true"/>
+        <fileexists path="@@SampleJsonPath@@" failuremssage="sample.json not found! (@@SampleKey@@)"/>
+        <fileexists path="@@SampleJsonPath@@" matchcase="true" warn="true"/>
+      </conditions>
+    </rule>
+
+    <rule name="ValidateSamples">
       <conditions>
         <foreachfolder path="column-samples" pattern="date*">
-          <fileexists path="@@Each@@.json" failuremessage="Primary sample does not match folder name (@@Each@@)!"/>
-          <fileexists path="@@Each@@.json" matchcase="true" warn="true"/>
-          <fileexists path="README.md"/>
-          <fileexists path="README.md" matchcase="true" warn="true"/>
-          <folderexists path="assets"/>
-          <folderexists path="assets" matchcase="true" warn="true"/>
-          <fileexists path="assets/sample.json"/>
-          <fileexists path="assets/sample.json" matchcase="true" warn="true"/>
+          <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>
     </rule>
 
-    <rule name="Screenshot">
+    <rule name="Screenshot" description="Verifies at least 1 screenshot exists (either gif or png)">
       <conditions>
         <or>
           <and>
