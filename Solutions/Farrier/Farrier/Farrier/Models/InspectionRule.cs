@@ -4,6 +4,7 @@ using System.Text;
 using Farrier.Parser;
 using System.Xml;
 using Farrier.Helpers;
+using Farrier.Models.Conditions;
 
 namespace Farrier.Models
 {

@@ -5,7 +5,7 @@ using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 
-namespace Farrier.Models
+namespace Farrier.Models.Conditions
 {
     class AndCondition : BaseCondition
     {

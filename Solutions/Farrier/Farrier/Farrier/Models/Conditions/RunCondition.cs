@@ -6,7 +6,7 @@ using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
 
-namespace Farrier.Models
+namespace Farrier.Models.Conditions
 {
     class RunCondition : BaseCondition
     {

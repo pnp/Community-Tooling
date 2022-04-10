@@ -5,7 +5,7 @@ using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 
-namespace Farrier.Models
+namespace Farrier.Models.Conditions
 {
     abstract class BaseCondition
     {
@@ -24,6 +24,8 @@ namespace Farrier.Models
                         return FolderExistsCondition.FromNode(conditionNode);
                     case "run":
                         return RunCondition.FromNode(conditionNode);
+                    case "foreachfolder":
+                        return ForEachFolderCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
