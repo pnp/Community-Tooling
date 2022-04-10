@@ -54,6 +54,16 @@
         <folderexists path="@@AssetsPath@@" matchcase="true" warn="true"/>
         <fileexists path="@@SampleJsonPath@@" failuremssage="sample.json not found! (@@SampleKey@@)"/>
         <fileexists path="@@SampleJsonPath@@" matchcase="true" warn="true"/>
+        <or>
+          <and>
+            <fileexists path="@@AssetsPath@@\screenshot.png"/>
+            <fileexists path="@@AssetsPath@@\screenshot.png" matchcase="true" warn="true"/>
+          </and>
+          <and>
+            <fileexists path="@@AssetsPath@@\screenshot.gif"/>
+            <fileexists path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
+          </and>
+        </or>
       </conditions>
     </rule>
 
@@ -79,5 +89,21 @@
         </or>
       </conditions>
     </rule>
+
+    <rule name="TelemetryLink">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#form,#view))"/>
+        <token name="TelemetryTag">
+          <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/@@SampleType@@-samples/@@SampleKey@@" />]]>
+        </token>
+      </tokens>
+      <conditions>
+        <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@"/>
+      </conditions>
+    </rule>
+    
   </rules>
 </inspection>

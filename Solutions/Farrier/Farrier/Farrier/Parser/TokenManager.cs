@@ -168,9 +168,22 @@ namespace Farrier.Parser
                     {
                         XmlAttribute nameAttribute = tokenNode.Attributes["name"];
                         XmlAttribute valueAttribute = tokenNode.Attributes["value"];
-                        if (nameAttribute != null && !String.IsNullOrEmpty(nameAttribute.Value) && valueAttribute != null && !String.IsNullOrEmpty(valueAttribute.Value))
+                        if (nameAttribute != null && !String.IsNullOrEmpty(nameAttribute.Value))
                         {
-                            AddToken(nameAttribute.Value, valueAttribute.Value, asColumns, additionalTokens);
+                            string key = nameAttribute.Value;
+                            string value = String.Empty;
+                            if(valueAttribute != null && !String.IsNullOrEmpty(valueAttribute.Value))
+                            {
+                                value = valueAttribute.Value;
+                            }
+                            else
+                            {
+                                if(tokenNode.HasChildNodes)
+                                {
+                                    value = tokenNode.FirstChild.InnerText;
+                                }
+                            }
+                            AddToken(key, value, asColumns, additionalTokens);
                         }
                     }
                 }
