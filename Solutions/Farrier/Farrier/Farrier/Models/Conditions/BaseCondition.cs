@@ -18,6 +18,8 @@ namespace Farrier.Models.Conditions
                 {
                     case "and":
                         return AndCondition.FromNode(conditionNode);
+                    case "or":
+                        return OrCondition.FromNode(conditionNode);
                     case "fileexists":
                         return FileExistsCondition.FromNode(conditionNode);
                     case "folderexists":
@@ -50,6 +52,8 @@ namespace Farrier.Models.Conditions
         protected string successmessage;
         protected string failuremessage;
         public string FailureMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"Unspecified {(this.IsWarning ? "warning" : "error")} from {this.type} condition" : this.failuremessage; } }
+        protected bool suppressFailureMessage;
+        public bool SuppressFailureMessage { get { return suppressFailureMessage; } }
         public string SuccessMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"{this.type} condition succeeded" : this.successmessage; } }
         protected List<Message> messages;
         public List<Message> Messages { get { return this.messages; } }

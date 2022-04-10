@@ -41,10 +41,28 @@
         <foreachfolder path="column-samples" pattern="date*">
           <fileexists path="@@Each@@.json" failuremessage="Primary sample does not match folder name (@@Each@@)!"/>
           <fileexists path="@@Each@@.json" matchcase="true" warn="true"/>
-          <foreachfolder>
-            <fileexists path="sample.json"/>
-          </foreachfolder>
+          <fileexists path="README.md"/>
+          <fileexists path="README.md" matchcase="true" warn="true"/>
+          <folderexists path="assets"/>
+          <folderexists path="assets" matchcase="true" warn="true"/>
+          <fileexists path="assets/sample.json"/>
+          <fileexists path="assets/sample.json" matchcase="true" warn="true"/>
         </foreachfolder>
+      </conditions>
+    </rule>
+
+    <rule name="Screenshot">
+      <conditions>
+        <or>
+          <and>
+            <fileexists path="assets/screenshot.png"/>
+            <fileexists path="assets/screenshot.png" matchcase="true" warn="true"/>
+          </and>
+          <and>
+            <fileexists path="assets/screenshot.gif"/>
+            <fileexists path="assets/screenshot.gif" matchcase="true" warn="true"/>
+          </and>
+        </or>
       </conditions>
     </rule>
   </rules>

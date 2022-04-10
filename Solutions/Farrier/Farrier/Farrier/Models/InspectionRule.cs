@@ -99,10 +99,10 @@ namespace Farrier.Models
                 }
                 else
                 {
-                    //if(this.errors.Count == 0)
-                    //{
+                    if(!rootCondition.SuppressFailureMessage)
+                    {
                         this.messages.Add(Message.Error(tokens.DecodeString(rootCondition.FailureMessage)));
-                    //}
+                    }
                     return false;
                 }
             }

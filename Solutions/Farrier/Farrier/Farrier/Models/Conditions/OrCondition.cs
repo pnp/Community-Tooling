@@ -8,15 +8,15 @@ using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
-    class AndCondition : BaseCondition
+    class OrCondition : BaseCondition
     {
         private List<BaseCondition> _subConditions;
-        public new static AndCondition FromNode(XmlNode conditionNode)
+        public new static OrCondition FromNode(XmlNode conditionNode)
         {
-            return new AndCondition(conditionNode);
+            return new OrCondition(conditionNode);
         }
 
-        public AndCondition(XmlNode conditionNode) : base(conditionNode)
+        public OrCondition(XmlNode conditionNode) : base(conditionNode)
         {
             _subConditions = new List<BaseCondition>();
             foreach (XmlNode child in conditionNode.ChildNodes)
@@ -57,21 +57,25 @@ namespace Farrier.Models.Conditions
                     {
                         //Add its warning, but don't fail the condition
                         subMessages.Add(Message.Warning(tokens.DecodeString(condition.FailureMessage)));
+                        return true;
                     }
                     else
                     {
-                        //no need to keep evaluating if even 1 sub is false
-                        if (!condition.SuppressFailureMessage)
+                        if(!condition.SuppressFailureMessage)
                         {
                             subMessages.Add(Message.Error(tokens.DecodeString(condition.FailureMessage)));
                         }
-                        this.messages.AddRange(subMessages); //Only bubble up all in failure situations
-                        return false;
                     }
                 }
+                else
+                {
+                    //no need to keep evaluating if even 1 sub is true
+                    this.messages.AddRange(subMessages.Where(m => m.Level != MessageLevel.error));
+                    return true;
+                }
             }
-            this.messages.AddRange(subMessages.Where(m => m.Level != MessageLevel.error));
-            return true;
+            this.messages.AddRange(subMessages); //Only bubble up all in failure situations
+            return false;
         }
 
     }
