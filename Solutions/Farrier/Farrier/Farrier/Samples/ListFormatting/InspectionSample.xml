@@ -44,6 +44,10 @@
         <token name="READMEPath" value="@@FolderPath@@\README.md"/>
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#form,#view))"/>
+        <token name="TelemetryTag">
+          <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/@@SampleType@@-samples/@@SampleKey@@" />]]>
+        </token>
       </tokens>
       <conditions>
         <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
@@ -63,6 +67,11 @@
             <fileexists path="@@AssetsPath@@\screenshot.gif"/>
             <fileexists path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
           </and>
+        </or>
+        <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true"/>
+        <or>
+          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
+          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
         </or>
       </conditions>
     </rule>
@@ -101,7 +110,14 @@
         </token>
       </tokens>
       <conditions>
-        <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@"/>
+        <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)"/>
+        <or>
+          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@)"/>
+          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@)"/>
+        </or>
+        <filecontains path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
+        <filecontains path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+        <filecontains path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
       </conditions>
     </rule>
     
