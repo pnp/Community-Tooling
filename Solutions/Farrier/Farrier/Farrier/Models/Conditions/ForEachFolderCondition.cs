@@ -37,10 +37,7 @@ namespace Farrier.Models.Conditions
 
             if(!Directory.Exists(path))
             {
-                if(String.IsNullOrEmpty(failuremessage))
-                {
-                    failuremessage = $"Unable to find the directory {path}";
-                }
+                this.setFailureMessage(tokens, $"Unable to find the directory {path}");
                 return false;
             }
 
@@ -73,10 +70,7 @@ namespace Farrier.Models.Conditions
                         {
                             //no need to keep evaluating if even 1 sub is false
                             messages.Add(Message.Error(foreachTokens.DecodeString(condition.FailureMessage),messagePrefix+1));
-                            if (String.IsNullOrEmpty(failuremessage))
-                            {
-                                failuremessage = $"Sub Condition failure during processing of folder {folder.FullName}";
-                            }
+                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of folder {folder.FullName}");
                             return false;
                         }
                     }

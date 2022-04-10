@@ -30,6 +30,8 @@ namespace Farrier.Models.Conditions
                         return ForEachFolderCondition.FromNode(conditionNode);
                     case "filecontains":
                         return FileContainsCondition.FromNode(conditionNode);
+                    case "jsonquery":
+                        return JsonQueryCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
@@ -45,6 +47,18 @@ namespace Farrier.Models.Conditions
             this.failuremessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
             this.successmessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["successmessage"]);
             this.messages = new List<Message>();
+        }
+
+        protected void setFailureMessage(TokenManager tokens, string text)
+        {
+            if (String.IsNullOrEmpty(this.failuremessage))
+            {
+                this.failuremessage = text;
+            }
+            else
+            {
+                this.failuremessage = tokens.DecodeString(failuremessage);
+            }
         }
 
         public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "");

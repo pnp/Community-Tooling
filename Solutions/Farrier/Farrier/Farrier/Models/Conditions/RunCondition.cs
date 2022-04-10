@@ -27,14 +27,7 @@ namespace Farrier.Models.Conditions
             var result = runRule(rName, tokens.CleanTokens(), prefix+1, parentRule);
             if(!result)
             {
-                if (String.IsNullOrEmpty(this.failuremessage))
-                {
-                    this.failuremessage = $"Child rule \"{rName}\" failed";
-                }
-                else
-                {
-                    this.failuremessage = tokens.DecodeString(failuremessage);
-                }
+                this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");
             }
             return result;
         }

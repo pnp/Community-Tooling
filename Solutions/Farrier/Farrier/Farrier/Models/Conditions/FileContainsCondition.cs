@@ -36,14 +36,7 @@ namespace Farrier.Models.Conditions
                     if (matchcase && !contents.Contains(searchText))
                     {
                         //Invalid casing
-                        if (String.IsNullOrEmpty(this.failuremessage))
-                        {
-                            this.failuremessage = $"Text exists but casing does not match ({path})";
-                        }
-                        else
-                        {
-                            this.failuremessage = tokens.DecodeString(failuremessage);
-                        }
+                        this.setFailureMessage(tokens, $"Text exists but casing does not match ({path})");
                         return false;
                     }
                     else
@@ -53,27 +46,13 @@ namespace Farrier.Models.Conditions
                 }
                 else
                 {
-                    if (String.IsNullOrEmpty(this.failuremessage))
-                    {
-                        this.failuremessage = $"Specified text not found in {path}";
-                    }
-                    else
-                    {
-                        this.failuremessage = tokens.DecodeString(failuremessage);
-                    }
+                    this.setFailureMessage(tokens, $"Specified text not found in {path}");
                     return false;
                 }
             }
             else
             {
-                if(String.IsNullOrEmpty(this.failuremessage))
-                {
-                    this.failuremessage = $"File not found at {path}";
-                }
-                else
-                {
-                    this.failuremessage = tokens.DecodeString(failuremessage);
-                }
+                this.setFailureMessage(tokens, $"File not found at {path}");
                 return false;
             }
         }

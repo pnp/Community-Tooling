@@ -38,14 +38,7 @@ namespace Farrier.Models.Conditions
                         if(origFilename.Equals(filename,StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
                         {
                             //Invalid casing
-                            if(String.IsNullOrEmpty(this.failuremessage))
-                            {
-                                this.failuremessage = $"File exists but casing does not match (found {filename})";
-                            }
-                            else
-                            {
-                                this.failuremessage = tokens.DecodeString(failuremessage);
-                            }
+                            this.setFailureMessage(tokens, $"File exists but casing does not match (found {filename})");
                             return false;
                         }
                     }
@@ -58,10 +51,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                if(String.IsNullOrEmpty(this.failuremessage))
-                {
-                    this.failuremessage = $"File not found at {path}";
-                }
+                this.setFailureMessage(tokens, $"File not found at {path}");
                 return false;
             }
         }
