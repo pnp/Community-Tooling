@@ -38,6 +38,19 @@ namespace Farrier.Parser
             AddToken("Now", DateTime.Now.ToString("F"));
         }
 
+        public TokenManager(TokenManager baseTokens)
+        {
+            TOKENSTART = baseTokens.TOKENSTART;
+            TOKENEND = baseTokens.TOKENEND;
+            COLUMNSTART = baseTokens.COLUMNSTART;
+            COLUMNEND = baseTokens.COLUMNEND;
+            _log = baseTokens._log;
+
+            _functionResolver = baseTokens._functionResolver;
+
+            _tokens = new Dictionary<string, string>(baseTokens._tokens);
+        }
+
         public static List<TokenManager> TokenizeRows(DataTable dt, FunctionResolver fr, string start = "@@", string end = "@@", string columnStart = "[", string columnEnd = "]", LogRouter log = null)
         {
             List<DataRow> rows = new List<DataRow>();

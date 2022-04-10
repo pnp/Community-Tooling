@@ -35,5 +35,14 @@
         <run rule="Assets_Exists"/>
       </conditions>
     </rule>
+
+    <rule name="Folders" description="">
+      <conditions>
+        <foreachfolder path="column-samples" pattern="date*">
+          <fileexists path="@@Each@@.json" failuremessage="Primary sample does not match folder name (@@Each@@)!"/>
+          <fileexists path="@@Each@@.json" matchcase="true" warn="true"/>
+        </foreachfolder>
+      </conditions>
+    </rule>
   </rules>
 </inspection>
