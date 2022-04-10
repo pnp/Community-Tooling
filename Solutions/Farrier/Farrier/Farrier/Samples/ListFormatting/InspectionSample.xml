@@ -135,6 +135,10 @@
       </tokens>
       <conditions>
         <jsonquery path="@@SampleJsonPath@@" value="@@SampleType@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" matchcase="true"/>
+        <jsonquery path="@@SampleJsonPath@@" value="pnp-list-formatting-@@SampleKey@@" query="$[0].name" matchcase="true"/>
+        <jsonquery path="@@SampleJsonPath@@" value="@@SampleKey@@" query="$[0].reponame" matchcase="true"/>
+        <jsonquery path="@@SampleJsonPath@@" value="https://github.com/pnp/sp-dev-list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" query="$[0].url" matchcase="true"/>
+        <jsonquery path="@@SampleJsonPath@@" comparison="count" value="1" query="$[0].shortDescription"/>
       </conditions>
     </rule>
     
