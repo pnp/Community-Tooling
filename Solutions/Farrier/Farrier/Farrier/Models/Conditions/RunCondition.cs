@@ -17,13 +17,13 @@ namespace Farrier.Models.Conditions
 
         public RunCondition(XmlNode conditionNode) : base(conditionNode)
         {
-            RuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
+            rawRuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
         }
 
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
         {
             this.messages = new List<Message>();
-            var rName = tokens.DecodeString(RuleName);
+            var rName = tokens.DecodeString(rawRuleName);
             var result = runRule(rName, tokens.CleanTokens(), prefix+1, parentRule);
             if(!result)
             {
@@ -31,10 +31,14 @@ namespace Farrier.Models.Conditions
                 {
                     this.failuremessage = $"Child rule \"{rName}\" failed";
                 }
+                else
+                {
+                    this.failuremessage = tokens.DecodeString(failuremessage);
+                }
             }
             return result;
         }
 
-        public readonly string RuleName;
+        private string rawRuleName;
     }
 }

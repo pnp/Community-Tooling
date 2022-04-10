@@ -17,17 +17,18 @@ namespace Farrier.Models.Conditions
 
         public FolderExistsCondition(XmlNode conditionNode) : base(conditionNode)
         {
-            Path = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
-            MatchCase = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["matchcase"]);
+            rawPath = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
+            rawMatchCase = XmlHelper.XmlAttributeToString(conditionNode.Attributes["matchcase"]);
         }
 
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, int messagePrefix = 0, string startingpath = "")
         {
             this.messages = new List<Message>();
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(Path));
+            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            var matchcase = tokens.DecodeString(rawMatchCase) == "true";
             if (Directory.Exists(path))
             {
-                if(MatchCase)
+                if(matchcase)
                 {
                     var origFoldername = new DirectoryInfo(path).Name;
                     var folders = Directory.GetParent(path).GetDirectories();
@@ -40,6 +41,10 @@ namespace Farrier.Models.Conditions
                             if(String.IsNullOrEmpty(this.failuremessage))
                             {
                                 this.failuremessage = $"Folder exists but casing does not match (found {foldername})";
+                            }
+                            else
+                            {
+                                this.failuremessage = tokens.DecodeString(failuremessage);
                             }
                             return false;
                         }
@@ -57,11 +62,15 @@ namespace Farrier.Models.Conditions
                 {
                     this.failuremessage = $"Folder not found at {path}";
                 }
+                else
+                {
+                    this.failuremessage = tokens.DecodeString(failuremessage);
+                }
                 return false;
             }
         }
 
-        public readonly string Path;
-        public readonly bool MatchCase;
+        private string rawPath;
+        private string rawMatchCase;
     }
 }

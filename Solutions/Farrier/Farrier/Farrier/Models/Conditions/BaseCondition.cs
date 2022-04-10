@@ -28,6 +28,8 @@ namespace Farrier.Models.Conditions
                         return RunCondition.FromNode(conditionNode);
                     case "foreachfolder":
                         return ForEachFolderCondition.FromNode(conditionNode);
+                    case "filecontains":
+                        return FileContainsCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
