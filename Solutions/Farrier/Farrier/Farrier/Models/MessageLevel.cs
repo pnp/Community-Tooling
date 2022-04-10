@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Farrier.Models
 {
-    enum ConditionLevel
+    enum MessageLevel
     {
-        warn,
-        fail,
-        ignore
+        warning,
+        error,
+        info
     }
 }

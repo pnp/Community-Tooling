@@ -41,6 +41,9 @@
         <foreachfolder path="column-samples" pattern="date*">
           <fileexists path="@@Each@@.json" failuremessage="Primary sample does not match folder name (@@Each@@)!"/>
           <fileexists path="@@Each@@.json" matchcase="true" warn="true"/>
+          <foreachfolder>
+            <fileexists path="sample.json"/>
+          </foreachfolder>
         </foreachfolder>
       </conditions>
     </rule>

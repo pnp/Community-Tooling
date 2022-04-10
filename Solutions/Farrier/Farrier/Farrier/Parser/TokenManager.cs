@@ -102,6 +102,40 @@ namespace Farrier.Parser
             }
         }
 
+        public void NestToken(string key, string value, bool asColumn = false, int count = 1, params TokenManager[] additionalTokens)
+        {
+            //Adds if it doesn't exist, otherwise bumps up the previous with a number (key, key2, key3, etc.)
+            string tokenKey = buildKey((count > 1 ? key + count.ToString() : key), asColumn);
+            if (!_tokens.ContainsKey(tokenKey))
+            {
+                if (count == 0)
+                {
+                    _tokens.Add(tokenKey, DecodeString(value, false, additionalTokens));
+                }
+                else
+                {
+                    //Take the value exactly as it is (will have been previously decoded since this is just a bump)
+                    _tokens.Add(tokenKey, value);
+                }
+            }
+            else
+            {
+                var bumpedvalue = _tokens[tokenKey];
+                if(count == 1)
+                {
+                    _tokens[tokenKey] = DecodeString(value, false, additionalTokens);
+                }
+                else
+                {
+                    //Take the value exactly as it is (will have been previously decoded since this is just a bump)
+                    _tokens[tokenKey] = value;
+                }
+                
+                //bump the previous
+                NestToken(key, bumpedvalue, asColumn, count + 1, additionalTokens);
+            }
+        }
+
         public void AddTokens(IEnumerable<string> strings, bool asColumns = false, params TokenManager[] additionalTokens)
         {
             AddTokens(IEnumerableToDictionary(strings), asColumns, additionalTokens);

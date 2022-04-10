@@ -39,19 +39,19 @@ namespace Farrier.Models.Conditions
 
             this.IsWarning = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["warn"]);
             this.failuremessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
-            this.warnings = new List<string>();
-            this.errors = new List<string>();
+            this.successmessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["successmessage"]);
+            this.messages = new List<Message>();
         }
 
-        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "");
+        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "");
 
         public readonly string type;
         public readonly bool IsWarning;
+        protected string successmessage;
         protected string failuremessage;
         public string FailureMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"Unspecified {(this.IsWarning ? "warning" : "error")} from {this.type} condition" : this.failuremessage; } }
-        protected List<string> warnings;
-        protected List<string> errors;
-        public List<string> Warnings { get { return this.warnings; } }
-        public List<string> Errors { get { return this.errors; } }
+        public string SuccessMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"{this.type} condition succeeded" : this.successmessage; } }
+        protected List<Message> messages;
+        public List<Message> Messages { get { return this.messages; } }
     }
 }

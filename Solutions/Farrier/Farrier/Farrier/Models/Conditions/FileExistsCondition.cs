@@ -21,8 +21,9 @@ namespace Farrier.Models.Conditions
             MatchCase = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["matchcase"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, int messagePrefix = 0, string startingpath = "")
         {
+            this.messages = new List<Message>();
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(Path));
             if (File.Exists(path))
             {

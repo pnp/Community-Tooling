@@ -27,8 +27,7 @@ namespace Farrier.Models
 
             tokens = new TokenManager(new FunctionResolver(), log: _log);
             tokens.AddToken("RuleName", name);
-            this.warnings = new List<string>();
-            this.errors = new List<string>();
+            this.messages = new List<Message>();
         }
 
         public InspectionRule(XmlNode ruleNode, LogRouter log = null)
@@ -52,8 +51,7 @@ namespace Farrier.Models
             {
                 _log.Warn($"No conditions found for rule: {this.Name}");
             }
-            this.warnings = new List<string>();
-            this.errors = new List<string>();
+            this.messages = new List<Message>();
         }
 
         public bool Run(Dictionary<string, string> ruleTokens, TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
@@ -90,22 +88,21 @@ namespace Farrier.Models
             //Add conditions (always starts with an And condition)
             var rootCondition = AndCondition.FromNode(_conditionsNode);
 
-            var result = rootCondition.IsValid(tokens, runRule, this, prefix, startingpath);
-            this.warnings.AddRange(rootCondition.Warnings);
-            this.errors.AddRange(rootCondition.Errors);
+            var result = rootCondition.IsValid(tokens, runRule, this, prefix, 0, startingpath);
+            this.messages.AddRange(rootCondition.Messages);
             
             if(!result)
             {
                 if(rootCondition.IsWarning)
                 {
-                    warnings.Add(tokens.DecodeString(rootCondition.FailureMessage));
+                    messages.Add(Message.Warning(tokens.DecodeString(rootCondition.FailureMessage)));
                 }
                 else
                 {
-                    if(this.errors.Count == 0)
-                    {
-                        this.errors.Add(tokens.DecodeString(rootCondition.FailureMessage));
-                    }
+                    //if(this.errors.Count == 0)
+                    //{
+                        this.messages.Add(Message.Error(tokens.DecodeString(rootCondition.FailureMessage)));
+                    //}
                     return false;
                 }
             }
@@ -117,9 +114,7 @@ namespace Farrier.Models
 
         public TokenManager tokens { get; }
 
-        protected List<string> warnings;
-        protected List<string> errors;
-        public List<string> Warnings { get { return this.warnings; } }
-        public List<string> Errors { get { return this.errors; } }
+        protected List<Message> messages;
+        public List<Message> Messages { get { return this.messages; } }
     }
 }

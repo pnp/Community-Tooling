@@ -103,13 +103,22 @@ namespace Farrier.Inspect
                 var rule = _rules[ruleName];
                 var result = rule.Run(_rootTokens, RunRule, _listTokens, prefix, _startingpath, parentRule);
                 _log.Info($"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix + 1);
-                foreach (var warning in rule.Warnings)
+                foreach(var message in rule.Messages)
                 {
-                    _log.Warn($"Warning: {warning}", prefix+2);
-                }
-                foreach (var error in rule.Errors)
-                {
-                    _log.Error($"Error: {error}", prefix+2);
+                    switch (message.Level)
+                    {
+                        case MessageLevel.warning:
+                            _log.Warn($"Warning: {message.Text}", prefix + 2 + message.Prefix);
+                            break;
+                        case MessageLevel.error:
+                            _log.Error($"Error: {message.Text}", prefix + 2 + message.Prefix);
+                            break;
+                        case MessageLevel.info:
+                            _log.Info($"-{message.Text}", prefix + 2 + message.Prefix);
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 
                 return result;

@@ -25,9 +25,9 @@ namespace Farrier.Models.Conditions
             }
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
         {
-
+            this.messages = new List<Message>();
             if(_subConditions.Count == 0)
             {
                 return false;
@@ -50,27 +50,27 @@ namespace Farrier.Models.Conditions
             foreach (var folder in folders)
             {
                 var foreachTokens = new TokenManager(tokens);
-                foreachTokens.AddToken("Each", folder.Name);
+                foreachTokens.NestToken("Each", folder.Name);
+                messages.Add(Message.Info($"Processing folder {folder.Name}...",messagePrefix));
 
                 foreach (var condition in _subConditions)
                 {
-                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix, folder.FullName);
+                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, messagePrefix+1, folder.FullName);
 
                     //bubble up any warnings or errors
-                    this.warnings.AddRange(condition.Warnings);
-                    this.errors.AddRange(condition.Errors);
+                    this.messages.AddRange(condition.Messages);
 
                     if (!result)
                     {
                         if (condition.IsWarning)
                         {
                             //Add its warning, but don't fail the condition
-                            warnings.Add(foreachTokens.DecodeString(condition.FailureMessage));
+                            messages.Add(Message.Warning(foreachTokens.DecodeString(condition.FailureMessage),messagePrefix+1));
                         }
                         else
                         {
                             //no need to keep evaluating if even 1 sub is false
-                            errors.Add(foreachTokens.DecodeString(condition.FailureMessage));
+                            messages.Add(Message.Error(foreachTokens.DecodeString(condition.FailureMessage),messagePrefix+1));
                             if (String.IsNullOrEmpty(failuremessage))
                             {
                                 failuremessage = $"Sub Condition failure during processing of folder {folder.FullName}";
@@ -79,6 +79,10 @@ namespace Farrier.Models.Conditions
                         }
                     }
                 }
+            }
+            if (String.IsNullOrEmpty(successmessage))
+            {
+                successmessage = $"foreachfolder finished for {path}";
             }
             return true;
         }

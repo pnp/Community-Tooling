@@ -20,8 +20,9 @@ namespace Farrier.Models.Conditions
             RuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
         {
+            this.messages = new List<Message>();
             var rName = tokens.DecodeString(RuleName);
             var result = runRule(rName, prefix+1, parentRule);
             if(!result)

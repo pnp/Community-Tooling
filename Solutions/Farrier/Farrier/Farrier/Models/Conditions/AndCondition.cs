@@ -32,33 +32,32 @@ namespace Farrier.Models.Conditions
             }
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
         {
-
-            if(_subConditions.Count == 0)
+            this.messages = new List<Message>();
+            if (_subConditions.Count == 0)
             {
                 return false;
             }
 
             foreach (var condition in _subConditions)
             {
-                var result = condition.IsValid(tokens, runRule, parentRule, prefix, startingpath);
+                var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, messagePrefix+1, startingpath);
 
-                //bubble up any warnings or errors
-                this.warnings.AddRange(condition.Warnings);
-                this.errors.AddRange(condition.Errors);
+                //bubble up any messages
+                this.messages.AddRange(condition.Messages);
 
                 if (!result)
                 {
                     if(condition.IsWarning)
                     {
                         //Add its warning, but don't fail the condition
-                        warnings.Add(tokens.DecodeString(condition.FailureMessage));
+                        messages.Add(Message.Warning(tokens.DecodeString(condition.FailureMessage)));
                     }
                     else
                     {
                         //no need to keep evaluating if even 1 sub is false
-                        errors.Add(tokens.DecodeString(condition.FailureMessage));
+                        messages.Add(Message.Error(tokens.DecodeString(condition.FailureMessage)));
                         return false;
                     }
                 }
