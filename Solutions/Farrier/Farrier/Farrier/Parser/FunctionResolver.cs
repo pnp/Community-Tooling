@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using Farrier.Helpers;
+using System.IO;
 
 namespace Farrier.Parser
 {
@@ -159,6 +160,12 @@ namespace Farrier.Parser
                     case "IF":
                         var ifP = functionParameters(keyword, innards, 3);
                         return ifP[0] == "true" ? ifP[1] : ifP[2];
+                    case "DIRECTORYNAME":
+                        return new DirectoryInfo(innards).Name;
+                    case "FILENAME":
+                        return Path.GetFileName(innards);
+                    case "FILEEXTENSION":
+                        return Path.GetExtension(innards);
                     default:
                         throw new Exception("Unknown function: " + keyword);
                 }
