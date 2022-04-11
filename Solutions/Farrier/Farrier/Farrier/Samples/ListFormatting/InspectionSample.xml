@@ -2,9 +2,16 @@
 
 <inspection>
   <tokens>
-    <token name="ColumnSchema" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
-    <token name="ViewSchema" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
-    <token name="TilesSchema" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
+    <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
+    <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
+    <token name="TilesSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
+    <token name="FormattedSchemaTemplate">
+      <![CDATA[{
+  "$schema": "SCHEMAURLHERE",]]>
+    </token>
+    <token name="ColumnSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrl@@)"/>
+    <token name="ViewSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ViewSchemaUrl@@)"/>
+    <token name="TilesSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@TilesSchemaUrl@@)"/>
   </tokens>
 
   <rules>
@@ -135,10 +142,6 @@
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
         <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
-        <token name="FormattedSchema">
-          <![CDATA[{
-  "$schema": "$IF($EQUALS(@@SampleType@@,#Column),#@@ColumnSchema@@,#@@ViewSchema@@)",]]>
-        </token>
       </tokens>
       <conditions>
         <jsonquery path="@@SampleJsonPath@@" value="@@SampleType@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" matchcase="true"/>
@@ -153,7 +156,26 @@
           <jsonquery path="@@SampleJsonPath@@" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.png" query="$[0].thumbnails[0].url"/>
           <jsonquery path="@@SampleJsonPath@@" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.gif" query="$[0].thumbnails[0].url"/>
         </or>
-        <filecontains path="@@MainJsonPath@@" text="@@FormattedSchema@@"/>
+      </conditions>
+    </rule>
+
+    <rule name="SchemaValidate">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
+      </tokens>
+      <conditions>
+        <only when="$EQUALS(@@SampleType@@,#Columns)">
+          <filecontains path="@@MainJsonPath@@" text="@@ColumnSchema@@"/>
+        </only>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <or>
+            <filecontains path="@@MainJsonPath@@" text="@@ViewSchema@@"/>
+            <filecontains path="@@MainJsonPath@@" text="@@TilesSchema@@"/>
+          </or>
+        </only>
       </conditions>
     </rule>
     

@@ -10,7 +10,7 @@ namespace Farrier.Models.Conditions
 {
     class AndCondition : BaseCondition
     {
-        private List<BaseCondition> _subConditions;
+        protected List<BaseCondition> _subConditions;
         public new static AndCondition FromNode(XmlNode conditionNode)
         {
             return new AndCondition(conditionNode);

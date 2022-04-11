@@ -32,6 +32,8 @@ namespace Farrier.Models.Conditions
                         return FileContainsCondition.FromNode(conditionNode);
                     case "jsonquery":
                         return JsonQueryCondition.FromNode(conditionNode);
+                    case "only":
+                        return OnlyWhenCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
@@ -58,6 +60,18 @@ namespace Farrier.Models.Conditions
             else
             {
                 this.failuremessage = tokens.DecodeString(failuremessage);
+            }
+        }
+
+        protected void setSuccessMessage(TokenManager tokens, string text)
+        {
+            if (String.IsNullOrEmpty(this.successmessage))
+            {
+                this.successmessage = text;
+            }
+            else
+            {
+                this.successmessage = tokens.DecodeString(successmessage);
             }
         }
 
