@@ -65,10 +65,10 @@ namespace Farrier.Models.Conditions
                         {
                             case "count":
                                 var count = queryValue.Matches.Count;
-                                //Remove blank results
+                                //Remove blank string results
                                 foreach (var match in queryValue.Matches)
                                 {
-                                    if(String.IsNullOrEmpty(match.Value.GetString()))
+                                    if(match.Value.ValueKind == JsonValueKind.String && String.IsNullOrEmpty(match.Value.GetString()))
                                         count -= 1;
                                 }
                                 if (!String.IsNullOrEmpty(rawValue))
@@ -150,6 +150,11 @@ namespace Farrier.Models.Conditions
                                     }
                                 }
                             default:
+                                if(queryValue.Matches.Count == 0)
+                                {
+                                    this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
+                                    return false;
+                                }
                                 string queryResult = queryValue.Matches[0].Value.GetString();
                                 if (value.Equals(queryResult, StringComparison.CurrentCultureIgnoreCase))
                                 {
