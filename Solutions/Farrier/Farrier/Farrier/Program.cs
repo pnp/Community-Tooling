@@ -29,7 +29,7 @@ namespace Farrier
                 if (System.Diagnostics.Debugger.IsAttached && args.Length == 0)
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
-                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "SchemaValidate", "-s", @"D:\Code\PnP\sp-dev-list-formatting\view-samples\alternating-rowclass" };
+                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "NoDebugMode", "-s", @"D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-icon-overlay" };
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite".Split();
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }

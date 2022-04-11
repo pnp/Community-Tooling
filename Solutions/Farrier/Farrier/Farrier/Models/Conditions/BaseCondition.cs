@@ -45,6 +45,8 @@ namespace Farrier.Models.Conditions
         {
             this.type = conditionNode.LocalName.ToLower();
 
+            rawNot = XmlHelper.XmlAttributeToString(conditionNode.Attributes["not"]);
+
             this.IsWarning = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["warn"]);
             this.failuremessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
             this.successmessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["successmessage"]);
@@ -75,6 +77,11 @@ namespace Farrier.Models.Conditions
             }
         }
 
+        protected bool IsNot(TokenManager tokens)
+        {
+            return tokens.DecodeString(rawNot) == "true";
+        }
+
         public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "");
 
         public readonly string type;
@@ -87,5 +94,7 @@ namespace Farrier.Models.Conditions
         public string SuccessMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"{this.type} condition succeeded" : this.successmessage; } }
         protected List<Message> messages;
         public List<Message> Messages { get { return this.messages; } }
+
+        private string rawNot;
     }
 }

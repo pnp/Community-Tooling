@@ -28,26 +28,60 @@ namespace Farrier.Models.Conditions
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
             if (File.Exists(path))
             {
+                var isNot = IsNot(tokens);
                 var contents = File.ReadAllText(path);
                 var searchText = tokens.DecodeString(rawText);
                 var matchcase = tokens.DecodeString(rawMatchCase) == "true";
                 if (contents.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
                 {
+                    //Text is in the file (regardless of casing)
+
                     if (matchcase && !contents.Contains(searchText))
                     {
                         //Invalid casing
-                        this.setFailureMessage(tokens, $"Text exists but casing does not match ({path})");
-                        return false;
+                        if (!isNot)
+                        {
+                            this.setFailureMessage(tokens, $"Text exists but casing does not match ({path})");
+                            return false;
+                        }
+                        else
+                        {
+                            //Flipped response
+                            this.setSuccessMessage(tokens, $"Text exists but casing does not match ({path})");
+                            return true;
+                        }
                     }
                     else
                     {
-                        return true;
+                        if(!isNot)
+                        {
+                            this.setSuccessMessage(tokens, "Text found");
+                            return true;
+                        }
+                        else
+                        {
+                            //Flipped response
+                            this.setFailureMessage(tokens, "Text found");
+                            return false;
+                        }
                     }
                 }
                 else
                 {
-                    this.setFailureMessage(tokens, $"Specified text not found in {path}");
-                    return false;
+                    //Text is NOT in the file (regardless of casing)
+
+                    if(!isNot)
+                    {
+                        this.setFailureMessage(tokens, $"Specified text not found in {path}");
+                        return false;
+                    }
+                    else
+                    {
+                        //Flipped response
+                        this.setSuccessMessage(tokens, $"Specified text not found in {path}");
+                        return true;
+                    }
+                    
                 }
             }
             else

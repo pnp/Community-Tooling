@@ -178,6 +178,36 @@
         </only>
       </conditions>
     </rule>
+
+    <rule name="NoDebugMode">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
+        <token name="DebugMode1">
+          <![CDATA["debugMode": true]]>
+        </token>
+        <token name="DebugMode2">
+          <![CDATA["debugMode": "true"]]>
+        </token>
+        <token name="DebugModeOff1">
+          <![CDATA["debugMode": false]]>
+        </token>
+        <token name="DebugModeOff2">
+          <![CDATA["debugMode": "false"]]>
+        </token>
+      </tokens>
+      <conditions>
+        <and>
+          <filecontains path="@@MainJsonPath@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode found (enabled)"/>
+          <filecontains path="@@MainJsonPath@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode found (enabled)"/>
+        </and>
+        <and>
+          <filecontains path="@@MainJsonPath@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (not enabled)"/>
+          <filecontains path="@@MainJsonPath@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (not enabled)"/>
+        </and>
+      </conditions>
+    </rule>
     
   </rules>
 </inspection>
