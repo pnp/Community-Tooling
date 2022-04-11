@@ -7,11 +7,11 @@ using Farrier.Parser;
 
 namespace Farrier.Models.Conditions
 {
-    abstract class BaseForEachCondition : BaseCondition
+    abstract class BaseParentCondition : BaseCondition
     {
         protected List<BaseCondition> _subConditions;
 
-        public BaseForEachCondition(XmlNode conditionNode) : base(conditionNode)
+        public BaseParentCondition(XmlNode conditionNode) : base(conditionNode)
         {
             _subConditions = new List<BaseCondition>();
             foreach (XmlNode child in conditionNode.ChildNodes)
@@ -26,6 +26,7 @@ namespace Farrier.Models.Conditions
             {
                 this.failuremessage = "No valid child conditions!";
             }
+            this.suppressFailureMessage = String.IsNullOrEmpty(failuremessage);
         }
 
     }

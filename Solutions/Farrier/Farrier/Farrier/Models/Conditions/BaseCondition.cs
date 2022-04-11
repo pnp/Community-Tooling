@@ -28,6 +28,8 @@ namespace Farrier.Models.Conditions
                         return RunCondition.FromNode(conditionNode);
                     case "foreachfolder":
                         return ForEachFolderCondition.FromNode(conditionNode);
+                    case "foreachfile":
+                        return ForEachFileCondition.FromNode(conditionNode);
                     case "filecontains":
                         return FileContainsCondition.FromNode(conditionNode);
                     case "jsonquery":
@@ -63,6 +65,7 @@ namespace Farrier.Models.Conditions
             {
                 this.failuremessage = tokens.DecodeString(failuremessage);
             }
+            this.suppressFailureMessage = false;
         }
 
         protected void setSuccessMessage(TokenManager tokens, string text)

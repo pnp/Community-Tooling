@@ -8,14 +8,14 @@ using System.IO;
 
 namespace Farrier.Models.Conditions
 {
-    class ForEachFolderCondition : BaseParentCondition
+    class ForEachFileCondition : BaseParentCondition
     {
-        public new static ForEachFolderCondition FromNode(XmlNode conditionNode)
+        public new static ForEachFileCondition FromNode(XmlNode conditionNode)
         {
-            return new ForEachFolderCondition(conditionNode);
+            return new ForEachFileCondition(conditionNode);
         }
 
-        public ForEachFolderCondition(XmlNode conditionNode) : base(conditionNode)
+        public ForEachFileCondition(XmlNode conditionNode) : base(conditionNode)
         {
             Path = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
             Pattern = XmlHelper.XmlAttributeToString(conditionNode.Attributes["pattern"]);
@@ -43,18 +43,21 @@ namespace Farrier.Models.Conditions
 
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(Pattern);
-            var folders = directory.GetDirectories(searchPattern);
-            foreach (var folder in folders)
+            var files = directory.GetFiles(searchPattern);
+            foreach (var file in files)
             {
                 var foreachTokens = new TokenManager(tokens);
-                foreachTokens.NestToken("Each", folder.Name);
+                foreachTokens.NestToken("Each", file.Name);
                 foreachTokens.NestToken("ContainerPath", directory.FullName);
                 foreachTokens.NestToken("ContainerName", directory.Name);
-                messages.Add(Message.Info($"Processing folder {folder.Name}...",messagePrefix));
+                foreachTokens.NestToken("FilePath", file.FullName);
+                foreachTokens.NestToken("FileExtension", file.Extension.Trim('.'));
+                foreachTokens.NestToken("FileNoExtension", file.Name.Replace(file.Extension, ""));
+                messages.Add(Message.Info($"Processing file {file.Name}...",messagePrefix));
 
                 foreach (var condition in _subConditions)
                 {
-                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, messagePrefix+1, folder.FullName);
+                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, messagePrefix+1, directory.FullName);
 
                     //bubble up any warnings or errors
                     this.messages.AddRange(condition.Messages);
@@ -69,17 +72,17 @@ namespace Farrier.Models.Conditions
                         else
                         {
                             //no need to keep evaluating if even 1 sub is false
-                            if (!condition.SuppressFailureMessage)
+                            if(!condition.SuppressFailureMessage)
                             {
                                 messages.Add(Message.Error(foreachTokens.DecodeString(condition.FailureMessage), messagePrefix + 1));
                             }
-                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of folder {folder.FullName}");
+                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of file {file.FullName}");
                             return false;
                         }
                     }
                 }
             }
-            this.setSuccessMessage(tokens, $"foreachfolder finished for {path}");
+            this.setSuccessMessage(tokens, $"foreachfile finished for {path}");
             return true;
         }
 

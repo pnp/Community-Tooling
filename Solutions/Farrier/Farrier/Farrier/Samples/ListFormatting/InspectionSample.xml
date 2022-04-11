@@ -167,7 +167,7 @@
         <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
       </tokens>
       <conditions>
-        <only when="$EQUALS(@@SampleType@@,#Columns)">
+        <only when="$EQUALS(@@SampleType@@,#Column)">
           <filecontains path="@@MainJsonPath@@" text="@@ColumnSchema@@"/>
         </only>
         <only when="$EQUALS(@@SampleType@@,#View)">
@@ -206,6 +206,27 @@
           <filecontains path="@@MainJsonPath@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (not enabled)"/>
           <filecontains path="@@MainJsonPath@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (not enabled)"/>
         </and>
+      </conditions>
+    </rule>
+
+    <rule name="Subsamples">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+      </tokens>
+      <conditions>
+        <foreachfile path="@@FolderPath@@" pattern="*.json">
+          <only when="$EQUALS(@@SampleType@@,#Column)">
+            <filecontains path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing or formatting is off (2 spaces)"/>
+          </only>
+          <only when="$EQUALS(@@SampleType@@,#View)">
+            <or failuremessage="View Formatting $schema declaration missing or formatting is off (2 spaces)">
+              <filecontains path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present"/>
+              <filecontains path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present"/>
+            </or>
+          </only>
+        </foreachfile>
       </conditions>
     </rule>
     

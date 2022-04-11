@@ -8,9 +8,8 @@ using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
-    class AndCondition : BaseCondition
+    class AndCondition : BaseParentCondition
     {
-        protected List<BaseCondition> _subConditions;
         public new static AndCondition FromNode(XmlNode conditionNode)
         {
             return new AndCondition(conditionNode);
@@ -18,20 +17,7 @@ namespace Farrier.Models.Conditions
 
         public AndCondition(XmlNode conditionNode) : base(conditionNode)
         {
-            _subConditions = new List<BaseCondition>();
-            foreach (XmlNode child in conditionNode.ChildNodes)
-            {
-                var childCondition = BaseCondition.FromNode(child);
-                if(childCondition != null)
-                {
-                    _subConditions.Add(childCondition);
-                }
-            }
-            if(_subConditions.Count == 0 && String.IsNullOrEmpty(this.failuremessage))
-            {
-                this.failuremessage = "No valid child conditions!";
-            }
-            this.suppressFailureMessage = String.IsNullOrEmpty(failuremessage);
+            
         }
 
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
