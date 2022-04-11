@@ -2,7 +2,9 @@
 
 <inspection>
   <tokens>
-    <token name="fun" value="wowee!"/>
+    <token name="ColumnSchema" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
+    <token name="ViewSchema" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
+    <token name="TilesSchema" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
   </tokens>
 
   <rules>
@@ -128,10 +130,15 @@
       <tokens>
         <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
         <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
         <token name="READMEPath" value="@@FolderPath@@\README.md"/>
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
         <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="FormattedSchema">
+          <![CDATA[{
+  "$schema": "$IF($EQUALS(@@SampleType@@,#Column),#@@ColumnSchema@@,#@@ViewSchema@@)",]]>
+        </token>
       </tokens>
       <conditions>
         <jsonquery path="@@SampleJsonPath@@" value="@@SampleType@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" matchcase="true"/>
@@ -139,6 +146,14 @@
         <jsonquery path="@@SampleJsonPath@@" value="@@SampleKey@@" query="$[0].reponame" matchcase="true"/>
         <jsonquery path="@@SampleJsonPath@@" value="https://github.com/pnp/sp-dev-list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" query="$[0].url" matchcase="true"/>
         <jsonquery path="@@SampleJsonPath@@" comparison="count" value="1" query="$[0].shortDescription"/>
+        <jsonquery path="@@SampleJsonPath@@" comparison="count" value="1" query="$[0].title"/>
+        <jsonquery path="@@SampleJsonPath@@" value="pnp" query="$[0].source" matchcase="true"/>
+        <jsonquery path="@@SampleJsonPath@@" comparison="count" min="1" query="$.[0].authors.[*].name"/>
+        <or>
+          <jsonquery path="@@SampleJsonPath@@" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.png" query="$[0].thumbnails[0].url"/>
+          <jsonquery path="@@SampleJsonPath@@" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.gif" query="$[0].thumbnails[0].url"/>
+        </or>
+        <filecontains path="@@MainJsonPath@@" text="@@FormattedSchema@@"/>
       </conditions>
     </rule>
     
