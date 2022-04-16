@@ -176,7 +176,7 @@ namespace Farrier.Models.Conditions
                                 }
                                 else
                                 {
-                                    this.setFailureMessage(tokens, $"Queried Value does not match (Result: {queryResult})");
+                                    this.setFailureMessage(tokens, $"Queried Value does not match (Result: '{queryResult}', Expected: '{value}')");
                                     return false;
                                 }
                         }
