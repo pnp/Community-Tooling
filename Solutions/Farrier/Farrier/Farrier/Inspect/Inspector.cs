@@ -111,13 +111,13 @@ namespace Farrier.Inspect
                     switch (message.Level)
                     {
                         case MessageLevel.warning:
-                            _log.Warn($"-{message.Text}", prefix + 2 + message.Prefix);
+                            _log.Warn($"@{message.Text}", prefix + 2 + message.Prefix);
                             break;
                         case MessageLevel.error:
-                            _log.Error($"-{message.Text}", prefix + 2 + message.Prefix);
+                            _log.Error($"@{message.Text}", prefix + 2 + message.Prefix);
                             break;
                         case MessageLevel.info:
-                            _log.Info($"-{message.Text}", prefix + 2 + message.Prefix);
+                            _log.Info($"@{message.Text}", prefix + 2 + message.Prefix);
                             break;
                         default:
                             break;

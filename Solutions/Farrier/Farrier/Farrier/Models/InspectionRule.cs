@@ -61,6 +61,8 @@ namespace Farrier.Models
         public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
             _log.Info($"Running rule \"{Name}\"...",prefix);
+            tokens.Reset();
+            tokens.AddTokens(rootTokens.CleanTokens());
 
             //Process tokens (done here so that parent token values can be evaluated on the fly)
             if (parentRule != null)

@@ -48,6 +48,16 @@ namespace Farrier.Models.Conditions
             this.type = conditionNode.LocalName.ToLower();
 
             rawNot = XmlHelper.XmlAttributeToString(conditionNode.Attributes["not"]);
+            Name = XmlHelper.XmlAttributeToString(conditionNode.Attributes["name"]);
+            if(string.IsNullOrEmpty(Name))
+            {
+                Name = $"[{type}]";
+                OverriddenName = false;
+            }
+            else
+            {
+                OverriddenName = true;
+            }
 
             this.IsWarning = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["warn"]);
             this.failuremessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
@@ -57,27 +67,23 @@ namespace Farrier.Models.Conditions
 
         protected void setFailureMessage(TokenManager tokens, string text)
         {
-            if (String.IsNullOrEmpty(this.failuremessage))
+            string message = text;
+            if (!String.IsNullOrEmpty(this.failuremessage))
             {
-                this.failuremessage = text;
+                message = tokens.DecodeString(failuremessage);
             }
-            else
-            {
-                this.failuremessage = tokens.DecodeString(failuremessage);
-            }
+            this.failuremessage = $"{Name}: {message}";
             this.suppressFailureMessage = false;
         }
 
         protected void setSuccessMessage(TokenManager tokens, string text)
         {
-            if (String.IsNullOrEmpty(this.successmessage))
+            string message = text;
+            if (!String.IsNullOrEmpty(this.successmessage))
             {
-                this.successmessage = text;
+                message = tokens.DecodeString(successmessage);
             }
-            else
-            {
-                this.successmessage = tokens.DecodeString(successmessage);
-            }
+            this.successmessage = $"{Name}: {message}";
         }
 
         protected bool IsNot(TokenManager tokens)
@@ -99,5 +105,7 @@ namespace Farrier.Models.Conditions
         public List<Message> Messages { get { return this.messages; } }
 
         private string rawNot;
+        public string Name;
+        public bool OverriddenName;
     }
 }

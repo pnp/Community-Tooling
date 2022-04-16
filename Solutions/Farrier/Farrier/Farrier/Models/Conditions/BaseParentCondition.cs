@@ -14,12 +14,18 @@ namespace Farrier.Models.Conditions
         public BaseParentCondition(XmlNode conditionNode) : base(conditionNode)
         {
             _subConditions = new List<BaseCondition>();
+            int index = 1;
             foreach (XmlNode child in conditionNode.ChildNodes)
             {
                 var childCondition = BaseCondition.FromNode(child);
                 if(childCondition != null)
                 {
+                    if(!childCondition.OverriddenName && index > 1)
+                    {
+                        childCondition.Name = $"[{childCondition.type}.{index}]";
+                    }
                     _subConditions.Add(childCondition);
+                    index += 1;
                 }
             }
             if(_subConditions.Count == 0 && String.IsNullOrEmpty(this.failuremessage))
