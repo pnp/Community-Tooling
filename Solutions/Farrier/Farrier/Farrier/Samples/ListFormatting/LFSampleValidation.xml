@@ -49,21 +49,21 @@
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
         <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
-        <token name="TelemetryTag">
+        <token name="TelemetryTagOld">
           <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
         </token>
-        <token name="TelemetryTag2">
+        <token name="TelemetryTag">
           <![CDATA[<img src="https://pnptelemetry.azurewebsites.net/list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
         </token>
         <token name="AuthorTable">
           <![CDATA[Solution|Author(s)
 --------|---------
-@@SampleKey@@.json |[]]>
+@@SampleKey@@.json | []]>
         </token>
       </tokens>
       <conditions>
         <!-- Files/Folders all exist (with correct casing) -->
-        <log text="Verifying all expected files are present (@@SampleKey@@)"/>
+        <log name="☺" text="Verifying all expected files are present (@@SampleKey@@)"/>
         <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
         <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
         <fileexists path="@@READMEPath@@" failuremessage="README not found! (@@SampleKey@@)"/>
@@ -72,7 +72,7 @@
         <folderexists path="@@AssetsPath@@" matchcase="true" warn="true"/>
         <fileexists path="@@SampleJsonPath@@" failuremssage="sample.json not found! (@@SampleKey@@)"/>
         <fileexists path="@@SampleJsonPath@@" matchcase="true" warn="true"/>
-        <or failuremessage="Primary screenshot not found (@@SampleKey@@)! assets\screenshot.png (or gif)">
+        <or name="Screenshot" failuremessage="Primary screenshot not found (@@SampleKey@@)! assets\screenshot.png (or gif)">
           <!-- At least 1 screenshot (named screenshot) must exist as either a png or gif -->
           <and>
             <fileexists path="@@AssetsPath@@\screenshot.png"/>
@@ -83,13 +83,13 @@
             <fileexists path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
           </and>
         </or>
+        <log name="☻" text="All expected files are present (@@SampleKey@@)"/>
         
         <!-- README Contents Validation -->
-        <or failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)">
-          <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true"/>
-          <filecontains path="@@READMEPath@@" text="@@TelemetryTag2@@" matchcase="true"/>
-        </or>
-        <or failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@) - should be '![screenshot of the sample](./assets/screenshot.png)' (can also be a .gif)">
+        <log name="☺" text="Validating README... (@@SampleKey@@)"/>
+        <filecontains name="TelemetryTag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
+        <filecontains name="TelemetryTag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)"/>
+        <or name="READMEScreenshot" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@) - should be '![screenshot of the sample](./assets/screenshot.png)' (can also be a .gif)">
           <!-- Ensures at least the primary screenshot is shown -->
           <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
           <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
@@ -97,12 +97,14 @@
         <filecontains path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
         <filecontains path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
         <filecontains path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
-        <filecontains path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@)"/>
         <filecontains path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
         <filecontains path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
+        <filecontains path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
         <filecontains path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
+        <log name="☻" text="README is Valid (@@SampleKey@@)"/>
 
         <!-- sample.json Contents Validation -->
+        <log name="☺" text="Validating sample.json... (@@SampleKey@@)"/>
         <filecontains path="@@SampleJsonPath@@" text="{" failuremessage="Sample.json is invalid and likely empty (@@SampleKey@@)"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].name" value="pnp-list-formatting-@@SampleKey@@" matchcase="true" failuremessage="name mismatch in sample.json (@@SampleKey@@) - should be 'pnp-list-formatting-@@SampleKey@@'"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
@@ -127,13 +129,14 @@
           <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019, SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019, SharePoint Online'"/>
         </or>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].thumbnails[*]" comparison="count" min="1" failuremessage="At least one thumbnail entry is required in sample.json (@@SampleKey@@)"/>
-        <or failuremessage="First thumbnail entry in sample.json should be the primary screenshot (gif or png) referenced from raw.githubusercontent.com (@@SampleKey@@)">
+        <or name="PrimaryThumbnail" failuremessage="First thumbnail entry in sample.json should be the primary screenshot (gif or png) referenced from raw.githubusercontent.com (@@SampleKey@@)">
           <!-- First thumbnail should be the primary screenshot and uses the correct reference (raw.githubusercontent.com)-->
           <jsonquery path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.png"/>
           <jsonquery path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.gif"/>
         </or>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].authors[*]" comparison="count" min="1" failuremessage="At least one author entry is required in sample.json (@@SampleKey@@)"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
+        <log name="☻" text="sample.json is Valid (@@SampleKey@@)"/>
         
         <!-- Sample file(s) validation -->
         <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
@@ -159,7 +162,7 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder path="column-samples" pattern="*">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>
