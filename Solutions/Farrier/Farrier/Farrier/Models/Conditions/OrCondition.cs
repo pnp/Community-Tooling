@@ -43,13 +43,13 @@ namespace Farrier.Models.Conditions
                     if(condition.IsWarning)
                     {
                         //Log as a warning, but don't fail the condition
-                        childMessages.Add(new Message(MessageLevel.warning, condition.Name, condition.FailureMessage, prefix+1));
+                        childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix+1));
                     }
                     else
                     {
                         if(!condition.SuppressFailureMessage)
                         {
-                            childMessages.Add(new Message(MessageLevel.error, condition.Name, condition.FailureMessage, prefix+1));
+                            childMessages.Add(new Message(MessageLevel.error, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix+1));
                         }
                     }
                 }
@@ -60,7 +60,7 @@ namespace Farrier.Models.Conditions
                 }
             }
 
-            LogChildMessages(tokens, prefix, success);
+            LogChildMessages(success);
             return success;
         }
 

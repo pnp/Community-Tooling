@@ -41,6 +41,7 @@ namespace Farrier.Models.Conditions
                 return false;
             }
 
+            bool success = true;
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(Pattern);
             var files = directory.GetFiles(searchPattern);
@@ -48,7 +49,7 @@ namespace Farrier.Models.Conditions
             var totalfiles = files.Length;
             foreach (var file in files)
             {
-                Info(tokens, $"Processing file ({currentfile}/{totalfiles}): {file.Name}...", prefix);
+                childMessages.Add(new Message(MessageLevel.info, Name, $"File ({currentfile}/{totalfiles}): {file.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", file.Name);
@@ -61,29 +62,34 @@ namespace Farrier.Models.Conditions
                 foreach (var condition in _subConditions)
                 {
                     var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, directory.FullName);
+                    childMessages.AddRange(condition.Messages);
 
                     if (!result)
                     {
                         if (condition.IsWarning)
                         {
                             //Log as warning, but don't fail the condition
-                            Warn(foreachTokens, condition.FailureMessage, prefix+1);
+                            childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
                         }
                         else
                         {
                             //no need to keep evaluating if even 1 sub is false
                             if(!condition.SuppressFailureMessage)
                             {
-                                Error(foreachTokens, condition.FailureMessage, prefix + 1);
+                                childMessages.Add(new Message(MessageLevel.error, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
                             }
                             this.setFailureMessage(tokens, $"Sub Condition failure during processing of file {file.FullName}");
-                            return false;
+                            success = false;
+                            break;
                         }
                     }
+                    if (!success)
+                        break;
                     currentfile += 1;
                 }
             }
-            return true;
+            LogChildMessages(success);
+            return success;
         }
 
         public readonly string Path;

@@ -29,7 +29,7 @@ namespace Farrier.Models.Conditions
             {
                 this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");
             }
-            parentRule.messages.AddRange(result.messages);
+            messages.AddRange(result.messages);
             return result.Succeeded;
         }
 

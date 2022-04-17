@@ -61,7 +61,7 @@ namespace Farrier.Helpers
 
         private string _getPrefix(int count)
         {
-            return new string(' ', count);
+            return new string('|', count);
         }
     }
 }

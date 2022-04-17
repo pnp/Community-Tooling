@@ -38,7 +38,7 @@ namespace Farrier.Models.Conditions
 
         protected List<Message> childMessages;
 
-        protected void LogChildMessages(TokenManager tokens, int prefix, bool skipErrors = false)
+        protected void LogChildMessages(bool skipErrors = false)
         {
             foreach(var message in childMessages)
             {
