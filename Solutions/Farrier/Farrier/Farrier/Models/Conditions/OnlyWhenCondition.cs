@@ -20,16 +20,16 @@ namespace Farrier.Models.Conditions
             rawWhen = XmlHelper.XmlAttributeToString(conditionNode.Attributes["when"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
+            messages.Clear();
             bool when = tokens.DecodeString(rawWhen) == "true";
             if(when)
             {
-                return base.IsValid(tokens, runRule, parentRule, prefix, messagePrefix, startingpath);
+                return base.IsValid(tokens, runRule, parentRule, prefix, startingpath);
             }
             else
             {
-                this.setSuccessMessage(tokens, "OnlyWhen skipped (condition was false)");
                 return true;
             }
         }

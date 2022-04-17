@@ -25,10 +25,10 @@ namespace Farrier.Models.Conditions
             }
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
-            if(_subConditions.Count == 0)
+            messages.Clear();
+            if (_subConditions.Count == 0)
             {
                 return false;
             }
@@ -41,46 +41,50 @@ namespace Farrier.Models.Conditions
                 return false;
             }
 
+            bool success = true;
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(Pattern);
             var folders = directory.GetDirectories(searchPattern);
+            var currentfolder = 1;
+            var totalfolders = folders.Length;
             foreach (var folder in folders)
             {
+                childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}...", prefix));
+
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", folder.Name);
                 foreachTokens.NestToken("ContainerPath", directory.FullName);
                 foreachTokens.NestToken("ContainerName", directory.Name);
-                messages.Add(Message.Info($"Processing folder {folder.Name}...",messagePrefix));
 
                 foreach (var condition in _subConditions)
                 {
-                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, messagePrefix+1, folder.FullName);
-
-                    //bubble up any warnings or errors
-                    this.messages.AddRange(condition.Messages);
+                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, folder.FullName);
+                    childMessages.AddRange(condition.Messages);
 
                     if (!result)
                     {
                         if (condition.IsWarning)
                         {
-                            //Add its warning, but don't fail the condition
-                            messages.Add(Message.Warning(foreachTokens.DecodeString(condition.FailureMessage),messagePrefix+1));
+                            //Log a warning, but don't fail the condition
+                            childMessages.Add(new Message(MessageLevel.warning, condition.Name, condition.FailureMessage, prefix+1));
                         }
                         else
                         {
                             //no need to keep evaluating if even 1 sub is false
                             if (!condition.SuppressFailureMessage)
                             {
-                                messages.Add(Message.Error(foreachTokens.DecodeString(condition.FailureMessage), messagePrefix + 1));
+                                childMessages.Add(new Message(MessageLevel.error, condition.Name, condition.FailureMessage, prefix+1));
                             }
                             this.setFailureMessage(tokens, $"Sub Condition failure during processing of folder {folder.FullName}");
-                            return false;
+                            success = false;
+                            break;
                         }
                     }
                 }
+                currentfolder += 1;
             }
-            this.setSuccessMessage(tokens, $"foreachfolder finished for {path}");
-            return true;
+            LogChildMessages(tokens, prefix, success);
+            return success;
         }
 
         public readonly string Path;

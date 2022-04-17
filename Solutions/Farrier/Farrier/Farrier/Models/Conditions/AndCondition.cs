@@ -20,44 +20,46 @@ namespace Farrier.Models.Conditions
             
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
+            messages.Clear();
             if (_subConditions.Count == 0)
             {
                 return false;
             }
 
-            var subMessages = new List<Message>();
+            bool success = true;
 
             foreach (var condition in _subConditions)
             {
-                var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, messagePrefix+1, startingpath);
+                var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, startingpath);
+                childMessages.AddRange(condition.Messages);
 
-                //bubble up any messages
-                subMessages.AddRange(condition.Messages);
+                if (condition.IgnoreResult)
+                    continue;
 
                 if (!result)
                 {
                     if(condition.IsWarning)
                     {
-                        //Add its warning, but don't fail the condition
-                        subMessages.Add(Message.Warning(tokens.DecodeString(condition.FailureMessage)));
+                        //Log as a warning, but don't fail the condition
+                        childMessages.Add(new Message(MessageLevel.warning, condition.Name, condition.FailureMessage, prefix+1));
                     }
                     else
                     {
                         //no need to keep evaluating if even 1 sub is false
                         if (!condition.SuppressFailureMessage)
                         {
-                            subMessages.Add(Message.Error(tokens.DecodeString(condition.FailureMessage)));
+                            childMessages.Add(new Message(MessageLevel.error, condition.Name, condition.FailureMessage, prefix+1));
                         }
-                        this.messages.AddRange(subMessages); //Only bubble up all in failure situations
-                        return false;
+                        success = false;
+                        break;
                     }
                 }
             }
-            this.messages.AddRange(subMessages.Where(m => m.Level != MessageLevel.error));
-            return true;
+
+            LogChildMessages(tokens, prefix, success);
+            return success;
         }
 
     }

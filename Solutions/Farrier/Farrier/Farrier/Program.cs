@@ -29,7 +29,8 @@ namespace Farrier
                 if (System.Diagnostics.Debugger.IsAttached && args.Length == 0)
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
-                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "Subsamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\view-samples\budget-tracker" };
+                    //args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "JsonValidate", "-s", @"D:\Code\PnP\sp-dev-list-formatting\view-samples\budget-tracker" };
+                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "Test", "-s", @"D:\Code\PnP\sp-dev-list-formatting" };
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite".Split();
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }

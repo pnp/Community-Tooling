@@ -14,6 +14,7 @@ namespace Farrier.Models
         private XmlNode _tokensNode;
         private XmlNode _conditionsNode;
         private Dictionary<string, string> _tokensDictionary;
+        public List<Message> messages;
 
         public InspectionRule(string name, string description = "", LogRouter log = null)
         {
@@ -26,7 +27,7 @@ namespace Farrier.Models
             Description = description;
 
             tokens = new TokenManager(new FunctionResolver(), log: _log);
-            this.messages = new List<Message>();
+            messages = new List<Message>();
         }
 
         public InspectionRule(TokenManager rootTokens, XmlNode ruleNode, LogRouter log = null)
@@ -41,15 +42,15 @@ namespace Farrier.Models
             Description = XmlHelper.XmlAttributeToString(ruleNode.Attributes["description"]);
 
             tokens = new TokenManager(rootTokens);
+            messages = new List<Message>();
 
             _tokensNode = ruleNode.SelectSingleNode("tokens");
 
             _conditionsNode = ruleNode.SelectSingleNode("conditions");
             if(_conditionsNode == null || _conditionsNode.ChildNodes.Count <= 0)
             {
-                _log.Warn($"No conditions found for rule: {this.Name}");
+               _log.Warn($"No conditions found for rule: {this.Name}");
             }
-            this.messages = new List<Message>();
         }
 
         public bool Run(Dictionary<string, string> ruleTokens, TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
@@ -60,7 +61,7 @@ namespace Farrier.Models
 
         public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
-            _log.Info($"Running rule \"{Name}\"...",prefix);
+            messages.Add(new Message(MessageLevel.info, Name, $"Running rule \"{Name}\"...", prefix));
             tokens.Reset();
             tokens.AddTokens(rootTokens.CleanTokens());
 
@@ -89,26 +90,54 @@ namespace Farrier.Models
 
             //Add conditions (always starts with an And condition)
             var rootCondition = AndCondition.FromNode(_conditionsNode);
+            rootCondition.Name = this.Name;
 
-            var result = rootCondition.IsValid(tokens, runRule, this, prefix, 0, startingpath);
-            this.messages.AddRange(rootCondition.Messages);
-            
+            var result = rootCondition.IsValid(tokens, runRule, this, prefix, startingpath);
+            messages.AddRange(rootCondition.Messages);
+            var success = true;
             if(!result)
             {
                 if(rootCondition.IsWarning)
                 {
-                    messages.Add(Message.Warning(tokens.DecodeString(rootCondition.FailureMessage)));
+                    messages.Add(new Message(MessageLevel.warning, Name, tokens.DecodeString(rootCondition.FailureMessage), prefix));
                 }
                 else
                 {
                     if(!rootCondition.SuppressFailureMessage)
                     {
-                        this.messages.Add(Message.Error(tokens.DecodeString(rootCondition.FailureMessage)));
+                        messages.Add(new Message(MessageLevel.error, Name, tokens.DecodeString(rootCondition.FailureMessage), prefix));
                     }
-                    return false;
+                    success = false;
                 }
             }
-            return true;
+            Succeeded = success;
+            return success;
+        }
+
+        public void LogMessages(bool skipErrors = false)
+        {
+            foreach (var message in messages)
+            {
+                var text = $"<{message.Source}> {message.Text}";
+                switch (message.Level)
+                {
+                    case MessageLevel.warning:
+                        _log.Warn(text, message.Prefix);
+                        break;
+                    case MessageLevel.error:
+                        if (!skipErrors)
+                        {
+                            if (message.Ex != null)
+                                _log.Error(message.Ex, text, message.Prefix);
+                            else
+                                _log.Error(text, message.Prefix);
+                        }
+                        break;
+                    default:
+                        _log.Info(text, message.Prefix);
+                        break;
+                }
+            }
         }
 
         public string Name { get; }
@@ -116,7 +145,6 @@ namespace Farrier.Models
 
         public TokenManager tokens { get; }
 
-        protected List<Message> messages;
-        public List<Message> Messages { get { return this.messages; } }
+        public bool Succeeded;
     }
 }

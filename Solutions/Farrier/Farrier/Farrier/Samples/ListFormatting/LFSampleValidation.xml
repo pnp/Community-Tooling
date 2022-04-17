@@ -12,40 +12,35 @@
     <token name="ColumnSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrl@@)"/>
     <token name="ViewSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ViewSchemaUrl@@)"/>
     <token name="TilesSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@TilesSchemaUrl@@)"/>
+    <token name="DebugMode1">
+      <![CDATA["debugMode": true]]>
+    </token>
+    <token name="DebugMode2">
+      <![CDATA["debugMode": "true"]]>
+    </token>
+    <token name="DebugModeOff1">
+      <![CDATA["debugMode": false]]>
+    </token>
+    <token name="DebugModeOff2">
+      <![CDATA["debugMode": "false"]]>
+    </token>
   </tokens>
 
   <rules>
-    <rule name="SampleContents" description="Validates the folders/files for a given sample">
-      <tokens>
-        <token name="whatever" value="$UPPER(@@fun@@)"/>
-      </tokens>
+    <rule name="Test">
       <conditions>
-        <fileexists relativepath=""/>
+        <log text="First Log"/>
+        <only when="true">
+          <log text="always"/>
+          <foreachfolder path="column-samples" pattern="*">
+            <log text="Foreach Actions (@@Each@@)"/>
+          </foreachfolder>
+        </only>
+        <log text="Last Log"/>
       </conditions>
     </rule>
-
-    <rule name="README_Exists" description="Verifies the README.md file exists">
-      <conditions>
-        <fileexists path="README.md"/>
-        <fileexists path="README.md" matchcase="true" warn="true"/>
-      </conditions>
-    </rule>
-
-    <rule name="AssetsFolder_Exists" description="Verifies the assets folder exists">
-      <conditions>
-        <folderexists path="assets"/>
-        <folderexists path="assets" matchcase="true" warn="true"/>
-      </conditions>
-    </rule>
-
-    <rule name="VerifySampleFiles" description="Makes sure base files exist">
-      <conditions>
-        <run rule="README_Exists"/>
-        <run rule="Assets_Exists"/>
-      </conditions>
-    </rule>
-
-    <rule name="ValidateSample" description="">
+    
+    <rule name="ValidateSample" description="Verifies key elements of a list formatting sample">
       <tokens>
         <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
         <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
@@ -57,8 +52,18 @@
         <token name="TelemetryTag">
           <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
         </token>
+        <token name="TelemetryTag2">
+          <![CDATA[<img src="https://pnptelemetry.azurewebsites.net/list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
+        </token>
+        <token name="AuthorTable">
+          <![CDATA[Solution|Author(s)
+--------|---------
+@@SampleKey@@.json |[]]>
+        </token>
       </tokens>
       <conditions>
+        <!-- Files/Folders all exist (with correct casing) -->
+        <log text="Verifying all expected files are present (@@SampleKey@@)"/>
         <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
         <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
         <fileexists path="@@READMEPath@@" failuremessage="README not found! (@@SampleKey@@)"/>
@@ -67,7 +72,8 @@
         <folderexists path="@@AssetsPath@@" matchcase="true" warn="true"/>
         <fileexists path="@@SampleJsonPath@@" failuremssage="sample.json not found! (@@SampleKey@@)"/>
         <fileexists path="@@SampleJsonPath@@" matchcase="true" warn="true"/>
-        <or>
+        <or failuremessage="Primary screenshot not found (@@SampleKey@@)! assets\screenshot.png (or gif)">
+          <!-- At least 1 screenshot (named screenshot) must exist as either a png or gif -->
           <and>
             <fileexists path="@@AssetsPath@@\screenshot.png"/>
             <fileexists path="@@AssetsPath@@\screenshot.png" matchcase="true" warn="true"/>
@@ -77,74 +83,27 @@
             <fileexists path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
           </and>
         </or>
-        <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)"/>
-        <or>
-          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@)"/>
-          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@)"/>
+        
+        <!-- README Contents Validation -->
+        <or failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)">
+          <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true"/>
+          <filecontains path="@@READMEPath@@" text="@@TelemetryTag2@@" matchcase="true"/>
+        </or>
+        <or failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@) - should be '![screenshot of the sample](./assets/screenshot.png)' (can also be a .gif)">
+          <!-- Ensures at least the primary screenshot is shown -->
+          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
+          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
         </or>
         <filecontains path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
         <filecontains path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+        <filecontains path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
+        <filecontains path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@)"/>
+        <filecontains path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
+        <filecontains path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
         <filecontains path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
-      </conditions>
-    </rule>
 
-    <rule name="ValidateSamples">
-      <conditions>
-        <foreachfolder path="column-samples" pattern="date*">
-          <run rule="ValidateSample"/>
-        </foreachfolder>
-      </conditions>
-    </rule>
-
-    <rule name="Screenshot" description="Verifies at least 1 screenshot exists (either gif or png)">
-      <conditions>
-        <or>
-          <and>
-            <fileexists path="assets/screenshot.png"/>
-            <fileexists path="assets/screenshot.png" matchcase="true" warn="true"/>
-          </and>
-          <and>
-            <fileexists path="assets/screenshot.gif"/>
-            <fileexists path="assets/screenshot.gif" matchcase="true" warn="true"/>
-          </and>
-        </or>
-      </conditions>
-    </rule>
-
-    <rule name="TelemetryLink">
-      <tokens>
-        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
-        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
-        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
-        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
-        <token name="TelemetryTag">
-          <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
-        </token>
-      </tokens>
-      <conditions>
-        <filecontains path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)"/>
-        <or>
-          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@)"/>
-          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@)"/>
-        </or>
-        <filecontains path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
-        <filecontains path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
-        <filecontains path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
-      </conditions>
-    </rule>
-
-    <rule name="JsonValidate">
-      <tokens>
-        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
-        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
-        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
-        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
-        <token name="AssetsPath" value="@@FolderPath@@\assets"/>
-        <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
-        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
-      </tokens>
-      <conditions>
         <!-- sample.json Contents Validation -->
+        <filecontains path="@@SampleJsonPath@@" text="{" failuremessage="Sample.json is invalid and likely empty (@@SampleKey@@)"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].name" value="pnp-list-formatting-@@SampleKey@@" matchcase="true" failuremessage="name mismatch in sample.json (@@SampleKey@@) - should be 'pnp-list-formatting-@@SampleKey@@'"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].source" value="pnp" matchcase="true" failuremessage="source mismatch in sample.json (@@SampleKey@@) - should be 'pnp'"/>
@@ -158,8 +117,8 @@
         <jsonquery path="@@SampleJsonPath@@" query="$[0].products[?(@=='SharePoint')]" comparison="count" value="1" failuremessage="products missing 'SharePoint' in sample.json (@@SampleKey@@)"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].products[?(@=='Microsoft Lists')]" comparison="count" value="1" failuremessage="products missing 'Microsoft Lists' in sample.json (@@SampleKey@@)"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata" comparison="count" value="1" failuremessage="metadata missing in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')]" comparison="count" value="1" matchcase="true" failuremessage="metadata LIST-SAMPLE-TYPE missing in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" value="@@SampleType@@" matchcase="true" failuremessage="LIST-SAMPLE-TYPE mismatch in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
+        <jsonquery name="Sample-Type-Exists" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')]" comparison="count" value="1" matchcase="true" failuremessage="metadata LIST-SAMPLE-TYPE missing in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
+        <jsonquery name="Sample-Type-Correct" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" value="@@SampleType@@" matchcase="true" failuremessage="LIST-SAMPLE-TYPE mismatch in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')]" comparison="count" value="1" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY missing in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019'"/>
         <or failuremessage="metadata SHAREPOINT-COMPATIBILITY invalid in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019' (separate values with a comma and a space)">
           <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online'"/>
@@ -175,95 +134,34 @@
         </or>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].authors[*]" comparison="count" min="1" failuremessage="At least one author entry is required in sample.json (@@SampleKey@@)"/>
         <jsonquery path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
-      </conditions>
-    </rule>
-
-    <rule name="SchemaValidate">
-      <tokens>
-        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
-        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
-        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
-        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
-      </tokens>
-      <conditions>
-        <only when="$EQUALS(@@SampleType@@,#Column)">
-          <filecontains path="@@MainJsonPath@@" text="@@ColumnSchema@@"/>
-        </only>
-        <only when="$EQUALS(@@SampleType@@,#View)">
-          <or>
-            <filecontains path="@@MainJsonPath@@" text="@@ViewSchema@@"/>
-            <filecontains path="@@MainJsonPath@@" text="@@TilesSchema@@"/>
-          </or>
-        </only>
-      </conditions>
-    </rule>
-
-    <rule name="NoDebugMode">
-      <tokens>
-        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
-        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
-        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
-        <token name="DebugMode1">
-          <![CDATA["debugMode": true]]>
-        </token>
-        <token name="DebugMode2">
-          <![CDATA["debugMode": "true"]]>
-        </token>
-        <token name="DebugModeOff1">
-          <![CDATA["debugMode": false]]>
-        </token>
-        <token name="DebugModeOff2">
-          <![CDATA["debugMode": "false"]]>
-        </token>
-      </tokens>
-      <conditions>
-        <and>
-          <filecontains path="@@MainJsonPath@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode found (enabled)"/>
-          <filecontains path="@@MainJsonPath@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode found (enabled)"/>
-        </and>
-        <and>
-          <filecontains path="@@MainJsonPath@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (not enabled)"/>
-          <filecontains path="@@MainJsonPath@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (not enabled)"/>
-        </and>
-      </conditions>
-    </rule>
-
-    <rule name="Subsamples">
-      <tokens>
-        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
-        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
-        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
-        <token name="DebugMode1">
-          <![CDATA["debugMode": true]]>
-        </token>
-        <token name="DebugMode2">
-          <![CDATA["debugMode": "true"]]>
-        </token>
-        <token name="DebugModeOff1">
-          <![CDATA["debugMode": false]]>
-        </token>
-        <token name="DebugModeOff2">
-          <![CDATA["debugMode": "false"]]>
-        </token>
-      </tokens>
-      <conditions>
-        <foreachfile path="@@FolderPath@@" pattern="*.json">
+        
+        <!-- Sample file(s) validation -->
+        <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
+          <!-- $schema validation (and formatting of 2 spaces) -->
           <only when="$EQUALS(@@SampleType@@,#Column)">
-            <filecontains path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces)"/>
+            <filecontains path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)"/>
           </only>
           <only when="$EQUALS(@@SampleType@@,#View)">
-            <or failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces)">
-              <filecontains path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid"/>
-              <filecontains path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid"/>
+            <or failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
+              <filecontains path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
             </or>
           </only>
-
+          
           <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
           <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
           <filecontains path="@@Each@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
           <filecontains path="@@Each@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
           <filecontains path="@@Each@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
         </foreachfile>
+      </conditions>
+    </rule>
+
+    <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
+      <conditions>
+        <foreachfolder path="column-samples" pattern="*">
+          <run rule="ValidateSample"/>
+        </foreachfolder>
       </conditions>
     </rule>
     

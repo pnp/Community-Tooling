@@ -36,6 +36,8 @@ namespace Farrier.Models.Conditions
                         return JsonQueryCondition.FromNode(conditionNode);
                     case "only":
                         return OnlyWhenCondition.FromNode(conditionNode);
+                    case "log":
+                        return LogCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
@@ -51,7 +53,7 @@ namespace Farrier.Models.Conditions
             Name = XmlHelper.XmlAttributeToString(conditionNode.Attributes["name"]);
             if(string.IsNullOrEmpty(Name))
             {
-                Name = $"[{type}]";
+                Name = type;
                 OverriddenName = false;
             }
             else
@@ -61,8 +63,30 @@ namespace Farrier.Models.Conditions
 
             this.IsWarning = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["warn"]);
             this.failuremessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
-            this.successmessage = XmlHelper.XmlAttributeToString(conditionNode.Attributes["successmessage"]);
-            this.messages = new List<Message>();
+            ignoreResult = false;
+            messages = new List<Message>();
+        }
+
+        public void Warn(TokenManager tokens, string text, int prefix)
+        {
+            messages.Add(new Message(MessageLevel.warning, Name, tokens.DecodeString(text), prefix));
+        }
+
+        public void Error(TokenManager tokens, string text, int prefix)
+        {
+            messages.Add(new Message(MessageLevel.error, Name, tokens.DecodeString(text), prefix));
+        }
+
+        public void Error(Exception ex, TokenManager tokens, string text, int prefix)
+        {
+            var msg = new Message(MessageLevel.error, Name, tokens.DecodeString(text), prefix);
+            msg.Ex = ex;
+            messages.Add(msg);
+        }
+
+        public void Info(TokenManager tokens, string text, int prefix)
+        {
+            messages.Add(new Message(MessageLevel.info, Name, tokens.DecodeString(text), prefix));
         }
 
         protected void setFailureMessage(TokenManager tokens, string text)
@@ -72,18 +96,8 @@ namespace Farrier.Models.Conditions
             {
                 message = tokens.DecodeString(failuremessage);
             }
-            this.failuremessage = $"{Name}: {message}";
+            this.failuremessage = message;
             this.suppressFailureMessage = false;
-        }
-
-        protected void setSuccessMessage(TokenManager tokens, string text)
-        {
-            string message = text;
-            if (!String.IsNullOrEmpty(this.successmessage))
-            {
-                message = tokens.DecodeString(successmessage);
-            }
-            this.successmessage = $"{Name}: {message}";
         }
 
         protected bool IsNot(TokenManager tokens)
@@ -91,21 +105,23 @@ namespace Farrier.Models.Conditions
             return tokens.DecodeString(rawNot) == "true";
         }
 
-        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "");
+        public abstract bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "");
 
         public readonly string type;
         public readonly bool IsWarning;
-        protected string successmessage;
         protected string failuremessage;
         public string FailureMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"Unspecified {(this.IsWarning ? "warning" : "error")} from {this.type} condition" : this.failuremessage; } }
         protected bool suppressFailureMessage;
         public bool SuppressFailureMessage { get { return suppressFailureMessage; } }
-        public string SuccessMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"{this.type} condition succeeded" : this.successmessage; } }
+
         protected List<Message> messages;
-        public List<Message> Messages { get { return this.messages; } }
+        public List<Message> Messages { get { return messages; } }
 
         private string rawNot;
         public string Name;
         public bool OverriddenName;
+
+        protected bool ignoreResult;
+        public bool IgnoreResult { get { return ignoreResult; } }
     }
 }

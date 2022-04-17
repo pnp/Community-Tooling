@@ -22,9 +22,9 @@ namespace Farrier.Models.Conditions
             rawText = XmlHelper.XmlAttributeToString(conditionNode.Attributes["text"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
+            messages.Clear();
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
             if (File.Exists(path))
             {
@@ -47,7 +47,6 @@ namespace Farrier.Models.Conditions
                         else
                         {
                             //Flipped response
-                            this.setSuccessMessage(tokens, $"Text exists but casing does not match ({path})");
                             return true;
                         }
                     }
@@ -55,7 +54,6 @@ namespace Farrier.Models.Conditions
                     {
                         if(!isNot)
                         {
-                            this.setSuccessMessage(tokens, "Text found");
                             return true;
                         }
                         else
@@ -78,7 +76,6 @@ namespace Farrier.Models.Conditions
                     else
                     {
                         //Flipped response
-                        this.setSuccessMessage(tokens, $"Specified text not found in {path}");
                         return true;
                     }
                     

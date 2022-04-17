@@ -14,18 +14,18 @@ namespace Farrier.Models.Conditions
         public BaseParentCondition(XmlNode conditionNode) : base(conditionNode)
         {
             _subConditions = new List<BaseCondition>();
-            int index = 1;
+            //int index = 1;
             foreach (XmlNode child in conditionNode.ChildNodes)
             {
                 var childCondition = BaseCondition.FromNode(child);
                 if(childCondition != null)
                 {
-                    if(!childCondition.OverriddenName && index > 1)
+                    /*if(!childCondition.OverriddenName && index > 1)
                     {
-                        childCondition.Name = $"[{childCondition.type}.{index}]";
-                    }
+                        childCondition.Name = $"{childCondition.type}.{index}";
+                    }*/
                     _subConditions.Add(childCondition);
-                    index += 1;
+                    //index += 1;
                 }
             }
             if(_subConditions.Count == 0 && String.IsNullOrEmpty(this.failuremessage))
@@ -33,6 +33,18 @@ namespace Farrier.Models.Conditions
                 this.failuremessage = "No valid child conditions!";
             }
             this.suppressFailureMessage = String.IsNullOrEmpty(failuremessage);
+            this.childMessages = new List<Message>();
+        }
+
+        protected List<Message> childMessages;
+
+        protected void LogChildMessages(TokenManager tokens, int prefix, bool skipErrors = false)
+        {
+            foreach(var message in childMessages)
+            {
+                if (message.Level != MessageLevel.error || (message.Level == MessageLevel.error && !skipErrors))
+                    messages.Add(message);
+            }
         }
 
     }

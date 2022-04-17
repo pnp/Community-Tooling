@@ -32,9 +32,9 @@ namespace Farrier.Models.Conditions
             rawMax = XmlHelper.XmlAttributeToString(conditionNode.Attributes["max"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
+            messages.Clear();
             var comparison = tokens.DecodeString(rawComparison);
             if (comparison != "equals" && comparison != "count")
             {

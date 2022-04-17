@@ -85,7 +85,7 @@ namespace Farrier.Inspect
                     }
 
                     //Let's get started!
-                    var result = RunRule(_rule);
+                    var result = RunRule(_rule, null, 1);
                     _log.Info($"Inspection {(result ? "PASSED" : "FAILED")}");
                 }
                 else
@@ -99,37 +99,38 @@ namespace Farrier.Inspect
             }
         }
 
-        private bool RunRule(string ruleName, Dictionary<string, string> ruleTokens = null, int prefix = 0, InspectionRule parentRule = null)
+        private bool RunRule(string ruleName, Dictionary<string, string> ruleTokens = null, int prefix = 0)
         {
-            if(_rules.ContainsKey(ruleName))
+            if (_rules.ContainsKey(ruleName))
             {
                 var rule = _rules[ruleName];
-                var result = rule.Run(ruleTokens, _rootTokens, RunRule, _listTokens, prefix, _startingpath, parentRule);
-                _log.Info($"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix + 1);
-                foreach(var message in rule.Messages)
-                {
-                    switch (message.Level)
-                    {
-                        case MessageLevel.warning:
-                            _log.Warn($"@{message.Text}", prefix + 2 + message.Prefix);
-                            break;
-                        case MessageLevel.error:
-                            _log.Error($"@{message.Text}", prefix + 2 + message.Prefix);
-                            break;
-                        case MessageLevel.info:
-                            _log.Info($"@{message.Text}", prefix + 2 + message.Prefix);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                
+                var result = rule.Run(ruleTokens, _rootTokens, RunChildRule, _listTokens, prefix, _startingpath);
+                rule.messages.Add(new Message(MessageLevel.info, ruleName, $"Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
+                rule.LogMessages();
+
                 return result;
             }
             else
             {
                 _log.Warn($"Rule {ruleName} not found!", prefix);
                 return false;
+            }
+        }
+
+        private InspectionRule RunChildRule(string ruleName, Dictionary<string, string> ruleTokens, int prefix, InspectionRule parentRule)
+        {
+            if(_rules.ContainsKey(ruleName))
+            {
+                var rule = _rules[ruleName];
+                var result = rule.Run(ruleTokens, _rootTokens, RunChildRule, _listTokens, prefix, _startingpath, parentRule);
+                rule.messages.Add(new Message(MessageLevel.info, ruleName, $"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
+
+                return rule;
+            }
+            else
+            {
+                _log.Warn($"Rule {ruleName} not found!", prefix);
+                return null;
             }
         }
     }

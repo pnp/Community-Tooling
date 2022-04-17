@@ -21,9 +21,9 @@ namespace Farrier.Models.Conditions
             rawMatchCase = XmlHelper.XmlAttributeToString(conditionNode.Attributes["matchcase"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
+            messages.Clear();
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
             if (Directory.Exists(path))

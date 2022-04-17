@@ -25,10 +25,10 @@ namespace Farrier.Models.Conditions
             }
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
-            if(_subConditions.Count == 0)
+            messages.Clear();
+            if (_subConditions.Count == 0)
             {
                 return false;
             }
@@ -44,8 +44,12 @@ namespace Farrier.Models.Conditions
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(Pattern);
             var files = directory.GetFiles(searchPattern);
+            var currentfile = 1;
+            var totalfiles = files.Length;
             foreach (var file in files)
             {
+                Info(tokens, $"Processing file ({currentfile}/{totalfiles}): {file.Name}...", prefix);
+
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", file.Name);
                 foreachTokens.NestToken("ContainerPath", directory.FullName);
@@ -53,36 +57,32 @@ namespace Farrier.Models.Conditions
                 foreachTokens.NestToken("FilePath", file.FullName);
                 foreachTokens.NestToken("FileExtension", file.Extension.Trim('.'));
                 foreachTokens.NestToken("FileNoExtension", file.Name.Replace(file.Extension, ""));
-                messages.Add(Message.Info($"Processing file {file.Name}...",messagePrefix));
 
                 foreach (var condition in _subConditions)
                 {
-                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, messagePrefix+1, directory.FullName);
-
-                    //bubble up any warnings or errors
-                    this.messages.AddRange(condition.Messages);
+                    var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, directory.FullName);
 
                     if (!result)
                     {
                         if (condition.IsWarning)
                         {
-                            //Add its warning, but don't fail the condition
-                            messages.Add(Message.Warning(foreachTokens.DecodeString(condition.FailureMessage),messagePrefix+1));
+                            //Log as warning, but don't fail the condition
+                            Warn(foreachTokens, condition.FailureMessage, prefix+1);
                         }
                         else
                         {
                             //no need to keep evaluating if even 1 sub is false
                             if(!condition.SuppressFailureMessage)
                             {
-                                messages.Add(Message.Error(foreachTokens.DecodeString(condition.FailureMessage), messagePrefix + 1));
+                                Error(foreachTokens, condition.FailureMessage, prefix + 1);
                             }
                             this.setFailureMessage(tokens, $"Sub Condition failure during processing of file {file.FullName}");
                             return false;
                         }
                     }
+                    currentfile += 1;
                 }
             }
-            this.setSuccessMessage(tokens, $"foreachfile finished for {path}");
             return true;
         }
 

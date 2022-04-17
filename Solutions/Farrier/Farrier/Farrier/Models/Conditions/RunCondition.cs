@@ -20,16 +20,17 @@ namespace Farrier.Models.Conditions
             rawRuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
         }
 
-        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, int messagePrefix = 0, string startingpath = "")
+        public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
-            this.messages = new List<Message>();
+            messages.Clear();
             var rName = tokens.DecodeString(rawRuleName);
             var result = runRule(rName, tokens.CleanTokens(), prefix+1, parentRule);
-            if(!result)
+            if(!result.Succeeded)
             {
                 this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");
             }
-            return result;
+            parentRule.messages.AddRange(result.messages);
+            return result.Succeeded;
         }
 
         private string rawRuleName;
