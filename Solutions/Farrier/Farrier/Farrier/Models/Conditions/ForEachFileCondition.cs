@@ -33,6 +33,8 @@ namespace Farrier.Models.Conditions
                 return false;
             }
 
+            int skip = ValidateSkip(tokens, "files", prefix);
+
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(Path));
 
             if(!Directory.Exists(path))
@@ -47,8 +49,15 @@ namespace Farrier.Models.Conditions
             var files = directory.GetFiles(searchPattern);
             var currentfile = 1;
             var totalfiles = files.Length;
+            int skipped = 0;
             foreach (var file in files)
             {
+                if (skipped < skip)
+                {
+                    currentfile += 1;
+                    skipped += 1;
+                    continue;
+                }
                 childMessages.Add(new Message(MessageLevel.info, Name, $"File ({currentfile}/{totalfiles}): {file.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);

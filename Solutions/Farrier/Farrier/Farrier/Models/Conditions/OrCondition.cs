@@ -28,10 +28,18 @@ namespace Farrier.Models.Conditions
                 return false;
             }
 
+            int skip = ValidateSkip(tokens, "conditions", prefix);
+
             bool success = false;
 
+            int skipped = 0;
             foreach (var condition in _subConditions)
             {
+                if (skipped < skip)
+                {
+                    skipped += 1;
+                    continue;
+                }
                 var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, startingpath);
                 childMessages.AddRange(condition.Messages);
 

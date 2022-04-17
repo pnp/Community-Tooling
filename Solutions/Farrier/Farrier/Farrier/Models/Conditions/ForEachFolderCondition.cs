@@ -17,11 +17,11 @@ namespace Farrier.Models.Conditions
 
         public ForEachFolderCondition(XmlNode conditionNode) : base(conditionNode)
         {
-            Path = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
-            Pattern = XmlHelper.XmlAttributeToString(conditionNode.Attributes["pattern"]);
-            if(String.IsNullOrEmpty(Pattern))
+            rawPath = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
+            rawPattern = XmlHelper.XmlAttributeToString(conditionNode.Attributes["pattern"]);
+            if(String.IsNullOrEmpty(rawPattern))
             {
-                Pattern = "*";
+                rawPattern = "*";
             }
         }
 
@@ -33,7 +33,9 @@ namespace Farrier.Models.Conditions
                 return false;
             }
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(Path));
+            int skip = ValidateSkip(tokens, "folders", prefix);
+
+            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
 
             if(!Directory.Exists(path))
             {
@@ -43,12 +45,19 @@ namespace Farrier.Models.Conditions
 
             bool success = true;
             var directory = new DirectoryInfo(path);
-            var searchPattern = tokens.DecodeString(Pattern);
+            var searchPattern = tokens.DecodeString(rawPattern);
             var folders = directory.GetDirectories(searchPattern);
             var currentfolder = 1;
             var totalfolders = folders.Length;
+            int skipped = 0;
             foreach (var folder in folders)
             {
+                if(skipped < skip)
+                {
+                    currentfolder += 1;
+                    skipped += 1;
+                    continue;
+                }
                 childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
@@ -89,8 +98,8 @@ namespace Farrier.Models.Conditions
             return success;
         }
 
-        public readonly string Path;
-        public readonly string Pattern;
+        public readonly string rawPath;
+        public readonly string rawPattern;
 
     }
 }

@@ -34,6 +34,21 @@ namespace Farrier.Models.Conditions
             }
             this.suppressFailureMessage = String.IsNullOrEmpty(failuremessage);
             this.childMessages = new List<Message>();
+            rawSkip = XmlHelper.XmlAttributeToString(conditionNode.Attributes["skip"]);
+        }
+
+        protected int ValidateSkip(TokenManager tokens, string itemsName, int prefix)
+        {
+            string decodedSkip = tokens.DecodeString(rawSkip);
+            int skip = 0;
+            if (!String.IsNullOrEmpty(decodedSkip) && !int.TryParse(decodedSkip, out skip))
+            {
+                messages.Add(new Message(MessageLevel.warning, Name, $"skip value is invalid. Expected a number but got '{decodedSkip}', no {itemsName} will be skipped", prefix));
+            }
+            if (skip > 0)
+                messages.Add(new Message(MessageLevel.info, Name, $"Skipping the first {skip} {itemsName}", prefix));
+
+            return skip;
         }
 
         protected List<Message> childMessages;
@@ -46,6 +61,8 @@ namespace Farrier.Models.Conditions
                     messages.Add(message);
             }
         }
+
+        protected string rawSkip;
 
     }
 }

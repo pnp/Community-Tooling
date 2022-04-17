@@ -23,7 +23,13 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
-            bool when = tokens.DecodeString(rawWhen) == "true";
+            string decodedWhen = tokens.DecodeString(rawWhen);
+            if(decodedWhen != "true" && decodedWhen != "false")
+            {
+                messages.Add(new Message(MessageLevel.warning, Name, $"when not evaluating correctly, skipping sub conditions. Expected 'true' or 'false' but got '{decodedWhen}'"));
+                return true;
+            }
+            bool when = decodedWhen == "true";
             if(when)
             {
                 return base.IsValid(tokens, runRule, parentRule, prefix, startingpath);

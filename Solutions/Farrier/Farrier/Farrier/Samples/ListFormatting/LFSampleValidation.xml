@@ -3,6 +3,7 @@
 <inspection>
   <tokens>
     <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
+    <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
     <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
     <token name="TilesSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
     <token name="FormattedSchemaTemplate">
@@ -10,6 +11,7 @@
   "$schema": "SCHEMAURLHERE",]]>
     </token>
     <token name="ColumnSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrl@@)"/>
+    <token name="ColumnSchemaAST" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrlAST@@)"/>
     <token name="ViewSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ViewSchemaUrl@@)"/>
     <token name="TilesSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@TilesSchemaUrl@@)"/>
     <token name="DebugMode1">
@@ -49,6 +51,7 @@
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
         <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="SampleUrl" value="https://github.com/pnp/list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@"/>
         <token name="TelemetryTagOld">
           <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
         </token>
@@ -75,94 +78,101 @@
         <or name="Screenshot" failuremessage="Primary screenshot not found (@@SampleKey@@)! assets\screenshot.png (or gif)">
           <!-- At least 1 screenshot (named screenshot) must exist as either a png or gif -->
           <and>
-            <fileexists path="@@AssetsPath@@\screenshot.png"/>
-            <fileexists path="@@AssetsPath@@\screenshot.png" matchcase="true" warn="true"/>
+            <fileexists name="Screenshot png" path="@@AssetsPath@@\screenshot.png"/>
+            <fileexists name="Screenshot png" path="@@AssetsPath@@\screenshot.png" matchcase="true" warn="true"/>
           </and>
           <and>
-            <fileexists path="@@AssetsPath@@\screenshot.gif"/>
-            <fileexists path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
+            <fileexists name="Screenshot gif" path="@@AssetsPath@@\screenshot.gif"/>
+            <fileexists name="Screenshot gif" path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
           </and>
         </or>
         <log name="☻" text="All expected files are present (@@SampleKey@@)"/>
         
         <!-- README Contents Validation -->
         <log name="☺" text="Validating README... (@@SampleKey@@)"/>
-        <filecontains name="TelemetryTag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
-        <filecontains name="TelemetryTag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@)"/>
-        <or name="READMEScreenshot" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@) - should be '![screenshot of the sample](./assets/screenshot.png)' (can also be a .gif)">
+        <filecontains name="README Summary" path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
+        <or name="README Screenshot" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@) - should be '![screenshot of the sample](./assets/screenshot.png)' (can also be a .gif)">
           <!-- Ensures at least the primary screenshot is shown -->
-          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
-          <filecontains path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
+          <filecontains name="README Screenshot png" path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
+          <filecontains name="README Screenshot gif" path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
         </or>
-        <filecontains path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
-        <filecontains path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
-        <filecontains path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
-        <filecontains path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
-        <filecontains path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
-        <filecontains path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
-        <filecontains path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
+        <filecontains name="README VR" path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+        <filecontains name="README Sample" path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
+        <filecontains name="README Github Link" path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
+        <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
+        <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
+        <filecontains name="README VH" path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
+        <filecontains name="Telemetry Tag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
+        <filecontains name="Telemetry Tag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@) - use '@@TelemetryTag@@'"/>
         <log name="☻" text="README is Valid (@@SampleKey@@)"/>
 
-        <!-- sample.json Contents Validation -->
-        <log name="☺" text="Validating sample.json... (@@SampleKey@@)"/>
-        <filecontains path="@@SampleJsonPath@@" text="{" failuremessage="Sample.json is invalid and likely empty (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].name" value="pnp-list-formatting-@@SampleKey@@" matchcase="true" failuremessage="name mismatch in sample.json (@@SampleKey@@) - should be 'pnp-list-formatting-@@SampleKey@@'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].source" value="pnp" matchcase="true" failuremessage="source mismatch in sample.json (@@SampleKey@@) - should be 'pnp'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].title" comparison="count" value="1" failuremessage="title missing or blank in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="count" value="1" failuremessage="shortDescription missing or blank in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].url" value="https://github.com/pnp/sp-dev-list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" matchcase="true" failuremessage="url mismatch in sample.json (@@SampleKey@@) - should be 'https://github.com/pnp/sp-dev-list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="count" min="1" failuremessage="longDescription missing or blank in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].creationDateTime" comparison="count" value="1" failuremessage="creationDateTime missing or blank in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].updateDateTime" comparison="count" value="1" failuremessage="updateDateTime missing or blank in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].products" comparison="count" value="1" failuremessage="products missing or blank in sample.json (@@SampleKey@@) - should include 'SharePoint' and 'Microsoft Lists'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].products[?(@=='SharePoint')]" comparison="count" value="1" failuremessage="products missing 'SharePoint' in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].products[?(@=='Microsoft Lists')]" comparison="count" value="1" failuremessage="products missing 'Microsoft Lists' in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata" comparison="count" value="1" failuremessage="metadata missing in sample.json (@@SampleKey@@)"/>
-        <jsonquery name="Sample-Type-Exists" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')]" comparison="count" value="1" matchcase="true" failuremessage="metadata LIST-SAMPLE-TYPE missing in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
-        <jsonquery name="Sample-Type-Correct" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" value="@@SampleType@@" matchcase="true" failuremessage="LIST-SAMPLE-TYPE mismatch in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')]" comparison="count" value="1" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY missing in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019'"/>
-        <or failuremessage="metadata SHAREPOINT-COMPATIBILITY invalid in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019' (separate values with a comma and a space)">
-          <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online'"/>
-          <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019'"/>
-          <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online, SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online, SharePoint 2019'"/>
-          <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019, SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019, SharePoint Online'"/>
-        </or>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].thumbnails[*]" comparison="count" min="1" failuremessage="At least one thumbnail entry is required in sample.json (@@SampleKey@@)"/>
-        <or name="PrimaryThumbnail" failuremessage="First thumbnail entry in sample.json should be the primary screenshot (gif or png) referenced from raw.githubusercontent.com (@@SampleKey@@)">
-          <!-- First thumbnail should be the primary screenshot and uses the correct reference (raw.githubusercontent.com)-->
-          <jsonquery path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.png"/>
-          <jsonquery path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.gif"/>
-        </or>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].authors[*]" comparison="count" min="1" failuremessage="At least one author entry is required in sample.json (@@SampleKey@@)"/>
-        <jsonquery path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
-        <log name="☻" text="sample.json is Valid (@@SampleKey@@)"/>
-        
         <!-- Sample file(s) validation -->
         <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
           <!-- $schema validation (and formatting of 2 spaces) -->
-          <only when="$EQUALS(@@SampleType@@,#Column)">
-            <filecontains path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)"/>
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$NOT($ENDSWITH(@@Each@@,#AST.json)))">
+            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrl@@'"/>
+          </only>
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$ENDSWITH(@@Each@@,#AST.json))">
+            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchemaAST@@" failuremessage="Column Formatting (AST) $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrlAST@@'"/>
           </only>
           <only when="$EQUALS(@@SampleType@@,#View)">
-            <or failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
-              <filecontains path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
-              <filecontains path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
+            <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
+              <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
             </or>
           </only>
-          
+
           <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
           <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
           <filecontains path="@@Each@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
           <filecontains path="@@Each@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
           <filecontains path="@@Each@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
         </foreachfile>
+        
+        <!-- sample.json Contents Validation -->
+        <log name="☺" text="Validating sample.json... (@@SampleKey@@)"/>
+        <filecontains name="Sample Not Empty" path="@@SampleJsonPath@@" text="{" failuremessage="Sample.json is invalid and likely empty (@@SampleKey@@)"/>
+        <jsonquery name="Sample Name" path="@@SampleJsonPath@@" query="$[0].name" value="pnp-list-formatting-@@SampleKey@@" matchcase="true" failuremessage="name mismatch in sample.json (@@SampleKey@@) - should be 'pnp-list-formatting-@@SampleKey@@'"/>
+        <jsonquery name="Sample Reponame" path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
+        <jsonquery name="Sample Source" path="@@SampleJsonPath@@" query="$[0].source" value="pnp" matchcase="true" failuremessage="source mismatch in sample.json (@@SampleKey@@) - should be 'pnp'"/>
+        <jsonquery name="Sample Title" path="@@SampleJsonPath@@" query="$[0].title" comparison="count" value="1" failuremessage="title missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample SD" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="count" value="1" failuremessage="shortDescription missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Url" path="@@SampleJsonPath@@" query="$[0].url" value="@@SampleUrl@@" failuremessage="url mismatch in sample.json (@@SampleKey@@) - should be '@@SampleUrl@@'"/>
+        <jsonquery name="Sample LD" path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="count" min="1" failuremessage="longDescription missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Creation" path="@@SampleJsonPath@@" query="$[0].creationDateTime" comparison="count" value="1" failuremessage="creationDateTime missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Update" path="@@SampleJsonPath@@" query="$[0].updateDateTime" comparison="count" value="1" failuremessage="updateDateTime missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Products" path="@@SampleJsonPath@@" query="$[0].products" comparison="count" value="1" failuremessage="products missing or blank in sample.json (@@SampleKey@@) - should include 'SharePoint' and 'Microsoft Lists'"/>
+        <jsonquery name="Sample Products SP" path="@@SampleJsonPath@@" query="$[0].products[?(@=='SharePoint')]" comparison="count" value="1" failuremessage="products missing 'SharePoint' in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Products ML" path="@@SampleJsonPath@@" query="$[0].products[?(@=='Microsoft Lists')]" comparison="count" value="1" failuremessage="products missing 'Microsoft Lists' in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Metadata" path="@@SampleJsonPath@@" query="$[0].metadata" comparison="count" value="1" failuremessage="metadata missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Type" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')]" comparison="count" value="1" matchcase="true" failuremessage="metadata LIST-SAMPLE-TYPE missing in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
+        <jsonquery name="Sample Type" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" value="@@SampleType@@" matchcase="true" failuremessage="LIST-SAMPLE-TYPE mismatch in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
+        <jsonquery name="Sample Compatibility" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')]" comparison="count" value="1" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY missing in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019'"/>
+        <or name="Sample Compatibility" failuremessage="metadata SHAREPOINT-COMPATIBILITY invalid in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019' (separate values with a comma and a space)">
+          <jsonquery name="Sample Compatibility SO" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online'"/>
+          <jsonquery name="Sample Compatibility S19" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019'"/>
+          <jsonquery name="Sample Compatibility All1" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online, SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online, SharePoint 2019'"/>
+          <jsonquery name="Sample Compatibility All2" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019, SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019, SharePoint Online'"/>
+        </or>
+        <jsonquery name="Sample Thumbnail" path="@@SampleJsonPath@@" query="$[0].thumbnails[*]" comparison="count" min="1" failuremessage="At least one thumbnail entry is required in sample.json (@@SampleKey@@) - use "/>
+        <or name="Sample Thumbnail" failuremessage="First thumbnail entry in sample.json should be the primary screenshot (gif or png) referenced from raw.githubusercontent.com (@@SampleKey@@)">
+          <!-- First thumbnail should be the primary screenshot and uses the correct reference (raw.githubusercontent.com)-->
+          <jsonquery name="Sample Thumbnail png" path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.png"/>
+          <jsonquery name="Sample Thumbnail gif" path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.gif"/>
+        </or>
+        <jsonquery name="Sample Author" path="@@SampleJsonPath@@" query="$[0].authors[*]" comparison="count" min="1" failuremessage="At least one author entry is required in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Author GH" path="@@SampleJsonPath@@" query="$[0].authors[0].gitHubAccount" comparison="count" value="1" failuremessage="A gitHubAccount is required for at least the first author (@@SampleKey@@)"/>
+        <jsonquery name="Sample Author Picture" path="@@SampleJsonPath@@" query="$[0].authors[0].pictureUrl" comparison="count" value="1" failuremessage="A pictureUrl is required for at least the first author (@@SampleKey@@) - use 'https://github.com/authorusername.png'"/>
+        <jsonquery name="Sample Author Picture" path="@@SampleJsonPath@@" query="$[0].authors[0].name" comparison="count" value="1" failuremessage="A name is required for at least the first author (@@SampleKey@@)"/>
+        <jsonquery name="Sample References" path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
+        <log name="☻" text="sample.json is Valid (@@SampleKey@@)"/>
+        
       </conditions>
     </rule>
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="10">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>
