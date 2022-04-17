@@ -83,10 +83,10 @@ namespace Farrier.Models.Conditions
                             break;
                         }
                     }
-                    if (!success)
-                        break;
-                    currentfile += 1;
                 }
+                if (!success)
+                    break;
+                currentfile += 1;
             }
             LogChildMessages(success);
             return success;
