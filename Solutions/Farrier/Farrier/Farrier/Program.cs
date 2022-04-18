@@ -30,8 +30,8 @@ namespace Farrier
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "JsonValidate", "-s", @"D:\Code\PnP\sp-dev-list-formatting\view-samples\budget-tracker" };
-                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting" };
-                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite".Split();
+                    //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting" };
+                    args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --limit 2".Split();
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }
 
@@ -123,6 +123,9 @@ namespace Farrier
                 log.Debug($"Param: skipheaders={options.SkipHeaders}");
                 log.Debug($"Param: firstonly={options.FirstOnly}");
                 log.Debug($"Param: multivalueseparator={options.MultiValueSeparator}");
+                log.Debug($"Param: skip={options.Skip}");
+                log.Debug($"Param: limit={options.Limit}");
+                log.Debug($"Param: pathdepth={options.PathDepth}");
 
                 var w = new Wrangler(options.Map,
                                      options.OutputPath,
@@ -136,6 +139,9 @@ namespace Farrier
                                      options.SkipHeaders,
                                      options.FirstOnly,
                                      options.MultiValueSeparator,
+                                     options.Skip,
+                                     options.Limit,
+                                     options.PathDepth,
                                      log);
                 w.RoundUp();
             }

@@ -11,6 +11,7 @@ using Json.Path;
 using System.Text.Json;
 using CsvHelper;
 using CsvHelper.Configuration;
+using System.Linq;
 
 namespace Farrier.RoundUp
 {
@@ -32,8 +33,11 @@ namespace Farrier.RoundUp
         private bool _skipHeaders;
         private bool _firstonly;
         private string _multivalueseparator;
+        private int _skip;
+        private int _limit;
+        private int _pathdepth;
 
-        public Wrangler(string map, string outputpath = "", string outputfilename = "roundup.csv", string startpath = "", string jsonfilepattern = "*.json", bool listjsonfiles = false, Dictionary<string, string> tokens = null, bool ListTokens = false, bool Overwrite = false, bool SkipHeaders = false, bool FirstOnly = false, string MultiValueSeparator = "|", LogRouter log = null)
+        public Wrangler(string map, string outputpath = "", string outputfilename = "roundup.csv", string startpath = "", string jsonfilepattern = "*.json", bool listjsonfiles = false, Dictionary<string, string> tokens = null, bool ListTokens = false, bool Overwrite = false, bool SkipHeaders = false, bool FirstOnly = false, string MultiValueSeparator = "|", int Skip = 0, int Limit = 10000, int PathDepth = 0, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -56,6 +60,18 @@ namespace Farrier.RoundUp
             _skipHeaders = SkipHeaders;
             _firstonly = FirstOnly;
             _multivalueseparator = MultiValueSeparator;
+            
+            _skip = Skip;
+            if (_skip < 0)
+                _skip = 0;
+
+            _limit = Limit;
+            if (_limit < 1)
+                _limit = 1;
+
+            _pathdepth = PathDepth;
+            if (_pathdepth < 0)
+                _pathdepth = 0;
 
             _functionResolver = new FunctionResolver(log: _log);
             _rootTokens = new TokenManager(_functionResolver, log: _log);
@@ -68,6 +84,8 @@ namespace Farrier.RoundUp
         {
             try
             {
+                _log.Info("Initializing...");
+
                 var resultPath = Path.Combine(_outputpath, _outputfilename);
                 if (String.IsNullOrEmpty(resultPath))
                     resultPath = Path.Combine(Directory.GetCurrentDirectory(), "roundup.csv");
@@ -82,12 +100,27 @@ namespace Farrier.RoundUp
                 var jsonFilePattern = Path.GetFileName(_jsonfilepattern);
                 var jsonFiles = startingDirectory.GetFiles(_jsonfilepattern, new EnumerationOptions() { RecurseSubdirectories = true });
                 
-                _log.Info($"Found {jsonFiles.Length} JSON file{(jsonFiles.Length > 1 ? "s" : "")} to round up");
+                _log.Info($"  Found {jsonFiles.Length} JSON file{(jsonFiles.Length > 1 ? "s" : "")} to round up");
+                
+                if(_skip > 0)
+                {
+                    jsonFiles = jsonFiles.Skip(_skip).ToArray();
+                    _log.Info($"    Skipping the first {(_skip > 1 ? $"{_skip} files" : "file")}");
+                }
+                if(jsonFiles.Length > _limit)
+                {
+                    jsonFiles = jsonFiles.SkipLast(jsonFiles.Length - _limit).ToArray();
+                    _log.Info($"    Limiting total files to process to {_limit}");
+                }
+
+                int totalFiles = jsonFiles.Length;
+                int currentFile = 1;
+
                 if(_listjsonfiles)
                 {
                     foreach (var jsonFile in jsonFiles)
                     {
-                        _log.Debug($"  Found {jsonFile.FullName}");
+                        _log.Debug($"    Found {jsonFile.FullName}");
                     }
                 }
 
@@ -98,10 +131,11 @@ namespace Farrier.RoundUp
                 if (_listTokens)
                     _rootTokens.LogTokens();
 
+
                 XmlNodeList columnNodes = doc.SelectNodes("//column");
                 if(columnNodes != null && columnNodes.Count > 0)
                 {
-                    _log.Info($"Mapping {columnNodes.Count} columns");
+                    _log.Info($" Configuring {columnNodes.Count} columns...");
 
                     var mappedColumns = MappedColumn.FromXmlNodeList(columnNodes);
 
@@ -110,12 +144,20 @@ namespace Farrier.RoundUp
                     {
                         results.Columns.Add(mappedColumn.Name);
                         if (!mappedColumn.ValidPath)
-                            _log.Warn($"The path for column {mappedColumn.Name} is invalid or blank. Untransformed results will contain an empty string for this column.");
+                            _log.Warn($"    The path for column {mappedColumn.Name} is invalid or blank. Untransformed results will contain an empty string for this column.");
                     }
+
+                    _log.Info($"Extracting {columnNodes.Count} column{(columnNodes.Count > 1 ? "s" : "")} from {totalFiles} file{(totalFiles > 1 ? "s" : "")}");
                     
                     foreach (var jsonFile in jsonFiles)
                     {
-                        results.Rows.Add(ProcessFile(jsonFile.FullName, results, mappedColumns));
+                        string identifier = FileHelper.PathFromDepth(jsonFile.FullName, _pathdepth);
+                        _log.Info($"  File ({currentFile}/{totalFiles}): {identifier}");
+                        var result = ProcessFile(jsonFile.FullName, identifier, results, mappedColumns);
+                        if(result != null)
+                            results.Rows.Add(result);
+
+                        currentFile += 1;
                     }
 
                     //Apply sorting (if specified)
@@ -143,7 +185,7 @@ namespace Farrier.RoundUp
                 }
                 else
                 {
-                    _log.Warn("No column entries found in map!");
+                    _log.Warn("  No column entries found in map!");
                 }
             }
             catch (Exception ex)
@@ -152,11 +194,17 @@ namespace Farrier.RoundUp
             }
         }
 
-        private DataRow ProcessFile(string filePath, DataTable dt, List<MappedColumn> mappedColumns)
+        private DataRow ProcessFile(string filePath, string identifier, DataTable dt, List<MappedColumn> mappedColumns)
         {
             var row = dt.NewRow();
+            string indent = "    ";
 
             var content = File.ReadAllText(filePath);
+            if(String.IsNullOrEmpty(content))
+            {
+                _log.Error($"{indent}Empty JSON File! Unable to pull details from {identifier}");
+                return null;
+            }
             var doc = JsonDocument.Parse(content);
 
             //Pull out raw values (just using paths, no transformation)
@@ -168,11 +216,11 @@ namespace Farrier.RoundUp
                     var pathValue = mappedColumn.ParsedPath.Evaluate(doc.RootElement);
                     if (!String.IsNullOrEmpty(pathValue.Error))
                     {
-                        _log.Warn($"Error while processing column {mappedColumn.Name} in {filePath}: {pathValue.Error}");
+                        _log.Warn($"{indent}Error while processing column {mappedColumn.Name}: {pathValue.Error}");
                     }
                     else if (pathValue.Matches == null || pathValue.Matches.Count < 1)
                     {
-                        _log.Warn($"No result found for column {mappedColumn.Name} in {filePath}");
+                        _log.Warn($"{indent}No result found for column {mappedColumn.Name}");
                     }
                     else
                     {
@@ -182,7 +230,7 @@ namespace Farrier.RoundUp
                         if (pathValue.Matches.Count > 1)
                         {
                             if(_firstonly)
-                                _log.Warn($"Found {pathValue.Matches.Count} results for the specified path for column {mappedColumn.Name} in {filePath}, only the first value will be used");
+                                _log.Warn($"{indent}Found {pathValue.Matches.Count} results for the specified path for column {mappedColumn.Name}, only the first value will be used (set FirstOnly to false to capture all values)");
                             else
                             {
                                 var values = new List<string>();

@@ -44,5 +44,14 @@ namespace Farrier.Helpers
 
         [Option(Required = false, Default = "|", HelpText = "When not specifying FirstOnly, when multiple values are found for a given path they will all be including with this value between them.")]
         public string MultiValueSeparator { get; set; }
+
+        [Option(Required = false, Default = 0, HelpText = "Number of files to skip processing")]
+        public int Skip { get; set; }
+
+        [Option(Required = false, Default = 10000, HelpText = "Maximum number of files to process (default = 10,000)")]
+        public int Limit { get; set; }
+
+        [Option(Required = false, Default = 0, HelpText = "Amount of path to use when referring to the file being processed. 0 = filename, 1 = parentdirectory/filename, 2 = parentofparent/parentdirectory/filename, etc.")]
+        public int PathDepth { get; set; }
     }
 }
