@@ -111,7 +111,8 @@ namespace Farrier.Inspect
             {
                 var rule = _rules[ruleName];
                 var result = rule.Run(ruleTokens, _rootTokens, RunChildRule, _listTokens, prefix, _startingpath);
-                rule.messages.Add(new Message(MessageLevel.info, ruleName, $"Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
+                if(!rule.Quiet)
+                    rule.messages.Add(new Message(MessageLevel.info, ruleName, $"Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
                 rule.LogMessages();
 
                 return result;
@@ -129,7 +130,8 @@ namespace Farrier.Inspect
             {
                 var rule = _rules[ruleName];
                 var result = rule.Run(ruleTokens, _rootTokens, RunChildRule, _listTokens, prefix, _startingpath, parentRule);
-                rule.messages.Add(new Message(MessageLevel.info, ruleName, $"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
+                if(!rule.Quiet)
+                    rule.messages.Add(new Message(MessageLevel.info, ruleName, $"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
 
                 return rule;
             }

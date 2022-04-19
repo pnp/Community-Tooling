@@ -19,6 +19,8 @@ namespace Farrier.Models.Conditions
         {
             rawRuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
             rawInput = XmlHelper.XmlAttributeToString(conditionNode.Attributes["input"]);
+
+            //TODO: Add support for passing full tokens to children
         }
 
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")

@@ -40,6 +40,7 @@ namespace Farrier.Models
 
             Name = XmlHelper.XmlAttributeToString(ruleNode.Attributes["name"]);
             Description = XmlHelper.XmlAttributeToString(ruleNode.Attributes["description"]);
+            Quiet = XmlHelper.XmlAttributeToBool(ruleNode.Attributes["quiet"]);
 
             tokens = new TokenManager(rootTokens);
             messages = new List<Message>();
@@ -69,7 +70,8 @@ namespace Farrier.Models
                 return false;
             }
 
-            messages.Add(new Message(MessageLevel.info, Name, $"Running rule \"{Name}\"...", prefix));
+            if(!Quiet)
+                messages.Add(new Message(MessageLevel.info, Name, $"Running rule \"{Name}\"...", prefix));
             tokens.Reset();
             tokens.AddTokens(rootTokens.CleanTokens());
 
@@ -150,6 +152,7 @@ namespace Farrier.Models
 
         public string Name { get; }
         public string Description { get; }
+        public bool Quiet { get; set; }
 
         public TokenManager tokens { get; }
 

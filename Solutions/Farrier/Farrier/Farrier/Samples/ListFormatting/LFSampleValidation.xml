@@ -46,7 +46,7 @@
       </conditions>
     </rule>
 
-    <rule name="CheckForToken">
+    <rule name="CheckForToken" quiet="true">
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>
