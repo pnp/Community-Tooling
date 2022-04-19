@@ -124,13 +124,13 @@ namespace Farrier.Inspect
             }
         }
 
-        private InspectionRule RunChildRule(string ruleName, Dictionary<string, string> ruleTokens, int prefix, InspectionRule parentRule)
+        private InspectionRule RunChildRule(string ruleName, Dictionary<string, string> ruleTokens, int prefix, InspectionRule parentRule, bool quiet = false)
         {
             if(_rules.ContainsKey(ruleName))
             {
                 var rule = _rules[ruleName];
-                var result = rule.Run(ruleTokens, _rootTokens, RunChildRule, _listTokens, prefix, _startingpath, parentRule);
-                if(!rule.Quiet)
+                var result = rule.Run(ruleTokens, _rootTokens, RunChildRule, _listTokens, prefix, _startingpath, parentRule, quiet);
+                if(!(rule.Quiet || quiet))
                     rule.messages.Add(new Message(MessageLevel.info, ruleName, $"-Rule \"{ruleName}\" {(result ? "PASSED" : "FAILED")}", prefix));
 
                 return rule;

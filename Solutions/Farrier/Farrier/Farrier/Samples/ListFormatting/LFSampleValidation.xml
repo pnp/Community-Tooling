@@ -40,13 +40,13 @@
       </tokens>
       <conditions>
         <log name="☺" text="Ensuring Tokens in sample.json..."/>
-        <run rule="CheckForToken" input="@me"/>
+        <run rule="CheckForToken" input="@me" quiet="true"/>
         <run rule="CheckForToken" input="@now"/>
         <log name="☻" text="Finished with Tokens"/>
       </conditions>
     </rule>
 
-    <rule name="CheckForToken" quiet="true">
+    <rule name="CheckForToken">
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>

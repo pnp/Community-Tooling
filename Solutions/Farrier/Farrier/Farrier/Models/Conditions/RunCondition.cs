@@ -19,6 +19,7 @@ namespace Farrier.Models.Conditions
         {
             rawRuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
             rawInput = XmlHelper.XmlAttributeToString(conditionNode.Attributes["input"]);
+            rawQuiet = XmlHelper.XmlAttributeToString(conditionNode.Attributes["quiet"]);
 
             //TODO: Add support for passing full tokens to children
         }
@@ -28,10 +29,11 @@ namespace Farrier.Models.Conditions
             messages.Clear();
             var rName = tokens.DecodeString(rawRuleName);
             var input = tokens.DecodeString(rawInput);
+            var quiet = tokens.DecodeString(rawQuiet) == "true";
             var runTokens = new TokenManager(tokens);
             runTokens.NestToken("Input", input);
 
-            var result = runRule(rName, runTokens.CleanTokens(), prefix+1, parentRule);
+            var result = runRule(rName, runTokens.CleanTokens(), prefix+1, parentRule, quiet);
             if(!result.Succeeded)
             {
                 this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");
@@ -42,5 +44,6 @@ namespace Farrier.Models.Conditions
 
         private string rawRuleName;
         private string rawInput;
+        private string rawQuiet;
     }
 }

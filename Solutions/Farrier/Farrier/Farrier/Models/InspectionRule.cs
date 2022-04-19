@@ -54,13 +54,13 @@ namespace Farrier.Models
             }
         }
 
-        public bool Run(Dictionary<string, string> ruleTokens, TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
+        public bool Run(Dictionary<string, string> ruleTokens, TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null, bool quiet = false)
         {
             _tokensDictionary = ruleTokens;
-            return Run(rootTokens, runRule, listTokens, prefix, startingpath, parentRule);
+            return Run(rootTokens, runRule, listTokens, prefix, startingpath, parentRule, quiet);
         }
 
-        public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
+        public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null, bool quiet = false)
         {
             messages.Clear();
 
@@ -70,7 +70,7 @@ namespace Farrier.Models
                 return false;
             }
 
-            if(!Quiet)
+            if(!(Quiet || quiet))
                 messages.Add(new Message(MessageLevel.info, Name, $"Running rule \"{Name}\"...", prefix));
             tokens.Reset();
             tokens.AddTokens(rootTokens.CleanTokens());
