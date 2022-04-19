@@ -29,17 +29,18 @@ namespace Farrier.Models.Conditions
             }
 
             int skip = ValidateSkip(tokens, "conditions", prefix);
+            int limit = ValidateLimit(tokens, "conditions", prefix);
 
             bool success = true;
 
-            int skipped = 0;
-            foreach (var condition in _subConditions)
+            var conditions = _subConditions;
+            if (skip > 0)
+                conditions = conditions.Skip(skip).ToList();
+            if (limit > 0 && conditions.Count > limit)
+                conditions = conditions.SkipLast(conditions.Count - limit).ToList();
+
+            foreach (var condition in conditions)
             {
-                if (skipped < skip)
-                {
-                    skipped += 1;
-                    continue;
-                }
                 var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, startingpath);
                 childMessages.AddRange(condition.Messages);
 

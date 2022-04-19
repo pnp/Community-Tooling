@@ -35,6 +35,7 @@ namespace Farrier.Models.Conditions
             this.suppressFailureMessage = String.IsNullOrEmpty(failuremessage);
             this.childMessages = new List<Message>();
             rawSkip = XmlHelper.XmlAttributeToString(conditionNode.Attributes["skip"]);
+            rawLimit = XmlHelper.XmlAttributeToString(conditionNode.Attributes["limit"]);
         }
 
         protected int ValidateSkip(TokenManager tokens, string itemsName, int prefix)
@@ -51,6 +52,20 @@ namespace Farrier.Models.Conditions
             return skip;
         }
 
+        protected int ValidateLimit(TokenManager tokens, string itemsName, int prefix)
+        {
+            string decodedLimit = tokens.DecodeString(rawLimit);
+            int limit = 0;
+            if (!String.IsNullOrEmpty(decodedLimit) && !int.TryParse(decodedLimit, out limit))
+            {
+                messages.Add(new Message(MessageLevel.warning, Name, $"limit value is invalid. Expected a number but got '{decodedLimit}', no limit of {itemsName} will be enforced", prefix));
+            }
+            if (limit > 0)
+                messages.Add(new Message(MessageLevel.info, Name, $"Limiting to the first {limit} {itemsName}", prefix));
+
+            return limit;
+        }
+
         protected List<Message> childMessages;
 
         protected void LogChildMessages(bool skipErrors = false)
@@ -63,6 +78,7 @@ namespace Farrier.Models.Conditions
         }
 
         protected string rawSkip;
+        protected string rawLimit;
 
     }
 }

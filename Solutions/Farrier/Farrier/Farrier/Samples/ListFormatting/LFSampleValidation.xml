@@ -34,15 +34,212 @@
         <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
         <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
         <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
-        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
+        <token name="FilePath" value="@@MainJsonPath@@"/>
       </tokens>
       <conditions>
         <log name="☺" text="Ensuring Tokens in sample.json..."/>
         <run rule="CheckForToken" input="@me" quiet="true"/>
-        <run rule="CheckForToken" input="@now"/>
+        <run rule="CheckForToken" input="@now" quiet="true"/>
+        <run rule="CheckForToken" input="@currentWeb" quiet="true"/>
+        <run rule="CheckForToken" input="@rowIndex" quiet="true"/>
+        <run rule="CheckForToken" input="@window.innerHeight" quiet="true"/>
+        <run rule="CheckForToken" input="@window.innerWidth" quiet="true"/>
+        <run rule="CheckForToken" input="@thumbnail" quiet="true"/>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <run rule="CheckForToken" input="@group.fieldData" quiet="true"/>
+          <run rule="CheckForToken" input="@group.count" quiet="true"/>
+          <run rule="CheckForToken" input="@group.columnDisplayName" quiet="true"/>
+          <run rule="CheckForToken" input="@aggregates" quiet="true"/>
+          <run rule="CheckForToken" input="@columnAggregate.type" quiet="true"/>
+          <run rule="CheckForToken" input="@columnAggregate.value" quiet="true"/>
+          <run rule="CheckForToken" input="@columnAggregate.columnDisplayName" quiet="true"/>
+          <run rule="CheckForToken" input="@commandBarProps" quiet="true"/>
+        </only>
         <log name="☻" text="Finished with Tokens"/>
+
+        <log name="☺" text="Ensuring Operators in sample.json..."/>
+        <!-- Basic operators like arithmetic and comparsion are excluded -->
+        <run rule="CheckForOperator" input="toLowerCase" quiet="true"/>
+        <run rule="CheckForOperator" input="toString" quiet="true"/>
+        <run rule="CheckForOperator" input="Number" quiet="true"/>
+        <run rule="CheckForOperator" input="Date" quiet="true"/>
+        <run rule="CheckForOperator" input="cos" quiet="true"/>
+        <run rule="CheckForOperator" input="sin" quiet="true"/>
+        <run rule="CheckForOperator" input="abs" quiet="true"/>
+        <run rule="CheckForOperator" input="loopIndex" quiet="true"/>
+        <run rule="CheckForOperator" input="toLocaleString" quiet="true"/>
+        <run rule="CheckForOperator" input="toLocaleDateString" quiet="true"/>
+        <run rule="CheckForOperator" input="toLocaleTimeString" quiet="true"/>
+        <run rule="CheckForOperator" input="indexOf" quiet="true"/>
+        <run rule="CheckForOperator" input="join" quiet="true"/>
+        <run rule="CheckForOperator" input="length" quiet="true"/>
+        <run rule="CheckForOperator" input="floor" quiet="true"/>
+        <run rule="CheckForOperator" input="ceiling" quiet="true"/>
+        <run rule="CheckForOperator" input="pow" quiet="true"/>
+        <run rule="CheckForOperator" input="substring" quiet="true"/>
+        <run rule="CheckForOperator" input="getDate" quiet="true"/>
+        <run rule="CheckForOperator" input="getMonth" quiet="true"/>
+        <run rule="CheckForOperator" input="getYear" quiet="true"/>
+        <run rule="CheckForOperator" input="toUpperCase" quiet="true"/>
+        <run rule="CheckForOperator" input="lastIndexOf" quiet="true"/>
+        <run rule="CheckForOperator" input="startsWith" quiet="true"/>
+        <run rule="CheckForOperator" input="endsWith" quiet="true"/>
+        <run rule="CheckForOperator" input="replace" quiet="true"/>
+        <run rule="CheckForOperator" input="padStart" quiet="true"/>
+        <run rule="CheckForOperator" input="padEnd" quiet="true"/>
+        <run rule="CheckForOperator" input="getUserImage" quiet="true"/>
+        <run rule="CheckForOperator" input="addDays" quiet="true"/>
+        <run rule="CheckForOperator" input="addMinutes" quiet="true"/>
+        <run rule="CheckForOperator" input="appendTo" quiet="true"/>
+        <run rule="CheckForOperator" input="removeFrom" quiet="true"/>
+        <log name="☻" text="Finished with Operators"/>
+
+        <log name="☺" text="Ensuring Actions in sample.json..."/>
+        <run rule="CheckForAction" input="defaultClick" quiet="true"/>
+        <run rule="CheckForAction" input="setValue" quiet="true"/>
+        <run rule="CheckForAction" input="executeFlow" quiet="true"/>
+        <run rule="CheckForAction" input="share" quiet="true"/>
+        <run rule="CheckForAction" input="delete" quiet="true"/>
+        <run rule="CheckForAction" input="editProps" quiet="true"/>
+        <run rule="CheckForAction" input="openContextMenu" quiet="true"/>
+        <log name="☻" text="Finished with Actions"/>
+
+        <log name="☺" text="Ensuring Features in sample.json..."/>
+        <run rule="CheckForProperty" input="forEach" quiet="true"/>
+        <run rule="CheckForProperty" input="inlineEditField" quiet="true"/>
+        <run rule="CheckForProperty" input="columnFormatterReference" quiet="true"/>
+        <run rule="CheckForProperty" input="defaultHoverField" quiet="true"/>
+        <run rule="CheckForProperty" input="customCardProps" quiet="true"/>
+        <run rule="CheckForProperty" input="beakStyle" quiet="true"/>
+        <run rule="CheckForProperty" input="directionalHint" quiet="true"/>
+        <run rule="CheckForProperty" input="filePreviewProps" quiet="true"/>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <run rule="CheckForProperty" input="hideSelection" quiet="true"/>
+          <run rule="CheckForProperty" input="hideColumnHeader" quiet="true"/>
+          <run rule="CheckForProperty" input="additionalRowClass" quiet="true"/>
+          <run rule="CheckForProperty" input="rowFormatter" quiet="true"/>
+          <run rule="CheckForProperty" input="groupProps" quiet="true"/>
+          <run rule="CheckForProperty" input="headerFormatter" quiet="true"/>
+          <run rule="CheckForProperty" input="hideFooter" quiet="true"/>
+          <run rule="CheckForProperty" input="footerFormatter" quiet="true"/>
+          <run rule="CheckForProperty" input="fillHorizontally" quiet="true"/>
+        </only>
+        <log name="☻" text="Finished with Features"/>
+
+        <log name="☺" text="Ensuring Classes in sample.json..."/>
+        <run rule="CheckForClass" input="ms-fontColor-themePrimary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themePrimary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeSecondary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeSecondary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeTertiary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeTertiary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralPrimary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralPrimary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralSecondary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralSecondary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralSecondaryAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralSecondaryAlt--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralTertiary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralTertiary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-white" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-black" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-red" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-redDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-green" quiet="true"/>
+
+        <run rule="CheckForClass" input="ms-bgColor-white" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-black" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+
+        <run rule="CheckForClass" input="sp-css-backgroundColor-blueBackground37" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-backgroundColor-successBackground50" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-backgroundColor-warningBackground50" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-backgroundColor-blockingBackground50" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-backgroundColor-errorBackground50" quiet="true"/>
+
+        <run rule="CheckForClass" input="sp-css-borderColor-neutralLight" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderColor-neutralSecondary" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderColor-" quiet="true"/>
+        
+        <run rule="CheckForClass" input="sp-card-container" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-defaultClickButton" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-borderHighlight" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-subContainer" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-displayColumnContainer" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-label" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-content" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-highlightedContent" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-lastTextColumnContainer" quiet="true"/>
+        
+        <run rule="CheckForClass" input="sp-row-card" quiet="true"/>
+        <run rule="CheckForClass" input="sp-row-title" quiet="true"/>
+        <run rule="CheckForClass" input="sp-row-listPadding" quiet="true"/>
+        <run rule="CheckForClass" input="sp-row-button" quiet="true"/>
+
+        <run rule="CheckForClass" input="sp-field-borderAllRegular" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-borderAllSolid" quiet="true"/>
+
+        <run rule="CheckForClass" input="sp-field-customFormatBackground" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-severity--good" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-severity--low" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-severity--warning" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-severity--severeWarning" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-severity--blocked" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-dataBars" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-trending--up" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-trending--down" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-quickAction" quiet="true"/>
+        <log name="☻" text="Finished with Classes"/>
+
+        <log name="☺" text="Ensuring Select Categories in sample.json..."/>
+        <!-- Suggests the Icons category if iconName is used -->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;iconName&quot;:"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Icons" matchcase="true"/>
+            <log name="Category" text="Add Icons" warn="true"/>
+          </if>
+        </if>
+        
+        <!-- Suggests the SVG category if an svg element is used -->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;elmType&quot;: &quot;svg&quot;"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="SVG" matchcase="true"/>
+            <log name="Category" text="Add SVG" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Power Automate category if an executeFlow action is used-->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;executeFlow&quot;"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notcontains" value="executeFlow" matchcase="true"/>
+            <log name="Category" text="Add Power Automate" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Inline Editing category if a setValue action is used or the inlineEditField-->
+        <if>
+          <or>
+            <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;setValue&quot;"/>
+            <filecontains path="@@FilePath@@" text="&quot;inlineEditField&quot;:"/>
+          </or>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Inline Editing" matchcase="true"/>
+            <log name="Category" text="Add Inline Editing" warn="true"/>
+          </if>
+        </if>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+        </only>
+        <log name="☻" text="Finished with Categories"/>
       </conditions>
     </rule>
 
@@ -51,7 +248,7 @@
       <conditions>
         <if>
           <!-- Check for presence of token in JSON -->
-          <filecontains path="@@MainJsonPath@@" text="@@Input@@"/>
+          <filecontains path="@@FilePath@@" text="@@Input@@"/>
           <if>
             <!-- Make sure it's in sample.json -->
             <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
@@ -62,6 +259,85 @@
             <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
             <log name="Token" text="Remove @@Input@@" warn="true"/>
           </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForOperator">
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of operator in JSON -->
+          <or>
+            <filecontains path="@@FilePath@@" text="@@Input@@("/>
+            <filecontains path="@@FilePath@@" text="&quot;operand&quot;: &quot;@@Input@@&quot;"/>
+          </or>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <log name="Operator" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <log name="Operator" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForAction">
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of action in JSON -->
+          <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;@@Input@@&quot;"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <log name="Action" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <log name="Action" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForProperty">
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of property in JSON -->
+          <filecontains path="@@FilePath@@" text="&quot;@@Input@@&quot;:"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <log name="Feature" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <log name="Feature" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForClass">
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of class in JSON -->
+          <filecontains path="@@FilePath@@" text="@@Input@@"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <log name="Class" text="Add @@Input@@" warn="true"/>
+          </if>
+          <!-- not suggesting to remove from sample.json as classes are often broken up -->
         </if>
       </conditions>
     </rule>
@@ -130,29 +406,6 @@
         <filecontains name="Telemetry Tag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@) - use '@@TelemetryTag@@'"/>
         <log name="☻" text="README is Valid (@@SampleKey@@)"/>
 
-        <!-- Sample file(s) validation -->
-        <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
-          <!-- $schema validation (and formatting of 2 spaces) -->
-          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$NOT($ENDSWITH(@@Each@@,#AST.json)))">
-            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrl@@'"/>
-          </only>
-          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$ENDSWITH(@@Each@@,#AST.json))">
-            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchemaAST@@" failuremessage="Column Formatting (AST) $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrlAST@@'"/>
-          </only>
-          <only when="$EQUALS(@@SampleType@@,#View)">
-            <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
-              <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
-              <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
-            </or>
-          </only>
-
-          <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
-          <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
-          <filecontains path="@@Each@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
-          <filecontains path="@@Each@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
-          <filecontains path="@@Each@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
-        </foreachfile>
-        
         <!-- sample.json Contents Validation -->
         <log name="☺" text="Validating sample.json... (@@SampleKey@@)"/>
         <filecontains name="Sample Not Empty" path="@@SampleJsonPath@@" text="{" failuremessage="Sample.json is invalid and likely empty (@@SampleKey@@)"/>
@@ -178,6 +431,13 @@
           <jsonquery name="Sample Compatibility All1" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online, SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online, SharePoint 2019'"/>
           <jsonquery name="Sample Compatibility All2" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019, SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019, SharePoint Online'"/>
         </or>
+        <jsonquery name="Sample Categories" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata SAMPLE-CATEGORIES missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Column Type" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata LIST-COLUMN-TYPE missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Tokens" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-TOKENS missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Operators" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-OPERATORS missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Actions" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-ACTIONS missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Features" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-FEATURES missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Classes" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata CLASSES missing in sample.json (@@SampleKey@@)"/>
         <jsonquery name="Sample Thumbnail" path="@@SampleJsonPath@@" query="$[0].thumbnails[*]" comparison="count" min="1" failuremessage="At least one thumbnail entry is required in sample.json (@@SampleKey@@) - use "/>
         <or name="Sample Thumbnail" failuremessage="First thumbnail entry in sample.json should be the primary screenshot (gif or png) referenced from raw.githubusercontent.com (@@SampleKey@@)">
           <!-- First thumbnail should be the primary screenshot and uses the correct reference (raw.githubusercontent.com)-->
@@ -190,13 +450,38 @@
         <jsonquery name="Sample Author Picture" path="@@SampleJsonPath@@" query="$[0].authors[0].name" comparison="count" value="1" failuremessage="A name is required for at least the first author (@@SampleKey@@)"/>
         <jsonquery name="Sample References" path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
         <log name="☻" text="sample.json is Valid (@@SampleKey@@)"/>
+
+        <!-- Sample file(s) validation -->
+        <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
+          <!-- $schema validation (and formatting of 2 spaces) -->
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$NOT($ENDSWITH(@@Each@@,#AST.json)))">
+            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrl@@'"/>
+          </only>
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$ENDSWITH(@@Each@@,#AST.json))">
+            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchemaAST@@" failuremessage="Column Formatting (AST) $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrlAST@@'"/>
+          </only>
+          <only when="$EQUALS(@@SampleType@@,#View)">
+            <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
+              <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
+            </or>
+          </only>
+
+          <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
+          <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
+          <filecontains path="@@Each@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
+          <filecontains path="@@Each@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
+          <filecontains path="@@Each@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
+
+          <run rule="Analyze" quiet="true"/>
+        </foreachfile>
         
       </conditions>
     </rule>
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="10">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="5" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>

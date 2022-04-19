@@ -5,6 +5,7 @@ using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -34,6 +35,7 @@ namespace Farrier.Models.Conditions
             }
 
             int skip = ValidateSkip(tokens, "folders", prefix);
+            int limit = ValidateLimit(tokens, "folders", prefix);
 
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
 
@@ -47,17 +49,15 @@ namespace Farrier.Models.Conditions
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(rawPattern);
             var folders = directory.GetDirectories(searchPattern);
+            if (skip > 0)
+                folders = folders.Skip(skip).ToArray();
+            if (limit > 0 && folders.Length > limit)
+                folders = folders.SkipLast(folders.Length - limit).ToArray();
+
             var currentfolder = 1;
             var totalfolders = folders.Length;
-            int skipped = 0;
             foreach (var folder in folders)
             {
-                if(skipped < skip)
-                {
-                    currentfolder += 1;
-                    skipped += 1;
-                    continue;
-                }
                 childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
