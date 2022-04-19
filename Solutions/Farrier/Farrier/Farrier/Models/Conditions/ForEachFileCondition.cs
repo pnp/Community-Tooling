@@ -73,6 +73,9 @@ namespace Farrier.Models.Conditions
                     var result = condition.IsValid(foreachTokens, runRule, parentRule, prefix+1, directory.FullName);
                     childMessages.AddRange(condition.Messages);
 
+                    if (condition.IgnoreResult)
+                        continue;
+
                     if (!result)
                     {
                         if (condition.IsWarning)
