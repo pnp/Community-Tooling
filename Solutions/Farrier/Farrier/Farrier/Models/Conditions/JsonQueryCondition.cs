@@ -54,7 +54,16 @@ namespace Farrier.Models.Conditions
                         this.setFailureMessage(tokens, $"Can't query inside an empty document! (path: {path})");
                         return false;
                     }
-                    var doc = JsonDocument.Parse(content);
+                    JsonDocument doc;
+                    try
+                    {
+                        doc = JsonDocument.Parse(content);
+                    }
+                    catch (JsonException ex)
+                    {
+                        messages.Add(new Message(MessageLevel.error, Name, $"Unable to parse JSON File {path}! Details: {ex.Message}", prefix));
+                        return false;
+                    }
 
                     var queryValue = parsedPath.Evaluate(doc.RootElement);
                     if(!String.IsNullOrEmpty(queryValue.Error))
