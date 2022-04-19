@@ -205,7 +205,17 @@ namespace Farrier.RoundUp
                 _log.Error($"{indent}Empty JSON File! Unable to pull details from {identifier}");
                 return null;
             }
-            var doc = JsonDocument.Parse(content);
+            JsonDocument doc;
+            try
+            {
+                doc = JsonDocument.Parse(content);
+            }
+            catch(JsonException ex)
+            {
+                _log.Error($"{indent}Unable to parse JSON File {identifier}! Details: {ex.Message}");
+                _log.Warn($"{indent}Values from {identifier} will NOT be included in results!");
+                return null;
+            }
 
             //Pull out raw values (just using paths, no transformation)
             foreach(var mappedColumn in mappedColumns)
