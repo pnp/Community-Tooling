@@ -38,6 +38,8 @@ namespace Farrier.Models.Conditions
                         return OnlyWhenCondition.FromNode(conditionNode);
                     case "log":
                         return LogCondition.FromNode(conditionNode);
+                    case "if":
+                        return IfCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }

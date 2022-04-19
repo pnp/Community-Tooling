@@ -29,16 +29,22 @@
   </tokens>
 
   <rules>
-    <rule name="Test">
+    <rule name="Analyze">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
+        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
+        <token name="AssetsPath" value="@@FolderPath@@\assets"/>
+        <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
+      </tokens>
       <conditions>
-        <log text="First Log"/>
-        <only when="true">
-          <log text="always"/>
-          <foreachfolder path="column-samples" pattern="*">
-            <log text="Foreach Actions (@@Each@@)"/>
-          </foreachfolder>
-        </only>
-        <log text="Last Log"/>
+        <log text="Detecting Tokens..."/>
+        <if>
+          <filecontains path="@@MainJsonPath@@" text="@me!"/>
+          <log name="Token" text="@me"/>
+          <log text="No @me"/>
+        </if>
       </conditions>
     </rule>
     
