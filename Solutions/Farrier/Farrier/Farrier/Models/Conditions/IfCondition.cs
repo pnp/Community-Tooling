@@ -42,6 +42,11 @@ namespace Farrier.Models.Conditions
             if (_subConditions[0].IgnoreResult)
                 ifresult = true;
 
+            if(!ifresult && _subConditions.Count == 2)
+            {
+                //No false condition, so just be done
+                return true;
+            }
             var childCondition = ifresult ? _subConditions[1] : _subConditions[2];
             bool success = childCondition.IsValid(tokens, runRule, parentRule, prefix + 1, startingpath);
             messages.AddRange(childCondition.Messages);
