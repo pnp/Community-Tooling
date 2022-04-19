@@ -39,11 +39,29 @@
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
       </tokens>
       <conditions>
-        <log text="Detecting Tokens..."/>
+        <log name="☺" text="Ensuring Tokens in sample.json..."/>
+        <run rule="CheckForToken" input="@me"/>
+        <run rule="CheckForToken" input="@now"/>
+        <log name="☻" text="Finished with Tokens"/>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForToken">
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
         <if>
-          <filecontains path="@@MainJsonPath@@" text="@me!"/>
-          <log name="Token" text="@me"/>
-          <log text="No @me"/>
+          <!-- Check for presence of token in JSON -->
+          <filecontains path="@@MainJsonPath@@" text="@@Input@@"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <log name="Token" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <log name="Token" text="Remove @@Input@@" warn="true"/>
+          </if>
         </if>
       </conditions>
     </rule>

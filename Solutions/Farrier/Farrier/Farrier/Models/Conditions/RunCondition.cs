@@ -18,13 +18,18 @@ namespace Farrier.Models.Conditions
         public RunCondition(XmlNode conditionNode) : base(conditionNode)
         {
             rawRuleName = XmlHelper.XmlAttributeToString(conditionNode.Attributes["rule"]);
+            rawInput = XmlHelper.XmlAttributeToString(conditionNode.Attributes["input"]);
         }
 
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
             var rName = tokens.DecodeString(rawRuleName);
-            var result = runRule(rName, tokens.CleanTokens(), prefix+1, parentRule);
+            var input = tokens.DecodeString(rawInput);
+            var runTokens = new TokenManager(tokens);
+            runTokens.NestToken("Input", input);
+
+            var result = runRule(rName, runTokens.CleanTokens(), prefix+1, parentRule);
             if(!result.Succeeded)
             {
                 this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");
@@ -34,5 +39,6 @@ namespace Farrier.Models.Conditions
         }
 
         private string rawRuleName;
+        private string rawInput;
     }
 }

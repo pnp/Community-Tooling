@@ -61,6 +61,8 @@ namespace Farrier.Models
 
         public bool Run(TokenManager rootTokens, DelRunRule runRule, bool listTokens = false, int prefix = 0, string startingpath = "", InspectionRule parentRule = null)
         {
+            messages.Clear();
+
             if(_conditionsNode == null)
             {
                 messages.Add(new Message(MessageLevel.error, Name, "Unable to run rule without conditions, marking as failed.", prefix));
