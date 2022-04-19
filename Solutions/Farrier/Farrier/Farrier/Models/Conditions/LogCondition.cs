@@ -24,7 +24,10 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
-            Info(tokens, rawText, prefix);
+            if (!IsWarning)
+                Info(tokens, rawText, prefix);
+            else
+                Warn(tokens, rawText, prefix);
             return true;
         }
 
