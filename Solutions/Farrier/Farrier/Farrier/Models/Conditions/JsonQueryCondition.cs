@@ -36,7 +36,7 @@ namespace Farrier.Models.Conditions
         {
             messages.Clear();
             var comparison = tokens.DecodeString(rawComparison);
-            if (comparison != "equals" && comparison != "count")
+            if (comparison != "equals" && comparison != "count" && comparison != "contains" && comparison != "notcontains")
             {
                 this.setFailureMessage(tokens, $"Invalid Json Query comparison value ({comparison})");
                 return false;
@@ -154,6 +154,23 @@ namespace Farrier.Models.Conditions
                                         return false;
                                     }
                                 }
+                            case "contains":
+                            case "notcontains":
+                                if (comparison == "contains" && queryValue.Matches.Count == 0)
+                                {
+                                    this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
+                                    return false;
+                                }
+                                var contains = false;
+                                foreach(var match in queryValue.Matches)
+                                {
+                                    if (match.Value.GetString().Contains(value, (matchcase ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase)))
+                                    {
+                                        contains = true;
+                                        break;
+                                    }
+                                }
+                                return comparison == "contains" ? contains : !contains;
                             default:
                                 if(queryValue.Matches.Count == 0)
                                 {
