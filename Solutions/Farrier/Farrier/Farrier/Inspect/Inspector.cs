@@ -51,6 +51,12 @@ namespace Farrier.Inspect
         {
             try
             {
+                if(!Directory.Exists(_startingpath))
+                {
+                    _log.Error($"No directory found for starting path: {_startingpath}");
+                    return;
+                }
+
                 var doc = new XmlDocument();
                 doc.Load(_configpath);
 
