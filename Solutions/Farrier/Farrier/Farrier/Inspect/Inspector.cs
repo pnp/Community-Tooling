@@ -58,7 +58,15 @@ namespace Farrier.Inspect
                 }
 
                 var doc = new XmlDocument();
-                doc.Load(_configpath);
+                try
+                {
+                    doc.Load(_configpath);
+                }
+                catch(XmlException ex)
+                {
+                    _log.Error($"Unable to read {_configpath}, likely bad XML. Details: {ex.Message}");
+                    return;
+                }
 
                 _rootTokens.AddTokens(doc.SelectSingleNode("//tokens"));
                 if (_listTokens)
