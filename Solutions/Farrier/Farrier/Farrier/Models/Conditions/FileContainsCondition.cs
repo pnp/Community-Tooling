@@ -30,7 +30,7 @@ namespace Farrier.Models.Conditions
             {
                 var isNot = IsNot(tokens);
                 var contents = File.ReadAllText(path);
-                var searchText = tokens.DecodeString(rawText);
+                var searchText = tokens.DecodeString(rawText).Replace("\\r", "\r").Replace("\\n","\n");
                 var matchcase = tokens.DecodeString(rawMatchCase) == "true";
                 if (contents.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
                 {
