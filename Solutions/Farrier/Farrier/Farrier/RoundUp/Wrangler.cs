@@ -36,8 +36,9 @@ namespace Farrier.RoundUp
         private int _skip;
         private int _limit;
         private int _pathdepth;
+        private bool _skipXMLValidation;
 
-        public Wrangler(string map, string outputpath = "", string outputfilename = "roundup.csv", string startpath = "", string jsonfilepattern = "*.json", bool listjsonfiles = false, Dictionary<string, string> tokens = null, bool ListTokens = false, bool Overwrite = false, bool SkipHeaders = false, bool FirstOnly = false, string MultiValueSeparator = "|", int Skip = 0, int Limit = 10000, int PathDepth = 0, LogRouter log = null)
+        public Wrangler(string map, string outputpath = "", string outputfilename = "roundup.csv", string startpath = "", string jsonfilepattern = "*.json", bool listjsonfiles = false, Dictionary<string, string> tokens = null, bool ListTokens = false, bool Overwrite = false, bool SkipHeaders = false, bool FirstOnly = false, string MultiValueSeparator = "|", int Skip = 0, int Limit = 10000, int PathDepth = 0, bool SkipXMLValidation = false, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -60,6 +61,7 @@ namespace Farrier.RoundUp
             _skipHeaders = SkipHeaders;
             _firstonly = FirstOnly;
             _multivalueseparator = MultiValueSeparator;
+            _skipXMLValidation = SkipXMLValidation;
             
             _skip = Skip;
             if (_skip < 0)
@@ -129,9 +131,27 @@ namespace Farrier.RoundUp
                 try
                 {
                     doc.Load(_map);
-                    doc.Schemas.Add("https://pnp.github.io/map", @"XML\Map.xsd");
                     nsmgr = new XmlNamespaceManager(doc.NameTable);
                     nsmgr.AddNamespace("f", "https://pnp.github.io/map");
+
+                    if (!_skipXMLValidation)
+                    {
+                        var validationMessages = XmlHelper.ValidateSchema(_map, "https://pnp.github.io/map", @"XML\Map.xsd");
+                        if (validationMessages.Count > 0)
+                        {
+                            _log.Error("  Invalid Mapping XML:");
+                            foreach (var message in validationMessages)
+                            {
+                                _log.Error($"    {message}");
+                            }
+                            _log.Warn("  If you are convinced the validation errors above will not affect the actual roundup, run again with --skipxmlvalidation to ignore these messages");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        _log.Warn("  Skipping XML Validation of Map Configuration file (Proceed at your own risk)");
+                    }
                 }
                 catch (XmlException ex)
                 {

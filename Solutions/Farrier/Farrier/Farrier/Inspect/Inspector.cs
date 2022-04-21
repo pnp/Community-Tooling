@@ -82,6 +82,10 @@ namespace Farrier.Inspect
                             return;
                         }
                     }
+                    else
+                    {
+                        _log.Warn("Skipping XML Validation of Inspection Configuration file (Proceed at your own risk)");
+                    }
                 }
                 catch(XmlException ex)
                 {

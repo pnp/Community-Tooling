@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<map xmlns="https://pnp.github.io/map" xmlns:xsi="https://pnp.github.io/map">
+<map xmlns="https://pnp.github.io/map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/thechriskent/a11120e4cad706c389fb10f3de3a5198/raw/fbfad98f417526e7edc863603caf48d9d600729c/Map.xsd">
   <columns>
     <column name="Type" path="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value"/>
     <column name="Name" path="$[0].reponame"/>

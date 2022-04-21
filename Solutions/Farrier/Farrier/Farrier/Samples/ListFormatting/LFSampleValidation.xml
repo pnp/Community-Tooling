@@ -2,7 +2,7 @@
 
 <inspection xmlns="https://pnp.github.io/inspection" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/thechriskent/319b6e7d1e87598feeb467f6e570f7d7/raw/a8173380a84425e10c2646d24301c6b65143b238/Inspection.xsd">
   <tokens>
-    <token dog="wow" name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
+    <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
     <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
     <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
     <token name="TilesSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>

@@ -53,5 +53,8 @@ namespace Farrier.Helpers
 
         [Option(Required = false, Default = 0, HelpText = "Amount of path to use when referring to the file being processed. 0 = filename, 1 = parentdirectory/filename, 2 = parentofparent/parentdirectory/filename, etc.")]
         public int PathDepth { get; set; }
+
+        [Option(Required = false, Default = false, HelpText = "Add to skip XML validation for the map file (not recommended)")]
+        public bool SkipXMLValidation { get; set; }
     }
 }
