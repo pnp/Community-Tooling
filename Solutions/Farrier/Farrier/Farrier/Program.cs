@@ -30,8 +30,8 @@ namespace Farrier
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "JsonValidate", "-s", @"D:\Code\PnP\sp-dev-list-formatting\view-samples\budget-tracker" };
-                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "Analyze", "-s", @"D:\Code\PnP\sp-dev-list-formatting\column-samples\approval-buttons-setValue-status-user" };
-                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --limit 2".Split();
+                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\", "--skipxmlvalidation" };
+                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --limit 5".Split();
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
                 }
 
@@ -79,6 +79,7 @@ namespace Farrier
                 log.Debug($"Param: outputpath={options.OutputPath}");
                 log.Debug($"Param: tokens={options.Tokens}");
                 log.Debug($"Param: listtokens={options.ListTokens}");
+                log.Debug($"Param: skipxmlvalidation={options.SkipXMLValidation}");
 
                 var i = new Inspector(options.RuleSet,
                                       options.StartingPath,
@@ -86,6 +87,7 @@ namespace Farrier
                                       options.OutputPath,
                                       TokenManager.IEnumerableToDictionary(options.Tokens),
                                       options.ListTokens,
+                                      options.SkipXMLValidation,
                                       log);
                 i.Inspect();
             }

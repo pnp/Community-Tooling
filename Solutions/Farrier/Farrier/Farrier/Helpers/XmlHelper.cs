@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Farrier.Helpers
 {
@@ -50,6 +51,25 @@ namespace Farrier.Helpers
                     return content;
             }
             return innerText;
+        }
+
+        public static List<string> ValidateSchema(string xmlLocation, string schemaNamespace, string schemaLocation)
+        {
+            var messages = new List<string>();
+            var settings = new XmlReaderSettings();
+            settings.ValidationType = ValidationType.Schema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
+            settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
+            //settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+            settings.Schemas.Add(schemaNamespace, schemaLocation);
+            settings.ValidationEventHandler += (o, args) =>
+            {
+                messages.Add($"{args.Message} (Line: {args.Exception.LineNumber}, Position: {args.Exception.LinePosition})");
+            };
+
+            XmlReader reader = XmlReader.Create(xmlLocation, settings);
+            while (reader.Read()) ;
+            return messages;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using Farrier.Parser;
 using Farrier.Helpers;
 using System.Xml;
+using System.Xml.Schema;
 using System.IO;
 using Farrier.Models;
 
@@ -21,10 +22,11 @@ namespace Farrier.Inspect
         private string _rule;
         private string _outputpath;
         private bool _listTokens;
+        private bool _skipXMLValidation;
 
         private Dictionary<string, InspectionRule> _rules;
 
-        public Inspector(string configpath, string startingpath = "", string rule = "", string outputpath = "", Dictionary<string, string> tokens = null, bool ListTokens = false, LogRouter log = null)
+        public Inspector(string configpath, string startingpath = "", string rule = "", string outputpath = "", Dictionary<string, string> tokens = null, bool ListTokens = false, bool SkipXMLValidation = false, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -36,6 +38,7 @@ namespace Farrier.Inspect
             _rule = rule;
             _outputpath = outputpath;
             _listTokens = ListTokens;
+            _skipXMLValidation = SkipXMLValidation;
 
             _functionResolver = new FunctionResolver(log: _log);
             _rootTokens = new TokenManager(_functionResolver, log: _log);
@@ -62,9 +65,23 @@ namespace Farrier.Inspect
                 try
                 {
                     doc.Load(_configpath);
-                    doc.Schemas.Add("https://pnp.github.io/inspection", @"XML\Inspection.xsd");
                     nsmgr = new XmlNamespaceManager(doc.NameTable);
                     nsmgr.AddNamespace("f", "https://pnp.github.io/inspection");
+
+                    if(!_skipXMLValidation)
+                    {
+                        var validationMessages = XmlHelper.ValidateSchema(_configpath, "https://pnp.github.io/inspection", @"XML\Inspection.xsd");
+                        if (validationMessages.Count > 0)
+                        {
+                            _log.Error("Invalid Inspection Configuration XML:");
+                            foreach (var message in validationMessages)
+                            {
+                                _log.Error($"  {message}");
+                            }
+                            _log.Warn("If you are convinced the validation errors above will not affect the actual inspection, run again with --skipxmlvalidation to ignore these messages");
+                            return;
+                        }
+                    }
                 }
                 catch(XmlException ex)
                 {

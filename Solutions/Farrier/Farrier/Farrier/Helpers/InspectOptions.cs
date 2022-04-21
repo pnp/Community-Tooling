@@ -26,5 +26,8 @@ namespace Farrier.Helpers
 
         [Option(Required = false, Default = false, HelpText = "Add to have all token values listed during processing (helpful for debugging)")]
         public bool ListTokens { get; set; }
+
+        [Option(Required = false, Default = false, HelpText = "Add to skip XML validation for the configuration file (not recommended)")]
+        public bool SkipXMLValidation { get; set; }
     }
 }
