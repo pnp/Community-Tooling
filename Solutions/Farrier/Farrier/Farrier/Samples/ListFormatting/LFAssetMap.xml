@@ -1,24 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<Map>
+<map xmlns="https://pnp.github.io/map" xmlns:xsi="https://pnp.github.io/map">
   <columns>
     <column name="Type" path="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value"/>
     <column name="Name" path="$[0].reponame"/>
     <column name="Title" path="$[0].title"/>
     <column name="Link" path="$[0].url"/>
     <column name="Author" path="$.[0].authors.[*].name"/>
-    <column name="Actions"/>
-    <column name="Operators"/>
+
+    <!-- Checks for the presence of 2019 -->
     <column name="SP2019"
             path="$.[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value"
             transform="$WHEN($CONTAINS(@@currentvalue@@,#2019),#Y)"/>
-    <column name="Categories" path="$.[0].metadata.[?(@.key=='LIST-CATEGORY')].value"/>
-    <column name="Tokens"/>
-    <column name="ColumnTypes" path="$.[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value"/>
+    
+    <!-- Actions, Operators, Categories, Tokens, & ColumnTypes 
+         can be multiple so replaces commas (and commans with space) with pipe -->
+    <column name="Categories"
+            path="$.[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+    
+    <column name="ColumnTypes"
+            path="$.[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+    
+    <column name="Tokens"
+            path="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+
+    <column name="Operators"
+            path="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+    
+    <column name="Actions"
+            path="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+
+    <column name="Features"
+            path="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+
+    <column name="Classes"
+            path="$.[0].metadata.[?(@.key=='CLASSES')].value"
+            transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
   </columns>
   
   <orderby>
     <sortcolumn name="Type" direction="descending"/>
     <sortcolumn name="Name"/>
   </orderby>
-</Map>
+</map>
