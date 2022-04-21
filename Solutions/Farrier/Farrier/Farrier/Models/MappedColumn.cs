@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Json.Path;
+using Farrier.Parser;
 
 namespace Farrier.Models
 {
@@ -11,24 +12,25 @@ namespace Farrier.Models
     {
         public MappedColumn() { }
 
-        public MappedColumn(XmlNode columnNode)
+        public MappedColumn(XmlNode columnNode, TokenManager tokens)
         {
             if (columnNode != null)
             {
                 //var xmlHelper = new XmlHelper();
-                Name = XmlHelper.XmlAttributeToString(columnNode.Attributes["name"]);
+                var rawName = XmlHelper.XmlAttributeToString(columnNode.Attributes["name"]);
+                Name = tokens.DecodeString(rawName);
                 Path = XmlHelper.XmlAttributeToString(columnNode.Attributes["path"]);
                 Transform = XmlHelper.XmlAttributeToString(columnNode.Attributes["transform"]);
             }
         }
 
-        public static List<MappedColumn> FromXmlNodeList(XmlNodeList columnNodes)
+        public static List<MappedColumn> FromXmlNodeList(XmlNodeList columnNodes, TokenManager tokens)
         {
             var mappedColumns = new List<MappedColumn>();
 
             foreach (XmlNode columnNode in columnNodes)
             {
-                mappedColumns.Add(new MappedColumn(columnNode));
+                mappedColumns.Add(new MappedColumn(columnNode, tokens));
             }
 
             return mappedColumns;

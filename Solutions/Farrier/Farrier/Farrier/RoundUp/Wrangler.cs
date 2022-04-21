@@ -124,6 +124,7 @@ namespace Farrier.RoundUp
                     }
                 }
 
+                //TODO: add catch for xml validation
                 var doc = new XmlDocument();
                 doc.Load(_map);
 
@@ -137,7 +138,7 @@ namespace Farrier.RoundUp
                 {
                     _log.Info($" Configuring {columnNodes.Count} columns...");
 
-                    var mappedColumns = MappedColumn.FromXmlNodeList(columnNodes);
+                    var mappedColumns = MappedColumn.FromXmlNodeList(columnNodes, _rootTokens);
 
                     var results = new DataTable();
                     foreach(var mappedColumn in mappedColumns)
@@ -167,10 +168,12 @@ namespace Farrier.RoundUp
                         var sort = new List<string>();
                         foreach(XmlNode sortColumnNode in sortColumnNodes)
                         {
-                            var sortName = XmlHelper.XmlAttributeToString(sortColumnNode.Attributes["name"]);
-                            var sortDirection = XmlHelper.XmlAttributeToString(sortColumnNode.Attributes["direction"]);
-                            if(!String.IsNullOrEmpty(sortName))
+                            var rawSortName = XmlHelper.XmlAttributeToString(sortColumnNode.Attributes["name"]);
+                            var rawSortDirection = XmlHelper.XmlAttributeToString(sortColumnNode.Attributes["direction"]);
+                            if(!String.IsNullOrEmpty(rawSortName))
                             {
+                                var sortName = _rootTokens.DecodeString(rawSortName);
+                                var sortDirection = _rootTokens.DecodeString(rawSortDirection);
                                 sort.Add(sortName + (sortDirection == "descending" ? " desc" : ""));
                             }
                         }
