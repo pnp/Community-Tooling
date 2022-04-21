@@ -58,9 +58,13 @@ namespace Farrier.Inspect
                 }
 
                 var doc = new XmlDocument();
+                XmlNamespaceManager nsmgr;
                 try
                 {
                     doc.Load(_configpath);
+                    doc.Schemas.Add("https://pnp.github.io/inspection", @"XML\Inspection.xsd");
+                    nsmgr = new XmlNamespaceManager(doc.NameTable);
+                    nsmgr.AddNamespace("f", "https://pnp.github.io/inspection");
                 }
                 catch(XmlException ex)
                 {
@@ -68,11 +72,11 @@ namespace Farrier.Inspect
                     return;
                 }
 
-                _rootTokens.AddTokens(doc.SelectSingleNode("//tokens"));
+                _rootTokens.AddTokens(doc.SelectSingleNode("//f:tokens", nsmgr));
                 if (_listTokens)
                     _rootTokens.LogTokens();
 
-                XmlNodeList ruleNodes = doc.SelectNodes("//rule");
+                XmlNodeList ruleNodes = doc.SelectNodes("//f:rule", nsmgr);
                 if (ruleNodes != null && ruleNodes.Count > 0)
                 {
                     _log.Info($"Processing {ruleNodes.Count} rules");
@@ -81,7 +85,7 @@ namespace Farrier.Inspect
                     _rules = new Dictionary<string, InspectionRule>();
                     foreach (XmlNode ruleNode in ruleNodes)
                     {
-                        var rule = new InspectionRule(_rootTokens, ruleNode, log: _log);
+                        var rule = new InspectionRule(_rootTokens, ruleNode, nsmgr, log: _log);
                         if(String.IsNullOrEmpty(_rule))
                         {
                             //When not specified, the first rule is used

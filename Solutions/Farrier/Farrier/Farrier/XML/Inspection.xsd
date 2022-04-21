@@ -66,6 +66,11 @@
   </xsd:complexType>
 
   <xsd:complexType name="rule">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines a set of conditions to evaluate as part of an inspection
+      </xsd:documentation>
+    </xsd:annotation>
     <xsd:all>
       <xsd:element name="tokens" type="farrier:tokens" minOccurs="0">
         <xsd:annotation>

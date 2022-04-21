@@ -30,7 +30,7 @@ namespace Farrier.Models
             messages = new List<Message>();
         }
 
-        public InspectionRule(TokenManager rootTokens, XmlNode ruleNode, LogRouter log = null)
+        public InspectionRule(TokenManager rootTokens, XmlNode ruleNode, XmlNamespaceManager nsmgr, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -45,9 +45,9 @@ namespace Farrier.Models
             tokens = new TokenManager(rootTokens);
             messages = new List<Message>();
 
-            _tokensNode = ruleNode.SelectSingleNode("tokens");
+            _tokensNode = ruleNode.SelectSingleNode("f:tokens", nsmgr);
 
-            _conditionsNode = ruleNode.SelectSingleNode("conditions");
+            _conditionsNode = ruleNode.SelectSingleNode("f:conditions", nsmgr);
             if(_conditionsNode == null || _conditionsNode.ChildNodes.Count <= 0)
             {
                _log.Warn($"No conditions found for rule: {this.Name}");

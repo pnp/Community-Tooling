@@ -7,6 +7,7 @@
     <column name="Title" path="$[0].title"/>
     <column name="Link" path="$[0].url"/>
     <column name="Author" path="$.[0].authors.[*].name"/>
+    <column name="ScreenshotUrl" path="$.[0].thumbnails[0].url"/>
 
     <!-- Checks for the presence of 2019 -->
     <column name="SP2019"
@@ -42,6 +43,7 @@
     <column name="Classes"
             path="$.[0].metadata.[?(@.key=='CLASSES')].value"
             transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
+    
   </columns>
   
   <orderby>

@@ -124,16 +124,27 @@ namespace Farrier.RoundUp
                     }
                 }
 
-                //TODO: add catch for xml validation
                 var doc = new XmlDocument();
-                doc.Load(_map);
+                XmlNamespaceManager nsmgr;
+                try
+                {
+                    doc.Load(_map);
+                    doc.Schemas.Add("https://pnp.github.io/map", @"XML\Map.xsd");
+                    nsmgr = new XmlNamespaceManager(doc.NameTable);
+                    nsmgr.AddNamespace("f", "https://pnp.github.io/map");
+                }
+                catch (XmlException ex)
+                {
+                    _log.Error($"Unable to read {_map}, likely bad XML. Details: {ex.Message}");
+                    return;
+                }
 
-                _rootTokens.AddTokens(doc.SelectSingleNode("//tokens"));
+                _rootTokens.AddTokens(doc.SelectSingleNode("//f:tokens", nsmgr));
                 if (_listTokens)
                     _rootTokens.LogTokens();
 
 
-                XmlNodeList columnNodes = doc.SelectNodes("//column");
+                XmlNodeList columnNodes = doc.SelectNodes("//f:column", nsmgr);
                 if(columnNodes != null && columnNodes.Count > 0)
                 {
                     _log.Info($" Configuring {columnNodes.Count} columns...");
@@ -162,7 +173,7 @@ namespace Farrier.RoundUp
                     }
 
                     //Apply sorting (if specified)
-                    XmlNodeList sortColumnNodes = doc.SelectNodes("//sortcolumn");
+                    XmlNodeList sortColumnNodes = doc.SelectNodes("//f:sortcolumn", nsmgr);
                     if(sortColumnNodes != null && sortColumnNodes.Count > 0)
                     {
                         var sort = new List<string>();

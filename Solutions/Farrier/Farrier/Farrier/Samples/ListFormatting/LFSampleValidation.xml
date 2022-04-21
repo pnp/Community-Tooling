@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<inspection>
+<inspection xmlns="https://pnp.github.io/inspection" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/thechriskent/319b6e7d1e87598feeb467f6e570f7d7/raw/a8173380a84425e10c2646d24301c6b65143b238/Inspection.xsd">
   <tokens>
     <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
     <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
@@ -40,7 +40,50 @@
         <token name="FilePath" value="@@MainJsonPath@@"/>
       </tokens>
       <conditions>
-        <log name="☺" text="Ensuring Tokens in sample.json..."/>
+        <log name="☺" text="Checking for recomendations for Metadata in sample.json..."/>
+        <!-- Suggests the Icons category if iconName is used -->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;iconName&quot;:"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Icons" matchcase="true"/>
+            <log name="Category" text="Add Icons" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the SVG category if an svg element is used -->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;elmType&quot;: &quot;svg&quot;"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="SVG" matchcase="true"/>
+            <log name="Category" text="Add SVG" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Power Automate category if an executeFlow action is used-->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;executeFlow&quot;"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notcontains" value="executeFlow" matchcase="true"/>
+            <log name="Category" text="Add Power Automate" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Inline Editing category if a setValue action is used or the inlineEditField-->
+        <if>
+          <or>
+            <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;setValue&quot;"/>
+            <filecontains path="@@FilePath@@" text="&quot;inlineEditField&quot;:"/>
+          </or>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Inline Editing" matchcase="true"/>
+            <log name="Category" text="Add Inline Editing" warn="true"/>
+          </if>
+        </if>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <log text="More stuff for views coming!"/>
+        </only>
+        
+        <!-- Checks for use of placeholder tokens (magic strings) -->
         <run rule="CheckForToken" input="@me" quiet="true"/>
         <run rule="CheckForToken" input="@now" quiet="true"/>
         <run rule="CheckForToken" input="@currentWeb" quiet="true"/>
@@ -58,9 +101,7 @@
           <run rule="CheckForToken" input="@columnAggregate.columnDisplayName" quiet="true"/>
           <run rule="CheckForToken" input="@commandBarProps" quiet="true"/>
         </only>
-        <log name="☻" text="Finished with Tokens"/>
 
-        <log name="☺" text="Ensuring Operators in sample.json..."/>
         <!-- Basic operators like arithmetic and comparsion are excluded -->
         <run rule="CheckForOperator" input="toLowerCase" quiet="true"/>
         <run rule="CheckForOperator" input="toString" quiet="true"/>
@@ -95,9 +136,8 @@
         <run rule="CheckForOperator" input="addMinutes" quiet="true"/>
         <run rule="CheckForOperator" input="appendTo" quiet="true"/>
         <run rule="CheckForOperator" input="removeFrom" quiet="true"/>
-        <log name="☻" text="Finished with Operators"/>
 
-        <log name="☺" text="Ensuring Actions in sample.json..."/>
+        <!-- Checks for use of customRowActions -->
         <run rule="CheckForAction" input="defaultClick" quiet="true"/>
         <run rule="CheckForAction" input="setValue" quiet="true"/>
         <run rule="CheckForAction" input="executeFlow" quiet="true"/>
@@ -105,9 +145,8 @@
         <run rule="CheckForAction" input="delete" quiet="true"/>
         <run rule="CheckForAction" input="editProps" quiet="true"/>
         <run rule="CheckForAction" input="openContextMenu" quiet="true"/>
-        <log name="☻" text="Finished with Actions"/>
 
-        <log name="☺" text="Ensuring Features in sample.json..."/>
+        <!-- Checks for "features" largely by detecting the presence of specific properties -->
         <run rule="CheckForProperty" input="forEach" quiet="true"/>
         <run rule="CheckForProperty" input="inlineEditField" quiet="true"/>
         <run rule="CheckForProperty" input="columnFormatterReference" quiet="true"/>
@@ -127,9 +166,8 @@
           <run rule="CheckForProperty" input="footerFormatter" quiet="true"/>
           <run rule="CheckForProperty" input="fillHorizontally" quiet="true"/>
         </only>
-        <log name="☻" text="Finished with Features"/>
-
-        <log name="☺" text="Ensuring Classes in sample.json..."/>
+        
+        <!-- Checks class usage (of limited use since many classes are assembled) -->
         <run rule="CheckForClass" input="ms-fontColor-themePrimary" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-themePrimary--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-themeSecondary" quiet="true"/>
@@ -149,6 +187,7 @@
         <run rule="CheckForClass" input="ms-fontColor-red" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-redDark" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-green" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-" quiet="true"/>
 
         <run rule="CheckForClass" input="ms-bgColor-white" quiet="true"/>
         <run rule="CheckForClass" input="ms-bgColor-black" quiet="true"/>
@@ -157,15 +196,31 @@
         <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
         <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
 
+        <run rule="CheckForClass" input="ms-borderColor-themePrimary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-borderColor-neutralSecondaryAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
+
+        <run rule="CheckForClass" input="ms-fontWeight-bold" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontWeight-semibold" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontWeight-" quiet="true"/>
+
+        <run rule="CheckForClass" input="ms-fontSize-10" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontSize-16" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontSize-20" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontSize-" quiet="true"/>
+
         <run rule="CheckForClass" input="sp-css-backgroundColor-blueBackground37" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-backgroundColor-successBackground50" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-backgroundColor-warningBackground50" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-backgroundColor-blockingBackground50" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-backgroundColor-errorBackground50" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-backgroundColor-" quiet="true"/>
 
         <run rule="CheckForClass" input="sp-css-borderColor-neutralLight" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-borderColor-neutralSecondary" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-borderColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderColor-green" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-borderColor-" quiet="true"/>
         
         <run rule="CheckForClass" input="sp-card-container" quiet="true"/>
@@ -177,11 +232,13 @@
         <run rule="CheckForClass" input="sp-card-content" quiet="true"/>
         <run rule="CheckForClass" input="sp-card-highlightedContent" quiet="true"/>
         <run rule="CheckForClass" input="sp-card-lastTextColumnContainer" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-" quiet="true"/>
         
         <run rule="CheckForClass" input="sp-row-card" quiet="true"/>
         <run rule="CheckForClass" input="sp-row-title" quiet="true"/>
         <run rule="CheckForClass" input="sp-row-listPadding" quiet="true"/>
         <run rule="CheckForClass" input="sp-row-button" quiet="true"/>
+        <run rule="CheckForClass" input="sp-row-" quiet="true"/>
 
         <run rule="CheckForClass" input="sp-field-borderAllRegular" quiet="true"/>
         <run rule="CheckForClass" input="sp-field-borderAllSolid" quiet="true"/>
@@ -196,50 +253,9 @@
         <run rule="CheckForClass" input="sp-field-trending--up" quiet="true"/>
         <run rule="CheckForClass" input="sp-field-trending--down" quiet="true"/>
         <run rule="CheckForClass" input="sp-field-quickAction" quiet="true"/>
-        <log name="☻" text="Finished with Classes"/>
-
-        <log name="☺" text="Ensuring Select Categories in sample.json..."/>
-        <!-- Suggests the Icons category if iconName is used -->
-        <if>
-          <filecontains path="@@FilePath@@" text="&quot;iconName&quot;:"/>
-          <if>
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Icons" matchcase="true"/>
-            <log name="Category" text="Add Icons" warn="true"/>
-          </if>
-        </if>
+        <run rule="CheckForClass" input="sp-field-" quiet="true"/>
         
-        <!-- Suggests the SVG category if an svg element is used -->
-        <if>
-          <filecontains path="@@FilePath@@" text="&quot;elmType&quot;: &quot;svg&quot;"/>
-          <if>
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="SVG" matchcase="true"/>
-            <log name="Category" text="Add SVG" warn="true"/>
-          </if>
-        </if>
-
-        <!-- Suggests the Power Automate category if an executeFlow action is used-->
-        <if>
-          <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;executeFlow&quot;"/>
-          <if>
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notcontains" value="executeFlow" matchcase="true"/>
-            <log name="Category" text="Add Power Automate" warn="true"/>
-          </if>
-        </if>
-
-        <!-- Suggests the Inline Editing category if a setValue action is used or the inlineEditField-->
-        <if>
-          <or>
-            <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;setValue&quot;"/>
-            <filecontains path="@@FilePath@@" text="&quot;inlineEditField&quot;:"/>
-          </or>
-          <if>
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Inline Editing" matchcase="true"/>
-            <log name="Category" text="Add Inline Editing" warn="true"/>
-          </if>
-        </if>
-        <only when="$EQUALS(@@SampleType@@,#View)">
-        </only>
-        <log name="☻" text="Finished with Categories"/>
+        <log name="☻" text="Finished with Analysis"/>
       </conditions>
     </rule>
 
@@ -373,7 +389,7 @@
         <fileexists path="@@READMEPath@@" matchcase="true" warn="true"/>
         <folderexists path="@@AssetsPath@@" failuremessage="assets folder missing! (@@SampleKey@@)"/>
         <folderexists path="@@AssetsPath@@" matchcase="true" warn="true"/>
-        <fileexists path="@@SampleJsonPath@@" failuremssage="sample.json not found! (@@SampleKey@@)"/>
+        <fileexists path="@@SampleJsonPath@@" failuremessage="sample.json not found! (@@SampleKey@@)"/>
         <fileexists path="@@SampleJsonPath@@" matchcase="true" warn="true"/>
         <or name="Screenshot" failuremessage="Primary screenshot not found (@@SampleKey@@)! assets\screenshot.png (or gif)">
           <!-- At least 1 screenshot (named screenshot) must exist as either a png or gif -->
@@ -466,6 +482,9 @@
               <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
             </or>
           </only>
+          <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property, these are noise and should be removed (@@Each@@)"/>
+          <filecontains name="Extra Space" path="@@Each@@" text=" &quot;\r\n" not="true" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)"/>
+          <filecontains name="Extra Space" path="@@Each@@" text=": &quot; " not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
 
           <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
           <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
@@ -481,7 +500,7 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="5" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="10" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>
