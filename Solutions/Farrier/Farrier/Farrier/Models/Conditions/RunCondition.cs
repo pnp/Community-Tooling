@@ -32,8 +32,9 @@ namespace Farrier.Models.Conditions
             var quiet = tokens.DecodeString(rawQuiet) == "true";
             var runTokens = new TokenManager(tokens);
             runTokens.NestToken("Input", input);
+            var rtDictionary = runTokens.CleanTokens();
 
-            var result = runRule(rName, runTokens.CleanTokens(), prefix+1, parentRule, quiet);
+            var result = runRule(rName, rtDictionary, prefix+1, parentRule, quiet);
             if(!result.Succeeded)
             {
                 this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");

@@ -29,6 +29,14 @@
   </tokens>
 
   <rules>
+    <rule name="Items">
+      <conditions>
+        <foreachitem items="Dog,Cat,Elephant" transform="@@currentvalue@@!">
+          <log text="Item: @@Each@@"/>
+        </foreachitem>
+      </conditions>
+    </rule>
+    
     <rule name="Analyze">
       <tokens>
         <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
@@ -174,20 +182,66 @@
         <run rule="CheckForClass" input="ms-fontColor-themeSecondary--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-themeTertiary" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-themeTertiary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeLight--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeLighter" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeLighter--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeLighterAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeLighterAlt--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeDark--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeDarker" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeDarker--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeDarkAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-themeDarkAlt--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralPrimary" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralPrimary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralPrimaryAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralPrimaryAlt--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralSecondary" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralSecondary--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralSecondaryAlt" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralSecondaryAlt--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralTertiary" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-neutralTertiary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralTertiaryAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralTertiaryAlt--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternary" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternary--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternaryAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternaryAlt--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralLight--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralLighter" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralLighter--hover" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralLighterAlt" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-neutralLighterAlt--hover" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-white" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-black" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-yellowDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-yellow" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-yellowLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-orange" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-orangeLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-orangeLighter" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-red" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-redDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-magentaDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-magenta" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-magentaLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-purpleDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-purple" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-purpleLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-blueDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-blueMid" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-blue" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-blueLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-tealDark" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-teal" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-tealLight" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-greenDark" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontColor-green" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontColor-greenLight" quiet="true"/>
 
         <run rule="CheckForClass" input="ms-bgColor-white" quiet="true"/>
         <run rule="CheckForClass" input="ms-bgColor-black" quiet="true"/>
@@ -483,6 +537,8 @@
             </or>
           </only>
           <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property, these are noise and should be removed (@@Each@@)"/>
+          <filecontains name="Empty Object" path="@@Each@@" text=": {}" not="true" warn="true" failuremessage="JSON has an empty object {}, these are noise and should be removed (@@Each@@)"/>
+          <filecontains name="Empty Array" path="@@Each@@" text=": []" not="true" warn="true" failuremessage="JSON has an empty array [], these are noise and should be removed (@@Each@@)"/>
           <filecontains name="Extra Space" path="@@Each@@" text=" &quot;\r\n" not="true" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)"/>
           <filecontains name="Extra Space" path="@@Each@@" text=": &quot; " not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
 
@@ -500,7 +556,7 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="10" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="14" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>

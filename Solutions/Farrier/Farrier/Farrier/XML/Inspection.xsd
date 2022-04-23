@@ -120,6 +120,7 @@
       <xsd:element name="fileexists" type="farrier:fileExistsCondition"/>
       <xsd:element name="folderexists" type="farrier:folderExistsCondition"/>
       <xsd:element name="if" type="farrier:ifCondition"/>
+      <xsd:element name="foreachitem" type="farrier:forEachItemCondition"/>
     </xsd:choice>
   </xsd:group>
 
@@ -490,6 +491,13 @@
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode which removes the foreach progress items from the log  (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -513,6 +521,53 @@
           <xsd:annotation>
             <xsd:documentation>
               The search pattern to match file names. Use * to match all. Use *.json to only retrieve json files, etc. (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode which removes the foreach progress items from the log  (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="forEachItemCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Evaluates all sub conditions against EACH item it finds (Available Tokens: @@Each@@ = The item, @@TotalItems@@ = Total number of items being processed (after skips and limits)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseParentCondition">
+        <xsd:attribute name="items" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              One or more items to process. Separate items with the specified separator (comma by default) (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="separator" use="optional" default="," type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The separator between items - comma when unspecified (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="transform" use="optional" default="@@currentvalue@@" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              Optional post processing of items. To access the item value use @@currentvalue@@ (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode which removes the foreach progress items from the log  (supports expressions, but must evaluate to true or false)
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
