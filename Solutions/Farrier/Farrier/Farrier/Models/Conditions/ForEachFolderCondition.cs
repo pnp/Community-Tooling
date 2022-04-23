@@ -36,6 +36,7 @@ namespace Farrier.Models.Conditions
 
             int skip = ValidateSkip(tokens, "folders", prefix);
             int limit = ValidateLimit(tokens, "folders", prefix);
+            var quiet = tokens.DecodeString(rawQuiet) == "true";
 
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
 
@@ -58,7 +59,8 @@ namespace Farrier.Models.Conditions
             var totalfolders = folders.Length;
             foreach (var folder in folders)
             {
-                childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
+                if (!quiet)
+                    childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", folder.Name);

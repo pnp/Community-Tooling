@@ -36,6 +36,7 @@ namespace Farrier.Models.Conditions
             this.childMessages = new List<Message>();
             rawSkip = XmlHelper.XmlAttributeToString(conditionNode.Attributes["skip"]);
             rawLimit = XmlHelper.XmlAttributeToString(conditionNode.Attributes["limit"]);
+            rawQuiet = XmlHelper.XmlAttributeToString(conditionNode.Attributes["quiet"]);
         }
 
         protected int ValidateSkip(TokenManager tokens, string itemsName, int prefix)
@@ -79,6 +80,6 @@ namespace Farrier.Models.Conditions
 
         protected string rawSkip;
         protected string rawLimit;
-
+        protected string rawQuiet;
     }
 }

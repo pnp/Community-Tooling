@@ -36,6 +36,7 @@ namespace Farrier.Models.Conditions
 
             int skip = ValidateSkip(tokens, "files", prefix);
             int limit = ValidateLimit(tokens, "files", prefix);
+            var quiet = tokens.DecodeString(rawQuiet) == "true";
 
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(Path));
 
@@ -58,7 +59,8 @@ namespace Farrier.Models.Conditions
             var totalfiles = files.Length;
             foreach (var file in files)
             {
-                childMessages.Add(new Message(MessageLevel.info, Name, $"File ({currentfile}/{totalfiles}): {file.Name}", prefix));
+                if (!quiet)
+                    childMessages.Add(new Message(MessageLevel.info, Name, $"File ({currentfile}/{totalfiles}): {file.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", file.Name);

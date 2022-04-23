@@ -40,6 +40,8 @@ namespace Farrier.Models.Conditions
                         return LogCondition.FromNode(conditionNode);
                     case "if":
                         return IfCondition.FromNode(conditionNode);
+                    case "foreachitem":
+                        return ForEachItemCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }
