@@ -20,12 +20,7 @@ namespace Farrier.Models.Conditions
                 var childCondition = BaseCondition.FromNode(child);
                 if(childCondition != null)
                 {
-                    /*if(!childCondition.OverriddenName && index > 1)
-                    {
-                        childCondition.Name = $"{childCondition.type}.{index}";
-                    }*/
                     _subConditions.Add(childCondition);
-                    //index += 1;
                 }
             }
             if(_subConditions.Count == 0 && String.IsNullOrEmpty(this.failuremessage))

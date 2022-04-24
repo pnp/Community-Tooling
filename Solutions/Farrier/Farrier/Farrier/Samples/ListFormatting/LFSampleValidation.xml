@@ -469,10 +469,10 @@
             </or>
           </only>
           <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property, these are noise and should be removed (@@Each@@)"/>
-          <filecontains name="Empty Object" path="@@Each@@" text=": {}" not="true" warn="true" failuremessage="JSON has an empty object {}, these are noise and should be removed (@@Each@@)"/>
-          <filecontains name="Empty Array" path="@@Each@@" text=": []" not="true" warn="true" failuremessage="JSON has an empty array [], these are noise and should be removed (@@Each@@)"/>
+          <regexmatches name="Empty Object" path="@@Each@@" pattern=": {\s*}" not="true" warn="true" failuremessage="JSON has an empty object {} (@@Each@@)"/>
+          <regexmatches name="Empty Array" path="@@Each@@" pattern=": \[\s*\]" not="true" warn="true" failuremessage="JSON has an empty array [] (@@Each@@)"/>
           <filecontains name="Extra Space" path="@@Each@@" text=" &quot;\r\n" not="true" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)"/>
-          <filecontains name="Extra Space" path="@@Each@@" text=": &quot; " not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
+          <regexmatches name="Extra Space" path="@@Each@@" pattern=": &quot;\s(?!&quot;)" not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
 
           <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
           <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
@@ -491,6 +491,19 @@
         <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="14" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
+      </conditions>
+    </rule>
+
+    <rule name="regex">
+      <tokens>
+        <token name="Each" value="generic-approval-status-hover-card.json"/>
+        <token name="FilePath" value="D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-approval-status-hover-card\generic-approval-status-hover-card.json"/>
+        <token name="SampleJsonPath" value="D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-approval-status-hover-card\assets\sample.json"/>
+      </tokens>
+      <conditions>
+
+        <run rule="CheckForOperator" input="Date" quiet="true"/>
+
       </conditions>
     </rule>
     

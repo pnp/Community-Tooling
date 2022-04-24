@@ -42,6 +42,8 @@ namespace Farrier.Models.Conditions
                         return IfCondition.FromNode(conditionNode);
                     case "foreachitem":
                         return ForEachItemCondition.FromNode(conditionNode);
+                    case "regexmatches":
+                        return RegexMatchesCondition.FromNode(conditionNode);
                     default:
                         return null;
                 }

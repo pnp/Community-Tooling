@@ -121,6 +121,7 @@
       <xsd:element name="folderexists" type="farrier:folderExistsCondition"/>
       <xsd:element name="if" type="farrier:ifCondition"/>
       <xsd:element name="foreachitem" type="farrier:forEachItemCondition"/>
+      <xsd:element name="regexmatches" type="farrier:regexMatchesCondition"/>
     </xsd:choice>
   </xsd:group>
 
@@ -275,7 +276,46 @@
         <xsd:attribute name="not" use="optional" default="false" type="farrier:BoolOrExpression">
           <xsd:annotation>
             <xsd:documentation>
-              When true, reverses the results so that the condition becomes &quot;file doesn't contain&quot; (supports expressions)
+              When true, reverses the results so that the condition returns false if the file contains the text (use for file should not contain conditions) (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="regexMatchesCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true if the specified pattern finds a match in the text-based file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The path of the text-based file to search within (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="pattern" use="required" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>
+              The pattern to use. Uses .NET default options but supports inline options in the form of (?imsx) or (?-imsx)
+              For instance, pattern matching is case-sensitive by default. To disable add (?i) to the beginning of your pattern (or group)
+              i = Case-Insensitive matching - default (?-i)
+              m = Multiline Mode - default (?-m)
+              s = Single-line Mode - default (?-s)
+              x = Ignore Pattern White Space - default (?-x)
+              (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="not" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, reverses the results so that the condition returns false if the specified pattern is found (use for file should not match the pattern conditions) (supports expressions)
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
