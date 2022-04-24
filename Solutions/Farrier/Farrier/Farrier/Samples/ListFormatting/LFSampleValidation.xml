@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<inspection xmlns="https://pnp.github.io/inspection" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/thechriskent/319b6e7d1e87598feeb467f6e570f7d7/raw/a8173380a84425e10c2646d24301c6b65143b238/Inspection.xsd">
+<inspection xmlns="https://pnp.github.io/inspection" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <tokens>
     <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
     <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
@@ -29,14 +29,6 @@
   </tokens>
 
   <rules>
-    <rule name="Items">
-      <conditions>
-        <foreachitem items="Dog,Cat,Elephant" transform="@@currentvalue@@!">
-          <log text="Item: @@Each@@"/>
-        </foreachitem>
-      </conditions>
-    </rule>
-    
     <rule name="Analyze">
       <tokens>
         <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
@@ -92,222 +84,162 @@
         </only>
         
         <!-- Checks for use of placeholder tokens (magic strings) -->
-        <run rule="CheckForToken" input="@me" quiet="true"/>
-        <run rule="CheckForToken" input="@now" quiet="true"/>
-        <run rule="CheckForToken" input="@currentWeb" quiet="true"/>
-        <run rule="CheckForToken" input="@rowIndex" quiet="true"/>
-        <run rule="CheckForToken" input="@window.innerHeight" quiet="true"/>
-        <run rule="CheckForToken" input="@window.innerWidth" quiet="true"/>
-        <run rule="CheckForToken" input="@thumbnail" quiet="true"/>
+        <foreachitem items="@me,@now,@currentWeb,@rowIndex,@window.innerHeight,@window.innerWidth,@thumbnail" quiet="true">
+          <run rule="CheckForToken" input="@@Each@@" quiet="true"/>
+        </foreachitem>
         <only when="$EQUALS(@@SampleType@@,#View)">
-          <run rule="CheckForToken" input="@group.fieldData" quiet="true"/>
-          <run rule="CheckForToken" input="@group.count" quiet="true"/>
-          <run rule="CheckForToken" input="@group.columnDisplayName" quiet="true"/>
-          <run rule="CheckForToken" input="@aggregates" quiet="true"/>
-          <run rule="CheckForToken" input="@columnAggregate.type" quiet="true"/>
-          <run rule="CheckForToken" input="@columnAggregate.value" quiet="true"/>
-          <run rule="CheckForToken" input="@columnAggregate.columnDisplayName" quiet="true"/>
-          <run rule="CheckForToken" input="@commandBarProps" quiet="true"/>
+          <foreachitem items="@groupfieldData,@group.count,@group.columnDisplayName,@aggregates,@columnAggregate.type,@columnAggregate.value,@columnAggregate.columnDisplayName" quiet="true">
+            <run rule="CheckForToken" input="@@Each@@" quiet="true"/>
+          </foreachitem>
         </only>
 
         <!-- Basic operators like arithmetic and comparsion are excluded -->
-        <run rule="CheckForOperator" input="toLowerCase" quiet="true"/>
-        <run rule="CheckForOperator" input="toString" quiet="true"/>
-        <run rule="CheckForOperator" input="Number" quiet="true"/>
-        <run rule="CheckForOperator" input="Date" quiet="true"/>
-        <run rule="CheckForOperator" input="cos" quiet="true"/>
-        <run rule="CheckForOperator" input="sin" quiet="true"/>
-        <run rule="CheckForOperator" input="abs" quiet="true"/>
-        <run rule="CheckForOperator" input="loopIndex" quiet="true"/>
-        <run rule="CheckForOperator" input="toLocaleString" quiet="true"/>
-        <run rule="CheckForOperator" input="toLocaleDateString" quiet="true"/>
-        <run rule="CheckForOperator" input="toLocaleTimeString" quiet="true"/>
-        <run rule="CheckForOperator" input="indexOf" quiet="true"/>
-        <run rule="CheckForOperator" input="join" quiet="true"/>
-        <run rule="CheckForOperator" input="length" quiet="true"/>
-        <run rule="CheckForOperator" input="floor" quiet="true"/>
-        <run rule="CheckForOperator" input="ceiling" quiet="true"/>
-        <run rule="CheckForOperator" input="pow" quiet="true"/>
-        <run rule="CheckForOperator" input="substring" quiet="true"/>
-        <run rule="CheckForOperator" input="getDate" quiet="true"/>
-        <run rule="CheckForOperator" input="getMonth" quiet="true"/>
-        <run rule="CheckForOperator" input="getYear" quiet="true"/>
-        <run rule="CheckForOperator" input="toUpperCase" quiet="true"/>
-        <run rule="CheckForOperator" input="lastIndexOf" quiet="true"/>
-        <run rule="CheckForOperator" input="startsWith" quiet="true"/>
-        <run rule="CheckForOperator" input="endsWith" quiet="true"/>
-        <run rule="CheckForOperator" input="replace" quiet="true"/>
-        <run rule="CheckForOperator" input="padStart" quiet="true"/>
-        <run rule="CheckForOperator" input="padEnd" quiet="true"/>
-        <run rule="CheckForOperator" input="getUserImage" quiet="true"/>
-        <run rule="CheckForOperator" input="addDays" quiet="true"/>
-        <run rule="CheckForOperator" input="addMinutes" quiet="true"/>
-        <run rule="CheckForOperator" input="appendTo" quiet="true"/>
-        <run rule="CheckForOperator" input="removeFrom" quiet="true"/>
+        <foreachitem items="toLowerCase,toString,Number,Date,cos,sin,abs,loopIndex,toLocaleString,toLocaleDateString,toLocaleTimeString,indexOf,join,length,floor,ceiling,pow,substring,getDate,getMonth,getYear,toUpperCase,lastIndexOf,startsWith,endsWith,replace,padStart,padEnd,getUserImage,addDays,addMinutes,appendTo,removeFrom" quiet="true">
+          <run rule="CheckForOperator" input="@@Each@@" quiet="true"/>
+        </foreachitem>
 
         <!-- Checks for use of customRowActions -->
-        <run rule="CheckForAction" input="defaultClick" quiet="true"/>
-        <run rule="CheckForAction" input="setValue" quiet="true"/>
-        <run rule="CheckForAction" input="executeFlow" quiet="true"/>
-        <run rule="CheckForAction" input="share" quiet="true"/>
-        <run rule="CheckForAction" input="delete" quiet="true"/>
-        <run rule="CheckForAction" input="editProps" quiet="true"/>
-        <run rule="CheckForAction" input="openContextMenu" quiet="true"/>
+        <foreachitem items="defaultClick,setValue,executeFlow,share,delete,editProps,openContextMenu" quiet="true">
+          <run rule="CheckForAction" input="@@Each@@" quiet="true"/>
+        </foreachitem>
 
         <!-- Checks for "features" largely by detecting the presence of specific properties -->
-        <run rule="CheckForProperty" input="forEach" quiet="true"/>
-        <run rule="CheckForProperty" input="inlineEditField" quiet="true"/>
-        <run rule="CheckForProperty" input="columnFormatterReference" quiet="true"/>
-        <run rule="CheckForProperty" input="defaultHoverField" quiet="true"/>
-        <run rule="CheckForProperty" input="customCardProps" quiet="true"/>
-        <run rule="CheckForProperty" input="beakStyle" quiet="true"/>
-        <run rule="CheckForProperty" input="directionalHint" quiet="true"/>
-        <run rule="CheckForProperty" input="filePreviewProps" quiet="true"/>
+        <foreachitem items="forEach,inlineEditField,columnFormatterReference,defaultHoverField,customCardProps,beakStyle,directionalHint,filePreviewProps" quiet="true">
+          <run rule="CheckForProperty" input="@@Each@@" quiet="true"/>
+        </foreachitem>
         <only when="$EQUALS(@@SampleType@@,#View)">
-          <run rule="CheckForProperty" input="hideSelection" quiet="true"/>
-          <run rule="CheckForProperty" input="hideColumnHeader" quiet="true"/>
-          <run rule="CheckForProperty" input="additionalRowClass" quiet="true"/>
-          <run rule="CheckForProperty" input="rowFormatter" quiet="true"/>
-          <run rule="CheckForProperty" input="groupProps" quiet="true"/>
-          <run rule="CheckForProperty" input="headerFormatter" quiet="true"/>
-          <run rule="CheckForProperty" input="hideFooter" quiet="true"/>
-          <run rule="CheckForProperty" input="footerFormatter" quiet="true"/>
-          <run rule="CheckForProperty" input="fillHorizontally" quiet="true"/>
+          <foreachitem items="hideSelection,hideColumnHeader,additionalRowClass,rowFormatter,groupProps,headerFormatter,hideFooter,footerFormatter,fillHorizontally" quiet="true">
+            <run rule="CheckForProperty" input="@@Each@@" quiet="true"/>
+          </foreachitem>
         </only>
         
+        
         <!-- Checks class usage (of limited use since many classes are assembled) -->
-        <run rule="CheckForClass" input="ms-fontColor-themePrimary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themePrimary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeSecondary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeSecondary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeTertiary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeTertiary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeLight--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeLighter" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeLighter--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeLighterAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeLighterAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeDark--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeDarker" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeDarker--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeDarkAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-themeDarkAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralPrimary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralPrimary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralPrimaryAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralPrimaryAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralSecondary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralSecondary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralSecondaryAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralSecondaryAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralTertiary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralTertiary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralTertiaryAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralTertiaryAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternary--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternaryAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralQuaternaryAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralLight--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralLighter" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralLighter--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralLighterAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-neutralLighterAlt--hover" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-white" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-black" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-yellowDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-yellow" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-yellowLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-orange" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-orangeLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-orangeLighter" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-red" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-redDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-magentaDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-magenta" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-magentaLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-purpleDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-purple" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-purpleLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-blueDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-blueMid" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-blue" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-blueLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-tealDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-teal" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-tealLight" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-greenDark" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-green" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontColor-greenLight" quiet="true"/>
+        
+        <!-- .ms-border-*, .ms-bgColor-*, .ms-fontColor-*, and hover versions -->
+        <foreachitem items="themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellowDark,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,constrastWhiteDisabled,constrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOranged20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="ms-fontColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-fontColor-@@Each@@--hover" quiet="true"/>
+          <run rule="CheckForClass" input="ms-borderColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-borderColor-@@Each@@--hover" quiet="true"/>
+          <run rule="CheckForClass" input="ms-bgColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-bgColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
 
-        <run rule="CheckForClass" input="ms-bgColor-white" quiet="true"/>
-        <run rule="CheckForClass" input="ms-bgColor-black" quiet="true"/>
-        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
-        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
-        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
-        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+        <!-- .ms-fontWeight-* -->
+        <foreachitem items="regular,semibold,bold,semilight,light" quiet="true">
+          <run rule="CheckForClass" input="ms-fontWeight-@@Each@@" quiet="true"/>
+        </foreachitem>
 
-        <run rule="CheckForClass" input="ms-borderColor-themePrimary" quiet="true"/>
-        <run rule="CheckForClass" input="ms-borderColor-neutralSecondaryAlt" quiet="true"/>
-        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
-        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
-        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
+        <!-- .ms-font-* -->
+        <foreachitem items="su,xxl,xl-plus,xl,l,m-plus,m,s-plus,s,xs,mi" quiet="true">
+          <run rule="CheckForClass" input="ms-font-@@Each@@" quiet="true"/>
+        </foreachitem>
 
-        <run rule="CheckForClass" input="ms-fontWeight-bold" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontWeight-semibold" quiet="true"/>
+        <!-- .ms-fontSize-* -->
+        <foreachitem items="su,xxl,xlPlus,xl,l,mPlus,m,sPlus,s,xs,mi,68,42,32,28,24,20,18,16,14,12,10" quiet="true">
+          <run rule="CheckForClass" input="ms-fontSize-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-field-fontSize* -->
+        <foreachitem items="14,15,17,21,24,28,32,36,42,Small,Medium,Large,XLarge" quiet="true">
+          <run rule="CheckForClass" input="sp-field-fontSize@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-motion-* -->
+        <foreachitem items="fadeIn,fadeOut,scaleDownIn,scaleDownOut,slideLeftOut,slideRightOut,slideDownOut,slideUpOut,slideLeftIn,slideRightIn,slideDownIn,slideUpIn" quiet="true">
+          <run rule="CheckForClass" input="ms-motion-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-* (animation classes) -->
+        <foreachitem items="slideRightIn10,slideRightIn20,slideRightIn40,slideRightIn400,slideRightOut40,slideRightOut400,slideLeftIn10,slideLeftIn20,slideLeftIn40,slideLeftIn400,slideLeftOut40,slideLeftOut400,slideUpIn10,slideUpIn20,slideDownIn10,slideDownIn20,slideUpOut10,slideUpOut20,slideDownOut10,slideDownOut20,scaleUpIn100,scaleUpOut103,scaleDownIn100,scaleDownOut98,rotateN90deg,rotate90deg,fadeIn100,fadeIn200,fadeIn400,fadeIn500,fadeOut100,fadeOut200,fadeOut400,fadeOut500,expandCollapse100,expandCollapse200,expandCollapse400" quiet="true">
+          <run rule="CheckForClass" input="ms-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-List-color* -->
+        <foreachitem items="1,2,3,4,5,6,7,8,9,10,11" quiet="true">
+          <run rule="CheckForClass" input="sp-List-color@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-backgroundColor-* -->
+        <foreachitem items="BgDarkRed,BgRed,BgOrange,BgBrown,BgGreen,BgTeal,BgDarkGreen,BgBlue,bgLavender,BgDarkBlue,BgDarkPurple,BgPurple,BgDarkPink,BgGray,BgCoral,BgDustRose,BgPeak,BgGold,BgMintGreen,BgCyan,BgSage,BgCornflowerBlue,BgLightPurple,BgLightBlue,BgViolet,BgMauve,BgLilac,BgLightGray,BgCoral30,BgDustRose30,BgPeach40,BgGold60,BgMintGreen30,BgCyan30,BgSage20,BgCornflower40,BgLightPurple30,BgLightBlue20,BgViolet40,BgMauve50,BgLilac30,BgLightGray30,DarkRedText,RedText,OrangeText,BrownText,GreenText,TealText,DarkGreenText,BlueText,LavenderText,DarkBlueText,DarkPurpleText,PurpleText,LightPurpleText,GrayText,WhiteText,BlackText,CoralFont,DustRoseFont,PeachFont,GoldFont,MintGreenFont,CyanFont,SageFont,CornflowerBlueFont,LightPurpleFont,LightBlueFont,VioletFont,MauveFont,LilacFont,LightGrayFont,WhiteFont,BlackFont,bodyBackground,bodyText,bodySubtext,bodyDivider,disabledBackground,disabledText,disabledSubtext,errorBackground,errorText,listBackground,listTextColor,listItemBackgroundChecked,warningBackground,successBackground,blockingBackground,themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,blue,yellow,yellowLight,red,redDark,green,greenLight,blueLight,blueDark,purple,neutralBackground30,neutralBackground20,neutralBackground10,neutralBackground,blueBackground37,blueBackground27,blueBackground17,blueBackground07,successBackground50,successBackground40,successBackground30,warningbackground50,warningbackground40,warningBackground30,blockingBackground50,blockingbackground40,blockingBackground30,errorbackground50,errorBackground40,errorBackground30,noFill" quiet="true">
+          <run rule="CheckForClass" input="sp-css-backgroundColor-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-borderTop-* -->
+        <foreachitem items="neutralBorder,blueBorder,successBorder,warningBorder,blockingBorder,errorBorder" quiet="true">
+          <run rule="CheckForClass" input="sp-css-borderTop-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-borderRight-* -->
+        <foreachitem items="neutralTertiaryDashed" quiet="true">
+          <run rule="CheckForClass" input="sp-css-borderRight-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-color-*, .sp-css-borderColor-*, .sp-css-borderLeftColor-*, 
+             .sp-css-borderRightColor-*, .sp-css-borderTopColor-*, .sp-css-borderBottomColor-* -->
+        <foreachitem items="themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellowDark,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,constrastWhiteDisabled,constrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOranged20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="sp-css-color-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderColor-@@Each@@--hover" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderLeftColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderRightColor-@@Each@@--hover" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderTopColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderBottomColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-card-* -->
+        <foreachitem items="borderHighlight,personCallout,container,keyboard-focusable,defaultClickButton,subContainer,displayColumnContainer,previewColumnContainerlastTextColumnContainer,label,content,userContent,boldText,highlightedContent,urlContent,formatterRef,imagePreviewBackground,imagePreviewBackground-shortened,userEmptyText,userThumbnail,userOthers,userTitle,userCustomCard,defaultImage,lookupInlineValues,defaultImage,defaultImageOverlay,starRating,emptyFillStar,halfFillStar,ratingCount,bottomCommandBar,linkes,heartIcon,multiline,container-noPadding,showOnHoverParent,showOnHoverChild,showOnHover" quiet="true">
+          <run rule="CheckForClass" input="sp-card-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-row-* -->
+        <foreachitem items="card,listPadding,title,button" quiet="true">
+          <run rule="CheckForClass" input="sp-row-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-field-* -->
+        <foreachitem items="customFormatter,customFormatBackground-margin,neutral,neutral20,neutral30,blue,blue17,blue27,blue37,severity--good,severity00good30,severity--good40,severity--good50,severity--low,severity--warning,severity--warning30,severity--warning40,severity--warning50,severity--severeWarning,severity--severeWarning30,severity--severeWarning40,severity--severeWarning50,severity--blocked,severity--blocked30,severity--blocked40,severity--blocked50,dataBars,trending--up,trending--down,quickAction,iconPadding,bold,italic,underline,strikeThrough,underlineStrikeThrough,iconRightAligned,iconLeftAligned,dashedBorderRight,editorBorder" quiet="true">
+          <run rule="CheckForClass" input="sp-field-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-field-border*Regular, .sp-field-border*Semibold, .sp-field-border*Bold,
+             .sp-field-border*Dashed, .sp-field-border*Dotted -->
+        <foreachitem items="All,Top,Bottom,Left,Right,TopBottom,LeftRight" quiet="true">
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Regular" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Semibold" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Bold" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Dashed" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Dotted" quiet="true"/>
+        </foreachitem>
+
+        <!-- Catch Alls (to attempt to catch missed assembled classes) -->
+        <run rule="CheckForClass" input="ms-fontColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontWeight-" quiet="true"/>
-
-        <run rule="CheckForClass" input="ms-fontSize-10" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontSize-16" quiet="true"/>
-        <run rule="CheckForClass" input="ms-fontSize-20" quiet="true"/>
+        <run rule="CheckForClass" input="ms-font-" quiet="true"/>
         <run rule="CheckForClass" input="ms-fontSize-" quiet="true"/>
-
-        <run rule="CheckForClass" input="sp-css-backgroundColor-blueBackground37" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-backgroundColor-successBackground50" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-backgroundColor-warningBackground50" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-backgroundColor-blockingBackground50" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-backgroundColor-errorBackground50" quiet="true"/>
+        <run rule="CheckForClass" input="ms-motion-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-List-color" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-backgroundColor-" quiet="true"/>
-
-        <run rule="CheckForClass" input="sp-css-borderColor-neutralLight" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-borderColor-neutralSecondary" quiet="true"/>
-        <run rule="CheckForClass" input="sp-css-borderColor-green" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderTop-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderRight-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-color-" quiet="true"/>
         <run rule="CheckForClass" input="sp-css-borderColor-" quiet="true"/>
-        
-        <run rule="CheckForClass" input="sp-card-container" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-defaultClickButton" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-borderHighlight" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-subContainer" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-displayColumnContainer" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-label" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-content" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-highlightedContent" quiet="true"/>
-        <run rule="CheckForClass" input="sp-card-lastTextColumnContainer" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderLeftColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderRightColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderTopColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderBottomColor-" quiet="true"/>
         <run rule="CheckForClass" input="sp-card-" quiet="true"/>
-        
-        <run rule="CheckForClass" input="sp-row-card" quiet="true"/>
-        <run rule="CheckForClass" input="sp-row-title" quiet="true"/>
-        <run rule="CheckForClass" input="sp-row-listPadding" quiet="true"/>
-        <run rule="CheckForClass" input="sp-row-button" quiet="true"/>
         <run rule="CheckForClass" input="sp-row-" quiet="true"/>
-
-        <run rule="CheckForClass" input="sp-field-borderAllRegular" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-borderAllSolid" quiet="true"/>
-
-        <run rule="CheckForClass" input="sp-field-customFormatBackground" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-severity--good" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-severity--low" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-severity--warning" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-severity--severeWarning" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-severity--blocked" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-dataBars" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-trending--up" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-trending--down" quiet="true"/>
-        <run rule="CheckForClass" input="sp-field-quickAction" quiet="true"/>
         <run rule="CheckForClass" input="sp-field-" quiet="true"/>
+        
+        <!-- Misc Classes -->
+        <run rule="CheckForClass" input="itemHovered" quiet="true"/>
+        <run rule="CheckForClass" input="sp-customformatter-thumbnail" quiet="true"/>
+        <run rule="CheckForClass" input="ms-Tile-background" quiet="true"/>
+        
         
         <log name="☻" text="Finished with Analysis"/>
       </conditions>
@@ -521,7 +453,7 @@
         <jsonquery name="Sample References" path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
         <log name="☻" text="sample.json is Valid (@@SampleKey@@)"/>
 
-        <!-- Sample file(s) validation -->
+        <!-- JSON file(s) validation -->
         <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
           <!-- $schema validation (and formatting of 2 spaces) -->
           <only when="$AND($EQUALS(@@SampleType@@,#Column),#$NOT($ENDSWITH(@@Each@@,#AST.json)))">
