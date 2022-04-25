@@ -246,6 +246,9 @@
     </rule>
 
     <rule name="CheckForToken">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>
@@ -258,7 +261,7 @@
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Token" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -266,6 +269,9 @@
     </rule>
 
     <rule name="CheckForOperator">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>
@@ -281,7 +287,7 @@
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Operator" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -289,6 +295,9 @@
     </rule>
 
     <rule name="CheckForAction">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>
@@ -301,7 +310,7 @@
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Action" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -309,6 +318,9 @@
     </rule>
 
     <rule name="CheckForProperty">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>
@@ -316,11 +328,12 @@
           <filecontains path="@@FilePath@@" text="&quot;@@Input@@&quot;:"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Feature" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
+            
             <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
             <log name="Feature" text="Remove @@Input@@" warn="true"/>
           </if>
@@ -502,7 +515,7 @@
       </tokens>
       <conditions>
 
-        <run rule="CheckForOperator" input="Date" quiet="true"/>
+        <run rule="CheckForOperator2" input="Date" quiet="true"/>
 
       </conditions>
     </rule>

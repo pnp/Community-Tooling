@@ -378,7 +378,7 @@
   <xsd:complexType name="jsonQueryCondition">
     <xsd:annotation>
       <xsd:documentation>
-        Returns true if all of the sub conditions evaluate to true (stops evaluating as soon as a single false condition is found)
+        Executes and then compares a Json Query against a JSON file
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexContent>
@@ -393,7 +393,9 @@
         <xsd:attribute name="matchcase" use="optional" default="false" type="farrier:BoolOrExpression">
           <xsd:annotation>
             <xsd:documentation>
-              When true, comparisons will require exact casing (supports expressions)
+              When true, comparisons will require exact casing.
+              Does NOT apply with matches/notmatches comparisons - use inline options in pattern (?i) for case insensitive.
+              (supports expressions)
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
@@ -433,6 +435,20 @@
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:enumeration>
+              <xsd:enumeration value="matches">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if any result of the query matches the pattern (value)
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="notmatches">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if no result of the query matches the pattern (value)
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
             </xsd:restriction>
           </xsd:simpleType>
         </xsd:attribute>
@@ -446,7 +462,16 @@
         <xsd:attribute name="value" use="optional" type="xsd:string">
           <xsd:annotation>
             <xsd:documentation>
-              The value to compare against. Leave out when using comparison count with ranges (min/max) otherwise needs to match exact count. (supports expressions)
+              The value to compare against.
+              Leave out when using comparison count with ranges (min/max) otherwise needs to match exact count.
+              Regex pattern when using comparison matches or notmatches. Use $RXESCAPE to wrap any tokens
+              Uses .NET default options for regular expressions but supports inline options in the form of (?imsx) or (?-imsx)
+              For instance, pattern matching is case-sensitive by default. To disable add (?i) to the beginning of your pattern (or group)
+              i = Case-Insensitive matching - default (?-i)
+              m = Multiline Mode - default (?-m)
+              s = Single-line Mode - default (?-s)
+              x = Ignore Pattern White Space - default (?-x)
+              (supports expressions)
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>

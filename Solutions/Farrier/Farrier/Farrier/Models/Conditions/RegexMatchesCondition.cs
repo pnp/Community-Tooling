@@ -36,7 +36,6 @@ namespace Farrier.Models.Conditions
                 if (Regex.IsMatch(contents,pattern))
                 {
                     //Match
-
                     if (!isNot)
                     {
                         return true;

@@ -7,6 +7,7 @@ using Farrier.Parser;
 using System.IO;
 using Json.Path;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Farrier.Models.Conditions
 {
@@ -36,7 +37,7 @@ namespace Farrier.Models.Conditions
         {
             messages.Clear();
             var comparison = tokens.DecodeString(rawComparison);
-            if (comparison != "equals" && comparison != "count" && comparison != "contains" && comparison != "notcontains")
+            if (comparison != "equals" && comparison != "count" && comparison != "contains" && comparison != "notcontains" && comparison != "matches" && comparison != "notmatches")
             {
                 this.setFailureMessage(tokens, $"Invalid Json Query comparison value ({comparison})");
                 return false;
@@ -180,7 +181,23 @@ namespace Farrier.Models.Conditions
                                     }
                                 }
                                 return comparison == "contains" ? contains : !contains;
+                            case "matches":
+                            case "notmatches":
+                                var matches = false;
+                                foreach (var result in queryValue.Matches)
+                                {
+                                    if (result.Value.ValueKind == JsonValueKind.String && Regex.IsMatch(result.Value.GetString(), value))
+                                        matches = true;
+                                }
+                                if ((matches && comparison == "matches") || (!matches && comparison == "notmatches"))
+                                    return true;
+                                else
+                                {
+                                    this.setFailureMessage(tokens, $"Pattern {(comparison == "matches" ? "doesn't match" : "matches")} query result");
+                                    return false;
+                                }
                             default:
+                                //Equals
                                 if(queryValue.Matches.Count == 0)
                                 {
                                     this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
