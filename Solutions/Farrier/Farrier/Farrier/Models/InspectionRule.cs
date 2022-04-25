@@ -82,7 +82,7 @@ namespace Farrier.Models
                 if (_tokensDictionary != null)
                     tokens.AddTokens(_tokensDictionary, false, rootTokens, parentRule.tokens);
                 if (_tokensNode != null)
-                    tokens.AddTokens(_tokensNode, false, rootTokens, parentRule.tokens);
+                    tokens.AddTokens(_tokensNode, false);
             }
             else
             {

@@ -256,7 +256,7 @@
           <filecontains path="@@FilePath@@" text="@@Input@@"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Token" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
@@ -282,7 +282,7 @@
           </or>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Operator" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
@@ -305,7 +305,7 @@
           <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;@@Input@@&quot;"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Action" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
@@ -328,13 +328,12 @@
           <filecontains path="@@FilePath@@" text="&quot;@@Input@@&quot;:"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Feature" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="contains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
             <log name="Feature" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -481,7 +480,7 @@
               <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
             </or>
           </only>
-          <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property, these are noise and should be removed (@@Each@@)"/>
+          <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property (@@Each@@)"/>
           <regexmatches name="Empty Object" path="@@Each@@" pattern=": {\s*}" not="true" warn="true" failuremessage="JSON has an empty object {} (@@Each@@)"/>
           <regexmatches name="Empty Array" path="@@Each@@" pattern=": \[\s*\]" not="true" warn="true" failuremessage="JSON has an empty array [] (@@Each@@)"/>
           <filecontains name="Extra Space" path="@@Each@@" text=" &quot;\r\n" not="true" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)"/>
@@ -501,22 +500,9 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="14" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="0" limit="15">
           <run rule="ValidateSample"/>
         </foreachfolder>
-      </conditions>
-    </rule>
-
-    <rule name="regex">
-      <tokens>
-        <token name="Each" value="generic-approval-status-hover-card.json"/>
-        <token name="FilePath" value="D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-approval-status-hover-card\generic-approval-status-hover-card.json"/>
-        <token name="SampleJsonPath" value="D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-approval-status-hover-card\assets\sample.json"/>
-      </tokens>
-      <conditions>
-
-        <run rule="CheckForOperator2" input="Date" quiet="true"/>
-
       </conditions>
     </rule>
     
