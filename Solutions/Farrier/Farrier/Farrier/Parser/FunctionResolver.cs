@@ -14,7 +14,7 @@ namespace Farrier.Parser
 
         private LogRouter _log;
 
-        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION)\\(", string paramstart = ",#", LogRouter log = null)
+        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE)\\(", string paramstart = ",#", LogRouter log = null)
         {
             FUNCPATTERN = pattern;
             PARAMSTART = paramstart;
@@ -166,6 +166,8 @@ namespace Farrier.Parser
                         return Path.GetFileName(innards);
                     case "FILEEXTENSION":
                         return Path.GetExtension(innards);
+                    case "RXESCAPE":
+                        return Regex.Escape(innards);
                     default:
                         throw new Exception("Unknown function: " + keyword);
                 }
