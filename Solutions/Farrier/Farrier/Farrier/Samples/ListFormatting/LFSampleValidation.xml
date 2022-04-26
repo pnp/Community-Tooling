@@ -82,6 +82,38 @@
         <only when="$EQUALS(@@SampleType@@,#View)">
           <log text="More stuff for views coming!"/>
         </only>
+
+        <!-- Column Type validation / recommendation -->
+        <only when="$EQUALS(@@SampleType@@,#Column)">
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$IN($LOWER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF(@@SampleKey@@,#-))),#currency,#date,#hyperlink,#image,#location,#number,#person,#picture))">
+            <!-- column type matches prefix -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="$PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF(@@SampleKey@@,#-)))" matchcase="true" />
+              <log name="Column Type" text="Set to $PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF(@@SampleKey@@,#-)))" warn="true"/>
+            </if>
+          </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#multi-)">
+            <!-- multi column types -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="$PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF($REPLACE(@@SampleKey@@,#multi-,#multi_),#-)))" matchcase="true" />
+              <log name="Column Type" text="Set to $PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF($REPLACE(@@SampleKey@@,#multi-,#multi_),#-)))" warn="true"/>
+            </if>
+          </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#yesno-)">
+            <!-- yes/no -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="Yes/No" matchcase="true" />
+              <log name="Column Type" text="Set to Yes/No" warn="true"/>
+            </if>
+          </only>
+          <only when="$OR($STARTSWITH(@@SampleKey@@,#generic-),#$STARTSWITH(@@SampleKey@@,#text-))">
+            <!-- yes/no -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="General" matchcase="true" />
+              <log name="Column Type" text="Set to General" warn="true"/>
+            </if>
+          </only>
+        </only>
         
         <!-- Checks for use of placeholder tokens (magic strings) -->
         <foreachitem items="@me,@now,@currentWeb,@rowIndex,@window.innerHeight,@window.innerWidth,@thumbnail" quiet="true">
@@ -162,7 +194,7 @@
         </foreachitem>
 
         <!-- .sp-css-backgroundColor-* -->
-        <foreachitem items="BgDarkRed,BgRed,BgOrange,BgBrown,BgGreen,BgTeal,BgDarkGreen,BgBlue,bgLavender,BgDarkBlue,BgDarkPurple,BgPurple,BgDarkPink,BgGray,BgCoral,BgDustRose,BgPeak,BgGold,BgMintGreen,BgCyan,BgSage,BgCornflowerBlue,BgLightPurple,BgLightBlue,BgViolet,BgMauve,BgLilac,BgLightGray,BgCoral30,BgDustRose30,BgPeach40,BgGold60,BgMintGreen30,BgCyan30,BgSage20,BgCornflower40,BgLightPurple30,BgLightBlue20,BgViolet40,BgMauve50,BgLilac30,BgLightGray30,DarkRedText,RedText,OrangeText,BrownText,GreenText,TealText,DarkGreenText,BlueText,LavenderText,DarkBlueText,DarkPurpleText,PurpleText,LightPurpleText,GrayText,WhiteText,BlackText,CoralFont,DustRoseFont,PeachFont,GoldFont,MintGreenFont,CyanFont,SageFont,CornflowerBlueFont,LightPurpleFont,LightBlueFont,VioletFont,MauveFont,LilacFont,LightGrayFont,WhiteFont,BlackFont,bodyBackground,bodyText,bodySubtext,bodyDivider,disabledBackground,disabledText,disabledSubtext,errorBackground,errorText,listBackground,listTextColor,listItemBackgroundChecked,warningBackground,successBackground,blockingBackground,themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,blue,yellow,yellowLight,red,redDark,green,greenLight,blueLight,blueDark,purple,neutralBackground30,neutralBackground20,neutralBackground10,neutralBackground,blueBackground37,blueBackground27,blueBackground17,blueBackground07,successBackground50,successBackground40,successBackground30,warningbackground50,warningbackground40,warningBackground30,blockingBackground50,blockingbackground40,blockingBackground30,errorbackground50,errorBackground40,errorBackground30,noFill" quiet="true">
+        <foreachitem items="BgDarkRed,BgRed,BgOrange,BgBrown,BgGreen,BgTeal,BgDarkGreen,BgBlue,bgLavender,BgDarkBlue,BgDarkPurple,BgPurple,BgDarkPink,BgGray,BgCoral,BgDustRose,BgPeak,BgGold,BgMintGreen,BgCyan,BgSage,BgCornflowerBlue,BgLightPurple,BgLightBlue,BgViolet,BgMauve,BgLilac,BgLightGray,BgCoral30,BgDustRose30,BgPeach40,BgGold60,BgMintGreen30,BgCyan30,BgSage20,BgCornflower40,BgLightPurple30,BgLightBlue20,BgViolet40,BgMauve50,BgLilac30,BgLightGray30,DarkRedText,RedText,OrangeText,BrownText,GreenText,TealText,DarkGreenText,BlueText,LavenderText,DarkBlueText,DarkPurpleText,PurpleText,LightPurpleText,GrayText,WhiteText,BlackText,CoralFont,DustRoseFont,PeachFont,GoldFont,MintGreenFont,CyanFont,SageFont,CornflowerBlueFont,LightPurpleFont,LightBlueFont,VioletFont,MauveFont,LilacFont,LightGrayFont,WhiteFont,BlackFont,bodyBackground,bodyText,bodySubtext,bodyDivider,disabledBackground,disabledText,disabledSubtext,errorBackground,errorText,listBackground,listTextColor,listItemBackgroundChecked,warningBackground,successBackground,blockingBackground,themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,blue,yellow,yellowLight,red,redDark,green,greenLight,blueLight,blueDark,purple,neutralBackground30,neutralBackground20,neutralBackground10,neutralBackground,blueBackground37,blueBackground27,blueBackground17,blueBackground07,successBackground50,successBackground40,successBackground30,warningBackground50,warningBackground40,warningBackground30,blockingBackground50,blockingBackground40,blockingBackground30,errorBackground50,errorBackground40,errorBackground30,noFill" quiet="true">
           <run rule="CheckForClass" input="sp-css-backgroundColor-@@Each@@" quiet="true"/>
         </foreachitem>
 
@@ -256,12 +288,12 @@
           <filecontains path="@@FilePath@@" text="@@Input@@"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Token" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Token" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -282,12 +314,12 @@
           </or>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Operator" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Operator" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -305,12 +337,12 @@
           <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;@@Input@@&quot;"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Action" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Action" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -328,12 +360,12 @@
           <filecontains path="@@FilePath@@" text="&quot;@@Input@@&quot;:"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="notmatches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Feature" text="Add @@Input@@" warn="true"/>
           </if>
           <if>
             <!-- Make sure it's not in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="matches" value="(?&lt;![a-zA-Z])@@EscapedInput@@"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Feature" text="Remove @@Input@@" warn="true"/>
           </if>
         </if>
@@ -341,6 +373,9 @@
     </rule>
 
     <rule name="CheckForClass">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
       <!-- Should not be called directly, relies on tokens coming higher level rules -->
       <conditions>
         <if>
@@ -348,7 +383,7 @@
           <filecontains path="@@FilePath@@" text="@@Input@@"/>
           <if>
             <!-- Make sure it's in sample.json -->
-            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')].value" comparison="notcontains" value="@@Input@@" matchcase="true"/>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
             <log name="Class" text="Add @@Input@@" warn="true"/>
           </if>
           <!-- not suggesting to remove from sample.json as classes are often broken up -->
@@ -500,7 +535,7 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="0" limit="15">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="generic*" skip="0" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>

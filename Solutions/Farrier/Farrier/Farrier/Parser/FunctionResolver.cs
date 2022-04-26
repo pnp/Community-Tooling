@@ -4,6 +4,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Farrier.Helpers;
 using System.IO;
+using System.Globalization;
+using System.Linq;
 
 namespace Farrier.Parser
 {
@@ -14,7 +16,7 @@ namespace Farrier.Parser
 
         private LogRouter _log;
 
-        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE)\\(", string paramstart = ",#", LogRouter log = null)
+        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|PROPER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|IN|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE)\\(", string paramstart = ",#", LogRouter log = null)
         {
             FUNCPATTERN = pattern;
             PARAMSTART = paramstart;
@@ -66,6 +68,9 @@ namespace Farrier.Parser
                         return innards.ToUpper();
                     case "LOWER":
                         return innards.ToLower();
+                    case "PROPER":
+                        var proper = new CultureInfo("en-US", false).TextInfo;
+                        return proper.ToTitleCase(innards);
                     case "TRIM":
                         return innards.Trim();
                     case "INDEXOF":
@@ -97,6 +102,13 @@ namespace Farrier.Parser
                     case "CONTAINS":
                         var cP = functionParameters(keyword, innards, 2);
                         return cP[0].Contains(cP[1]) ? "true" : "false";
+                    case "IN":
+                        var inP = functionParameters(keyword, innards);
+                        if(inP.Length < 2)
+                        {
+                            throw new Exception(keyword + " requires a minimum of two parameters (value followed by 1 or more values)");
+                        }
+                        return inP.Skip(1).Contains(inP[0]) ? "true" : "false";
                     case "REPLACE":
                         var rP = functionParameters(keyword, innards, 3);
                         return rP[0].Replace(rP[1], rP[2]);
@@ -187,6 +199,13 @@ namespace Farrier.Parser
             {
                 throw new Exception(keyword + " requires " + expected + " parameters (found " + p.Length + ": " + innards + ")");
             }
+            return p;
+        }
+
+        private string[] functionParameters(string keyword, string innards)
+        {
+            //No checking, just return them all
+            var p = innards.Split(PARAMSTART);
             return p;
         }
 
