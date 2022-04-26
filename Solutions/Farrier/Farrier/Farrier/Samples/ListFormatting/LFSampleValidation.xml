@@ -106,8 +106,15 @@
               <log name="Column Type" text="Set to Yes/No" warn="true"/>
             </if>
           </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#managed-metadata-)">
+            <!-- managed-metadata -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="Managed Metadata" matchcase="true" />
+              <log name="Column Type" text="Set to Managed Metadata" warn="true"/>
+            </if>
+          </only>
           <only when="$OR($STARTSWITH(@@SampleKey@@,#generic-),#$STARTSWITH(@@SampleKey@@,#text-))">
-            <!-- yes/no -->
+            <!-- generic or text -->
             <if>
               <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="General" matchcase="true" />
               <log name="Column Type" text="Set to General" warn="true"/>
@@ -535,7 +542,7 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="generic*" skip="0" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="49" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
       </conditions>
