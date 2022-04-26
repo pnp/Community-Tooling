@@ -37,7 +37,7 @@ namespace Farrier.Models.Conditions
         {
             messages.Clear();
             var comparison = tokens.DecodeString(rawComparison);
-            if (comparison != "equals" && comparison != "count" && comparison != "contains" && comparison != "notcontains" && comparison != "matches" && comparison != "notmatches")
+            if (comparison != "equals" && comparison != "notequals" && comparison != "count" && comparison != "contains" && comparison != "notcontains" && comparison != "matches" && comparison != "notmatches")
             {
                 this.setFailureMessage(tokens, $"Invalid Json Query comparison value ({comparison})");
                 return false;
@@ -197,30 +197,45 @@ namespace Farrier.Models.Conditions
                                     return false;
                                 }
                             default:
-                                //Equals
+                                //Equals/NotEquals
                                 if(queryValue.Matches.Count == 0)
                                 {
-                                    this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
-                                    return false;
+                                    if(comparison == "equals")
+                                    {
+                                        this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
+                                        return false;
+                                    }
+                                    return true; //notequals
                                 }
                                 string queryResult = queryValue.Matches[0].Value.GetString();
                                 if (value.Equals(queryResult, StringComparison.CurrentCultureIgnoreCase))
                                 {
                                     if (matchcase && !value.Equals(queryResult))
                                     {
-                                        //Invalid casing
-                                        this.setFailureMessage(tokens, $"Value found but casing does not match (Result: {queryResult})");
-                                        return false;
+                                        if (comparison == "equals")
+                                        {
+                                            //Invalid casing
+                                            this.setFailureMessage(tokens, $"Value found but casing does not match (Result: {queryResult})");
+                                            return false;
+                                        }
+                                        return true; //notequals
                                     }
                                     else
                                     {
-                                        return true;
+                                        if (comparison == "equals")
+                                            return true;
+                                        else
+                                            return false; //notequals
                                     }
                                 }
                                 else
                                 {
-                                    this.setFailureMessage(tokens, $"Queried Value does not match (Result: '{queryResult}', Expected: '{value}')");
-                                    return false;
+                                    if (comparison == "equals")
+                                    {
+                                        this.setFailureMessage(tokens, $"Queried Value does not match (Result: '{queryResult}', Expected: '{value}')");
+                                        return false;
+                                    }
+                                    return true; //notequals
                                 }
                         }
                     }

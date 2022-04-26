@@ -414,6 +414,13 @@
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:enumeration>
+              <xsd:enumeration value="notequals">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if the result of the query does NOT match the value. If the query ends up with multiple results, only the first is used.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
               <xsd:enumeration value="count">
                 <xsd:annotation>
                   <xsd:documentation>
