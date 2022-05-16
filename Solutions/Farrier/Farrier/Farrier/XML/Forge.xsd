@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema targetNamespace="https://pnp.github.io/forge"
+    elementFormDefault="qualified"
+    xmlns="https://pnp.github.io/forge"
+    xmlns:farrier="https://pnp.github.io/forge"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+  <xsd:element name="forge" type="farrier:forge">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        Base element of a Forge Blueprint File
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="forge">
+    <xsd:all>
+      <xsd:element name="tokens" type="farrier:tokens" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Contains 1 or more Root tokens that are available to ALL templates and files
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="templates" type="farrier:templates" minOccurs="0"/>
+      <xsd:element name="files" type="farrier:files"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="tokens">
+    <xsd:sequence>
+      <xsd:element name="token" type="farrier:token" maxOccurs="unbounded" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="token">
+    <xsd:annotation>
+      <xsd:documentation>
+        A token is a name/value pair that is evaluated on the fly and can be used to store common variables/calculations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="farrier:NotEmpty" use="required">
+          <xsd:annotation>
+            <xsd:documentation>This will be used to reference the token later. You can reference tokens by surrounding the name with @@. If the name was Id then you would reference it with @@Id@@</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute type="xsd:string" name="value" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>The value (can reference previous tokens). You can also place values inside the element which is helpful when you need to use CDATA.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="templates">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more templates that can be used when generating a file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="template" type="farrier:template" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="template">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines a reusable chunk
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="farrier:NotEmpty" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The name of the template (used to reference the template) (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="files">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more files to generate
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="file" type="farrier:file" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="file">
+    <xsd:annotation>
+      <xsd:documentation>
+        
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:group ref="farrier:fileItems" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The relative (to this blueprint) path of the file to output (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:group name="fileItems">
+    <xsd:choice>
+      <xsd:element name="section" type="farrier:section"/>
+      <xsd:element name="loop" type="farrier:loop"/>
+    </xsd:choice>
+  </xsd:group>
+
+  <xsd:complexType name="baseSection">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="template" type="farrier:NotEmpty" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>
+              The name of the template to use (separate multiple templates to be rendered in order by a comma), otherwise just place content inside the element (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="section">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines a section of content that will be output directly to the file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="farrier:baseSection"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="loop">
+    <xsd:annotation>
+      <xsd:documentation>
+        Loop content will be repeated for every item pulled from the CSV
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="groupStart" type="farrier:groupStart" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="item" type="farrier:item" minOccurs="1" maxOccurs="1"/>
+      <xsd:element name="groupEnd" type="farrier:groupEnd" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+    <xsd:attribute name="csv" use="required" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The relative (to this blueprint) path of the csv file to use as the loop data (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="orderBy" use="optional" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the column in the CSV to order the items by (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="orderDesc" use="optional" type="farrier:BoolOrExpression" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, items will be sorted in descending order (Z-A) (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="groupBy" use="optional" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the column in the CSV to group by (leave off for no grouping) (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="groupOrder" use="optional" default="value">
+      <xsd:annotation>
+        <xsd:documentation>
+          How group order should be determined. Uses the group value when unspecified.
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="value">
+            <xsd:annotation>
+              <xsd:documentation>
+                Group items will be sorted alphabetically by their value
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="size">
+            <xsd:annotation>
+              <xsd:documentation>
+                Group items will be sorted by how many items they contain
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="groupDesc" use="optional" type="farrier:BoolOrExpression" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, group items will be sorted in descending order (Z-A when using value, largest to smallest when using size) (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="filter" use="optional" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          Dataview Row Filter expression to apply to the CSV (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="groupSeparator" use="optional" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The text to use as an item separator when splitting values to establish groups (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="groupStart">
+    <xsd:annotation>
+      <xsd:documentation>
+        When grouping, you can provide content to be placed at the start of every group (before items are rendered). Available to use @@GroupSize@@, @@GroupValue@@, @@GroupIndex@@.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="farrier:baseSection"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="item">
+    <xsd:annotation>
+      <xsd:documentation>
+        Content output for each item, reference item values using the syntax @@[ColumnName]@@. When grouping, group tokens available to use @@GroupSize@@, @@GroupValue@@, @@GroupIndex@@.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="farrier:baseSection"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="groupEnd">
+    <xsd:annotation>
+      <xsd:documentation>
+        When grouping, you can provide content to be placed at the end of every group (after items are rendered). Available to use @@GroupSize@@, @@GroupValue@@, @@GroupIndex@@.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="farrier:baseSection"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+
+  <xsd:simpleType name="NotEmpty">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="BoolOrExpression">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value=".*@@.*@@.*|true|false"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="IntOrExpression">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value=".*@@.*@@.*|[0-9]*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

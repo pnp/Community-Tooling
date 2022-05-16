@@ -20,10 +20,13 @@ namespace Farrier.Forge
         private string _outputpath;
         private bool _listTokens;
         private bool _skipXMLFormattingFix;
+        private bool _skipXMLValidation;
 
         private Dictionary<string, string> _templates;
 
-        public Forger(string blueprint, string outputpath = "", Dictionary<string, string> tokens = null, bool ListTokens = false, bool SkipXMLFormattingFix = false, LogRouter log = null)
+        private XmlNamespaceManager nsmgr;
+
+        public Forger(string blueprint, string outputpath = "", Dictionary<string, string> tokens = null, bool ListTokens = false, bool SkipXMLFormattingFix = false, bool SkipXMLValidation = false, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -36,6 +39,7 @@ namespace Farrier.Forge
             _outputpath = outputpath;
             _listTokens = ListTokens;
             _skipXMLFormattingFix = SkipXMLFormattingFix;
+            _skipXMLValidation = SkipXMLValidation;
 
             _functionResolver = new FunctionResolver(log:_log);
             _rootTokens = newTokenManager();
@@ -49,15 +53,44 @@ namespace Farrier.Forge
             try
             {
                 var doc = new XmlDocument();
-                doc.Load(_blueprint);
+                try
+                {
+                    doc.Load(_blueprint);
+                    nsmgr = new XmlNamespaceManager(doc.NameTable);
+                    nsmgr.AddNamespace("f", "https://pnp.github.io/forge");
+                    if (!_skipXMLValidation)
+                    {
+                        var validationMessages = XmlHelper.ValidateSchema(_blueprint, "https://pnp.github.io/forge", @"XML\Forge.xsd");
+                        if (validationMessages.Count > 0)
+                        {
+                            _log.Error("Invalid Forger Blueprint XML:");
+                            foreach (var message in validationMessages)
+                            {
+                                _log.Error($"  {message}");
+                            }
+                            _log.Warn("If you are convinced the validation errors above will not affect the actual forge, run again with --skipxmlvalidation to ignore these messages");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        _log.Warn("Skipping XML Validation of Forge Blueprint file (Proceed at your own risk)");
+                    }
+                }
+                catch (XmlException ex)
+                {
+                    _log.Error($"Unable to read {_blueprint}, likely bad XML. Details: {ex.Message}");
+                    return;
+                }
 
-                _rootTokens.AddTokens(doc.SelectSingleNode("//tokens"));
+
+                _rootTokens.AddTokens(doc.SelectSingleNode("//f:tokens", nsmgr));
                 if (_listTokens)
                     _rootTokens.LogTokens();
 
-                LoadTemplates(doc.SelectSingleNode("//templates"));
+                LoadTemplates(doc.SelectSingleNode("//f:templates", nsmgr));
 
-                XmlNodeList fileNodes = doc.SelectNodes("//file");
+                XmlNodeList fileNodes = doc.SelectNodes("//f:file", nsmgr);
                 if (fileNodes != null && fileNodes.Count > 0)
                 {
                     _log.Info($"Processing {fileNodes.Count} files");
@@ -110,59 +143,52 @@ namespace Farrier.Forge
         {
             if (fileNode != null)
             {
-                XmlAttribute outputAttribute = fileNode.Attributes["output"];
-                if (outputAttribute != null && !String.IsNullOrEmpty(outputAttribute.Value))
+                string rawPath = XmlHelper.XmlAttributeToString(fileNode.Attributes["path"]);
+                string outputpath = Path.Combine(_outputpath, _rootTokens.DecodeString(rawPath));
+                string outputfilename = Path.GetFileName(outputpath);
+                string outputfilenamewithoutextension = Path.GetFileNameWithoutExtension(outputfilename);
+
+                var fileTokens = newTokenManager();
+
+                fileTokens.AddToken("OutputPath", outputpath);
+                fileTokens.AddToken("OutputFilename", outputfilename);
+                fileTokens.AddToken("OutputFilenameNoExtension", outputfilenamewithoutextension);
+
+                _log.Info($"Processing file: {outputpath}...");
+                if (_listTokens)
+                    fileTokens.LogTokens();
+
+                StringBuilder fileContent = new StringBuilder();
+
+                foreach (XmlNode contentNode in fileNode)
                 {
-                    string outputpath = Path.Combine(_outputpath, _rootTokens.DecodeString(outputAttribute.Value));
-                    string outputfilename = Path.GetFileName(outputpath);
-                    string outputfilenamewithoutextension = Path.GetFileNameWithoutExtension(outputfilename);
-
-                    var fileTokens = newTokenManager();
-
-                    fileTokens.AddToken("OutputPath", outputpath);
-                    fileTokens.AddToken("OutputFilename", outputfilename);
-                    fileTokens.AddToken("OutputFilenameNoExtension", outputfilenamewithoutextension);
-
-                    _log.Info($"Processing file: {outputpath}...");
-                    if (_listTokens)
-                        fileTokens.LogTokens();
-
-                    StringBuilder fileContent = new StringBuilder();
-
-                    foreach (XmlNode contentNode in fileNode)
+                    if (contentNode.NodeType == XmlNodeType.Element)
                     {
-                        if (contentNode.NodeType == XmlNodeType.Element)
+                        string contentType = contentNode.LocalName;
+                        switch (contentType)
                         {
-                            string contentType = contentNode.LocalName;
-                            switch (contentType)
-                            {
-                                case "section":
-                                    fileContent.Append(BuildSection(contentNode, fileTokens));
-                                    break;
-                                case "loop":
-                                    fileContent.Append(BuildLoop(contentNode, fileTokens));
-                                    break;
-                                default:
-                                    _log.Warn($"Unknown content element: {contentType}");
-                                    break;
-                            }
+                            case "section":
+                                fileContent.Append(BuildSection(contentNode, fileTokens));
+                                break;
+                            case "loop":
+                                fileContent.Append(BuildLoop(contentNode, fileTokens));
+                                break;
+                            default:
+                                _log.Warn($"Unknown content element: {contentType}");
+                                break;
                         }
                     }
-
-                    string finalContent = fileContent.ToString();
-
-                    if (!_skipXMLFormattingFix)
-                    {
-                        //remove final newline
-                        finalContent = finalContent.TrimEnd();
-                    }
-
-                    File.WriteAllText(outputpath, finalContent);
                 }
-                else
+
+                string finalContent = fileContent.ToString();
+
+                if (!_skipXMLFormattingFix)
                 {
-                    _log.Warn("No ouput found for file, skipping entry!");
+                    //remove final newline
+                    finalContent = finalContent.TrimEnd();
                 }
+
+                File.WriteAllText(outputpath, finalContent);
             }
         }
 
@@ -191,25 +217,29 @@ namespace Farrier.Forge
                 {
                     StringBuilder loopContent = new StringBuilder();
 
-                    XmlAttribute csvAttribute = loopNode.Attributes["csv"];
-                    if (csvAttribute == null || String.IsNullOrEmpty(csvAttribute.Value))
-                        throw new Exception("csv attribute is missing from loop!");
-
-                    string csvPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(_blueprint), csvAttribute.Value));
+                    string rawCsv = XmlHelper.XmlAttributeToString(loopNode.Attributes["csv"]);
+                    string csvPath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(_blueprint), _rootTokens.DecodeString(rawCsv, false, fileTokens)));
                     if (!File.Exists(csvPath))
                         throw new Exception("Unable to find csv file at " + csvPath);
 
-                    string orderBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["orderBy"]);
-                    bool orderDesc = XmlHelper.XmlAttributeToBool(loopNode.Attributes["orderDesc"]);
-                    string groupBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupBy"]);
+                    var rawOrderBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["orderBy"]);
+                    var rawOrderDesc = XmlHelper.XmlAttributeToString(loopNode.Attributes["orderDesc"]);
+                    var rawGroupBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupBy"]);
                     bool groupOrderBySize = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupOrder"]) == "size";
-                    bool groupDesc = XmlHelper.XmlAttributeToBool(loopNode.Attributes["groupDesc"]);
-                    string filter = XmlHelper.XmlAttributeToString(loopNode.Attributes["filter"]);
-                    string groupSeparator = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupSeparator"]);
+                    var rawGroupDesc = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupDesc"]);
+                    var rawFilter = XmlHelper.XmlAttributeToString(loopNode.Attributes["filter"]);
+                    var rawGroupSeparator = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupSeparator"]);
+
+                    var orderBy = _rootTokens.DecodeString(rawOrderBy, false, fileTokens);
+                    var orderDesc = _rootTokens.DecodeString(rawOrderDesc, false, fileTokens) == "true";
+                    var groupBy = _rootTokens.DecodeString(rawGroupBy, false, fileTokens);
+                    var groupDesc = _rootTokens.DecodeString(rawGroupDesc, false, fileTokens) == "true";
+                    var filter = _rootTokens.DecodeString(rawFilter, false, fileTokens);
+                    var groupSeparator = _rootTokens.DecodeString(rawGroupSeparator, false, fileTokens);
 
                     LoopData loopData = new LoopData(csvPath, orderBy, orderDesc, groupBy, groupOrderBySize, groupDesc, filter, groupSeparator, log: _log);
 
-                    XmlNode itemNode = loopNode.SelectSingleNode("item");
+                    XmlNode itemNode = loopNode.SelectSingleNode("f:item", nsmgr);
                     if (itemNode == null)
                         throw new Exception("No item element found in loop!");
 
@@ -228,8 +258,8 @@ namespace Farrier.Forge
                     }
                     else
                     {
-                        XmlNode groupStartNode = loopNode.SelectSingleNode("groupStart");
-                        XmlNode groupEndNode = loopNode.SelectSingleNode("groupEnd");
+                        XmlNode groupStartNode = loopNode.SelectSingleNode("f:groupStart", nsmgr);
+                        XmlNode groupEndNode = loopNode.SelectSingleNode("f:groupEnd", nsmgr);
 
                         int groupIndex = 0;
                         foreach (var group in loopData.GroupedData)
@@ -276,14 +306,19 @@ namespace Farrier.Forge
         {
             if (contentNode != null)
             {
-                string templateName = XmlHelper.XmlAttributeToString(contentNode.Attributes["template"]);
-                if (!String.IsNullOrEmpty(templateName))
+                string templateNames = XmlHelper.XmlAttributeToString(contentNode.Attributes["template"]);
+                if (!String.IsNullOrEmpty(templateNames))
                 {
-                    templateName = _rootTokens.DecodeString(templateName, false, additionalTokens);
-                    if (_templates.ContainsKey(templateName))
-                        return _templates[templateName];
-                    else
-                        throw new Exception("Template \"" + templateName + "\" not found!");
+                    templateNames = _rootTokens.DecodeString(templateNames, false, additionalTokens);
+                    var templateContent = new StringBuilder();
+                    foreach (var templateName in templateNames.Split(','))
+                    {
+                        if (_templates.ContainsKey(templateName))
+                            templateContent.Append(_templates[templateName]);
+                        else
+                            throw new Exception("Template \"" + templateName + "\" not found!");
+                    }
+                    return templateContent.ToString();
                 }
                 else
                 {

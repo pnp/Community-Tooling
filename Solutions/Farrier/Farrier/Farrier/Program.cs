@@ -30,10 +30,10 @@ namespace Farrier
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/InspectionSample.xml", "--listtokens", "-r", "JsonValidate", "-s", @"D:\Code\PnP\sp-dev-list-formatting\view-samples\budget-tracker" };
-                    args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\" };
+                    //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\" };
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "regex", "-s", @"D:\Code\PnP\sp-dev-list-formatting\column-samples\generic-approval-status-hover-card", "--skipxmlvalidation" };
-                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --limit 5".Split();
-                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml".Split();
+                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3".Split();
+                    args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\groupings\".Split();
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())
@@ -101,12 +101,14 @@ namespace Farrier
                 log.Debug($"Param: tokens={options.Tokens}");
                 log.Debug($"Param: listtokens={options.ListTokens}");
                 log.Debug($"Param: skipxmlformattingfix={options.SkipXMLFormattingFix}");
+                log.Debug($"Param: skipxmlvalidation={options.SkipXMLValidation}");
 
                 var f = new Forger(options.Blueprint,
                                    options.OutputPath,
                                    TokenManager.IEnumerableToDictionary(options.Tokens),
                                    options.ListTokens,
-                                   options.SkipXMLFormattingFix, 
+                                   options.SkipXMLFormattingFix,
+                                   options.SkipXMLValidation,
                                    log);
                 f.Forge();
             }

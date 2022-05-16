@@ -23,5 +23,8 @@ namespace Farrier.Helpers
 
         [Option(Required = false, Default = false, HelpText = "By default Farrier attempts to correct text content that has been entered in XML (extra lines, spaces, etc.) but add this parameter to use the text exactly as entered")]
         public bool SkipXMLFormattingFix { get; set; }
+
+        [Option(Required = false, Default = false, HelpText = "Add to skip XML validation for the configuration file (not recommended)")]
+        public bool SkipXMLValidation { get; set; }
     }
 }

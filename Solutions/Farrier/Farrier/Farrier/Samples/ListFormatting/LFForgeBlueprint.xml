@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<forge xmlns="https://pnp.github.io/forge" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tokens>
+    <token name="telemetry" value="https://pnptelemetry.azurewebsites.net/list-formatting/docs/groupings/"/>
+    <token name="iconExpandAll" value=":fontawesome-solid-angles-down:"/>
+    <token name="iconCollapseAll" value=":fontawesome-solid-angles-up:"/>
+    <token name="iconViewFormat" value=":fontawesome-solid-list:"/>
+    <token name="iconColumnFormat" value=":fontawesome-solid-align-center:"/>
+    <token name="iconFormFormat" value=":fontawesome-solid-align-left:"/>
+    <token name="groupIcon-action-defaultClick" value=":fontawesome-solid-hand-pointer:"/>
+    <token name="groupIcon-action-delete" value=":fontawesome-solid-trash-can:"/>
+    <token name="groupIcon-action-editProps" value=":fontawesome-solid-pen:"/>
+    <token name="groupIcon-action-executeFlow" value=":fontawesome-solid-code-fork:"/>
+    <token name="groupIcon-action-share" value=":fontawesome-solid-share-from-square:"/>
+    <token name="groupIcon-action-setValue" value=":fontawesome-solid-keyboard:"/>
+  </tokens>
+
+  <templates>
+    <template name="ExpansionGroup">
+      <![CDATA[<div class="expansiongroup">
+    <span class="sampleCount">@@GroupSize@@ samples</span>
+</div>
+]]>
+    </template>
+    <template name="GroupHeader">## @@GroupValue@@</template>
+    <template name="GroupIcon_action">@@groupIcon-action-@@GroupValue@@@@</template>
+
+    <template name="SampleItem">
+      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Name]@@](@@[Link]@@){target=_blank}
+    </template>
+
+    <template name="Telemetry">
+      &lt;img src="@@telemetry@@@@OutputFilenameNoExtension@@" /&gt;
+    </template>
+  </templates>
+
+  <files>
+    <file path="action.md">
+      <section>
+        <![CDATA[Samples are grouped by their usage of `customRowAction` `action` properties. Expand to see the related samples.
+@@iconExpandAll@@{.expand-all title="Expand All"}
+@@iconCollapseAll@@{.collapse-all title="Collapse All"}
+
+]]>
+      </section>
+      <loop csv="LFSamples.csv" orderBy="Name" groupBy="Actions" groupOrder="value" groupDesc="false" filter="ISNULL(Actions,'') &lt;&gt; ''" groupSeparator="|">
+        <groupStart template="ExpansionGroup,GroupIcon_action,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+      </loop>
+      <section template="Telemetry" />
+    </file>
+  </files>
+
+</forge>
