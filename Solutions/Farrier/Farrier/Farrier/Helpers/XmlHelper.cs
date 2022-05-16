@@ -40,7 +40,7 @@ namespace Farrier.Helpers
                         lines[i] = lines[i].Substring(leadingSpacesToTrim);
                     sb.AppendLine(lines[i]);
                 }
-                if (!String.IsNullOrWhiteSpace(lines[lines.Length - 1]))
+                if (lines.Length > 1 && !String.IsNullOrWhiteSpace(lines[lines.Length - 1]))
                     sb.AppendLine(lines[lines.Length - 1]);
 
                 // if an element exists, it will at least generate a new line
@@ -70,6 +70,16 @@ namespace Farrier.Helpers
             XmlReader reader = XmlReader.Create(xmlLocation, settings);
             while (reader.Read()) ;
             return messages;
+        }
+
+        public static string djb2(string text)
+        {
+            int r = 5381;
+            foreach(char c in text)
+            {
+                r = (r * 33) + (int)c;
+            }
+            return r.ToString();
         }
     }
 }
