@@ -198,7 +198,7 @@ namespace Farrier.Forge
             {
                 if (sectionNode != null)
                 {
-                    string sectionTemplate = GetContentTemplate(sectionNode, 6, fileTokens);
+                    string sectionTemplate = GetContentTemplate(sectionNode, 8, fileTokens);
                     return _rootTokens.DecodeString(sectionTemplate, false, fileTokens);
                 }
             }
@@ -229,6 +229,10 @@ namespace Farrier.Forge
                     var rawGroupDesc = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupDesc"]);
                     var rawFilter = XmlHelper.XmlAttributeToString(loopNode.Attributes["filter"]);
                     var rawGroupSeparator = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupSeparator"]);
+                    var rawgroupValues = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupValues"]);
+                    var rawgroupValuesSeparator = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupValuesSeparator"]);
+                    var rawgroupValuesRestrict = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupValuesRestrict"]);
+                    var rawgroupValuesIncludeMissing = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupValuesIncludeMissing"]);
 
                     var orderBy = _rootTokens.DecodeString(rawOrderBy, false, fileTokens);
                     var orderDesc = _rootTokens.DecodeString(rawOrderDesc, false, fileTokens) == "true";
@@ -236,8 +240,15 @@ namespace Farrier.Forge
                     var groupDesc = _rootTokens.DecodeString(rawGroupDesc, false, fileTokens) == "true";
                     var filter = _rootTokens.DecodeString(rawFilter, false, fileTokens);
                     var groupSeparator = _rootTokens.DecodeString(rawGroupSeparator, false, fileTokens);
+                    var groupValues = _rootTokens.DecodeString(rawgroupValues, false, fileTokens);
+                    var groupValuesSeparator = _rootTokens.DecodeString(rawgroupValuesSeparator, false, fileTokens);
+                    if (String.IsNullOrEmpty(groupValuesSeparator))
+                        groupValuesSeparator = ",";
+                    var groupValuesRestrict = _rootTokens.DecodeString(rawgroupValuesRestrict, false, fileTokens) == "true";
+                    var groupValuesIncludeMissing = _rootTokens.DecodeString(rawgroupValuesIncludeMissing, false, fileTokens) == "true";
 
-                    LoopData loopData = new LoopData(csvPath, orderBy, orderDesc, groupBy, groupOrderBySize, groupDesc, filter, groupSeparator, log: _log);
+
+                    LoopData loopData = new LoopData(csvPath, orderBy, orderDesc, groupBy, groupOrderBySize, groupDesc, filter, groupSeparator, groupValues, groupValuesSeparator, groupValuesRestrict, groupValuesIncludeMissing, log: _log);
 
                     XmlNode itemNode = loopNode.SelectSingleNode("f:item", nsmgr);
                     if (itemNode == null)
@@ -249,7 +260,7 @@ namespace Farrier.Forge
 
                     if (!loopData.IsGrouped)
                     {
-                        string itemTemplate = GetContentTemplate(itemNode, 8, loopTokens);
+                        string itemTemplate = GetContentTemplate(itemNode, 10, loopTokens);
                         var rowTokens = TokenManager.TokenizeRows(loopData.Data, _functionResolver,log: _log);
                         foreach (var rowT in rowTokens)
                         {
@@ -260,34 +271,50 @@ namespace Farrier.Forge
                     {
                         XmlNode groupStartNode = loopNode.SelectSingleNode("f:groupStart", nsmgr);
                         XmlNode groupEndNode = loopNode.SelectSingleNode("f:groupEnd", nsmgr);
+                        XmlNode emptyGroupNode = loopNode.SelectSingleNode("f:emptyGroup", nsmgr);
 
                         int groupIndex = 0;
                         foreach (var group in loopData.GroupedData)
                         {
                             var groupTokens = newTokenManager();
                             groupTokens.AddToken("GroupSize", group.Count.ToString());
-                            groupTokens.AddToken("GroupValue", group[0][groupBy].ToString());
+                            var groupValue = group[0][groupBy].ToString();
+                            var isMissing = groupValue.EndsWith(" [MISSING!]");
+                            if (isMissing)
+                                groupValue = groupValue.Replace(" [MISSING!]","");
+                            groupTokens.AddToken("GroupValue", groupValue);
                             groupTokens.AddToken("GroupIndex", groupIndex.ToString());
                             groupIndex += 1;
 
-                            string itemTemplate = GetContentTemplate(itemNode, 8, fileTokens, loopTokens, groupTokens);
-                            string groupStartTemplate = GetContentTemplate(groupStartNode, 8, fileTokens, loopTokens, groupTokens);
-                            string groupEndTemplate = GetContentTemplate(groupEndNode, 8, fileTokens, loopTokens, groupTokens);
-
-                            if (groupStartNode != null)
+                            if(!isMissing)
                             {
-                                loopContent.Append(_rootTokens.DecodeString(groupStartTemplate, false, fileTokens, loopTokens, groupTokens));
+                                string itemTemplate = GetContentTemplate(itemNode, 10, fileTokens, loopTokens, groupTokens);
+                                string groupStartTemplate = GetContentTemplate(groupStartNode, 10, fileTokens, loopTokens, groupTokens);
+                                string groupEndTemplate = GetContentTemplate(groupEndNode, 10, fileTokens, loopTokens, groupTokens);
+
+                                if (groupStartNode != null)
+                                {
+                                    loopContent.Append(_rootTokens.DecodeString(groupStartTemplate, false, fileTokens, loopTokens, groupTokens));
+                                }
+
+                                var rowTokens = TokenManager.TokenizeRows(group, loopData.Data.Columns, _functionResolver, log: _log);
+                                foreach (var rowT in rowTokens)
+                                {
+                                    loopContent.Append(_rootTokens.DecodeString(itemTemplate, false, fileTokens, loopTokens, groupTokens, rowT));
+                                }
+
+                                if (groupEndNode != null)
+                                {
+                                    loopContent.Append(_rootTokens.DecodeString(groupEndTemplate, false, fileTokens, loopTokens, groupTokens));
+                                }
                             }
-
-                            var rowTokens = TokenManager.TokenizeRows(group, loopData.Data.Columns, _functionResolver, log: _log);
-                            foreach (var rowT in rowTokens)
+                            else
                             {
-                                loopContent.Append(_rootTokens.DecodeString(itemTemplate, false, fileTokens, loopTokens, groupTokens, rowT));
-                            }
-
-                            if (groupEndNode != null)
-                            {
-                                loopContent.Append(_rootTokens.DecodeString(groupEndTemplate, false, fileTokens, loopTokens, groupTokens));
+                                string emptyGroupTemplate = GetContentTemplate(emptyGroupNode, 10, fileTokens, loopTokens, groupTokens);
+                                if(emptyGroupNode != null)
+                                {
+                                    loopContent.Append(_rootTokens.DecodeString(emptyGroupTemplate, false, fileTokens, loopTokens, groupTokens));
+                                }
                             }
                         }
                     }

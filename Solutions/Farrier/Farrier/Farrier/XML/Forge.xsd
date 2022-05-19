@@ -156,6 +156,7 @@
       <xsd:element name="groupStart" type="farrier:groupStart" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="item" type="farrier:item" minOccurs="1" maxOccurs="1"/>
       <xsd:element name="groupEnd" type="farrier:groupEnd" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="emptyGroup" type="farrier:emptyGroup" minOccurs="0" maxOccurs="1"/>
     </xsd:sequence>
     <xsd:attribute name="csv" use="required" type="farrier:NotEmpty">
       <xsd:annotation>
@@ -231,6 +232,34 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute name="groupValues" use="optional" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          A list of possible group values (separate multiple with the groupValuesSeparator - defaults to comma). Only used when groupValuesRestrict or groupValuesIncludeMissing are set to true. (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="groupValuesSeparator" use="optional" type="farrier:NotEmpty" default=",">
+      <xsd:annotation>
+        <xsd:documentation>
+          The separator to use between multiple group value items. Defaults to comma. (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="groupValuesRestrict" use="optional" type="farrier:BoolOrExpression" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, any values NOT in the groupValues property will be ignored. (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="groupValuesIncludeMissing" use="optional" type="farrier:BoolOrExpression" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, any groupValues NOT found will still be included and will use the emptyGroup template. (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
   </xsd:complexType>
 
   <xsd:complexType name="groupStart">
@@ -259,6 +288,17 @@
     <xsd:annotation>
       <xsd:documentation>
         When grouping, you can provide content to be placed at the end of every group (after items are rendered). Available to use @@GroupSize@@, @@GroupValue@@, @@GroupIndex@@.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="farrier:baseSection"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="emptyGroup">
+    <xsd:annotation>
+      <xsd:documentation>
+        When grouping, you can provide content to be shown when the group value is missing (only valid when groupValues and groupValuesIncludeMissing are being used). Available to use @@GroupSize@@, @@GroupValue@@, @@GroupIndex@@.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:simpleContent>

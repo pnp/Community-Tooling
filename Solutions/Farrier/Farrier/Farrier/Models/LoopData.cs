@@ -19,7 +19,7 @@ namespace Farrier.Models
 
         public List<List<DataRow>> GroupedData { get; }
 
-        public LoopData(string csvFilePath, string orderBy = "", bool orderDesc = false, string groupBy = "", bool groupOrderBySize = false, bool groupDesc = false, string filter = "", string groupSeparator = "", LogRouter log = null)
+        public LoopData(string csvFilePath, string orderBy = "", bool orderDesc = false, string groupBy = "", bool groupOrderBySize = false, bool groupDesc = false, string filter = "", string groupSeparator = "", string groupValues = "", string groupValuesSeparator = ",", bool groupValuesRestrict = false, bool groupValuesIncludeMissing = false, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -60,11 +60,11 @@ namespace Farrier.Models
                                     List<DataRow> killRows = new List<DataRow>();
                                     foreach (DataRow row in Data.Rows)
                                     {
-                                        var groupValues = row[groupBy].ToString().Split(groupSeparator);
-                                        if (groupValues.Length > 1)
+                                        var foundGroupValues = row[groupBy].ToString().Split(groupSeparator);
+                                        if (foundGroupValues.Length > 1)
                                         {
                                             killRows.Add(row); //Remove this row
-                                            for (int r = 0; r < groupValues.Length; r++)
+                                            for (int r = 0; r < foundGroupValues.Length; r++)
                                             {
                                                 //Map split values into clones of original row
                                                 var newRow = Data.NewRow();
@@ -72,7 +72,7 @@ namespace Farrier.Models
                                                 {
                                                     newRow[col] = row[col];
                                                 }
-                                                newRow[groupBy] = groupValues[r];
+                                                newRow[groupBy] = foundGroupValues[r];
                                                 newRows.Add(newRow);
                                             }
                                         }
@@ -84,6 +84,38 @@ namespace Farrier.Models
                                     foreach (DataRow row in newRows)
                                     {
                                         Data.Rows.Add(row);
+                                    }
+                                }
+                                if(groupValuesRestrict || groupValuesIncludeMissing)
+                                {
+                                    var groupItems = groupValues.Split(groupValuesSeparator);
+                                    if(groupValuesRestrict)
+                                    {
+                                        //Remove any found group values that are not in the specified groupValues
+                                        for (int r = Data.Rows.Count - 1; r >= 0; r--)
+                                        {
+                                            if (!groupItems.Contains(Data.Rows[r][groupBy].ToString()))
+                                            {
+                                                Data.Rows.RemoveAt(r);
+                                            }
+                                        }
+                                    }
+                                    if(groupValuesIncludeMissing)
+                                    {
+
+                                        var distinctFoundGroups = Data.DefaultView.ToTable(true, groupBy);
+                                        var listFoundGroups = new List<string>();
+                                        foreach (DataRow row in distinctFoundGroups.Rows)
+                                        {
+                                            listFoundGroups.Add(row[groupBy].ToString());
+                                        }
+                                        var missingGroups = groupItems.Except(listFoundGroups);
+                                        foreach (var missingGroup in missingGroups)
+                                        {
+                                            var newRow = Data.NewRow();
+                                            newRow[groupBy] = missingGroup + " [MISSING!]";
+                                            Data.Rows.Add(newRow);
+                                        }
                                     }
                                 }
 

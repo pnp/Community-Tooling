@@ -8,23 +8,154 @@
     <token name="iconViewFormat" value=":fontawesome-solid-list:"/>
     <token name="iconColumnFormat" value=":fontawesome-solid-align-center:"/>
     <token name="iconFormFormat" value=":fontawesome-solid-align-left:"/>
+    <token name="iconContributionOpportunity" value=":fontawesome-solid-lightbulb:"/>
+    
     <token name="groupIcon-action-defaultClick" value=":fontawesome-solid-hand-pointer:"/>
     <token name="groupIcon-action-delete" value=":fontawesome-solid-trash-can:"/>
     <token name="groupIcon-action-editProps" value=":fontawesome-solid-pen:"/>
     <token name="groupIcon-action-executeFlow" value=":fontawesome-solid-code-fork:"/>
+    <token name="groupIcon-action-openContextMenu" value=":fontawesome-solid-ellipsis:"/>
     <token name="groupIcon-action-share" value=":fontawesome-solid-share-from-square:"/>
     <token name="groupIcon-action-setValue" value=":fontawesome-solid-keyboard:"/>
+    
+    <token name="groupIcon-author" value=":fontawesome-solid-user-pen:"/>
+    
+    <token name="groupIcon-class-background" value=":fontawesome-solid-fill-drip:"/>
+    <token name="groupIcon-class-border" value=":fontawesome-solid-border-all:"/>
+    <token name="groupIcon-class-font" value=":fontawesome-solid-font:"/>
+    
+    <token name="groupIcon-feature-additionalRowClass" value=":fontawesome-solid-paint-roller:"/>
+    <token name="groupIcon-feature-beakStyle" value=":fontawesome-solid-crow:"/>
+    <token name="groupIcon-feature-calendarProps" value=":fontawesome-solid-calendar:"/>
+    <token name="groupIcon-feature-columnFormatterReference" value=":fontawesome-solid-bread-slice:"/>
+    <token name="groupIcon-feature-customCardProps" value=":fontawesome-solid-square-person-confined:"/>
+    <token name="groupIcon-feature-defaultHoverField" value=":fontawesome-solid-id-card:"/>
+    <token name="groupIcon-feature-directionalHint" value=":fontawesome-solid-compass:"/>
+    <token name="groupIcon-feature-filePreviewProps" value=":fontawesome-solid-file-image:"/>
+    <token name="groupIcon-feature-fillHorizontally" value=":fontawesome-solid-arrows-left-right-to-line:"/>
+    <token name="groupIcon-feature-footerFormatter" value=":fontawesome-solid-shoe-prints:"/>
+    <token name="groupIcon-feature-forEach" value=":fontawesome-solid-braille:"/>
+    <token name="groupIcon-feature-groupProps" value=":fontawesome-solid-layer-group:"/>
+    <token name="groupIcon-feature-headerFormatter" value=":fontawesome-solid-hat-cowboy:"/>
+    <token name="groupIcon-feature-hideColumnHeader" value=":fontawesome-solid-ban:"/>
+    <token name="groupIcon-feature-hideFooter" value=":fontawesome-solid-socks:"/>
+    <token name="groupIcon-feature-hideSelection" value=":fontawesome-solid-square-minus:"/>
+    <token name="groupIcon-feature-inlineEditField" value=":fontawesome-solid-pen:"/>
+    <token name="groupIcon-feature-kanbanProps" value=":fontawesome-solid-cubes-stacked:"/>
+    <token name="groupIcon-feature-monthProps" value=":fontawesome-solid-calendar-days:"/>
+    <token name="groupIcon-feature-rowFormatter" value=":fontawesome-solid-brush:"/>
+    
+    <token name="groupIcon-operator-abs" value=":fontawesome-solid-martini-glass:"/>
+    <token name="groupIcon-operator-addDays" value=":fontawesome-solid-calendar-day:"/>
+    <token name="groupIcon-operator-addMinutes" value=":fontawesome-solid-stopwatch:"/>
+    <token name="groupIcon-operator-addYears" value=":fontawesome-solid-calendar-plus:"/>
+    <token name="groupIcon-operator-appendTo" value=":fontawesome-solid-circle-plus:"/>
+    <token name="groupIcon-operator-ceiling" value=":fontawesome-solid-up-long:"/>
+    <token name="groupIcon-operator-cos" value=":fontawesome-solid-mask:"/>
+    <token name="groupIcon-operator-Date" value=":fontawesome-solid-calendar:"/>
+    <token name="groupIcon-operator-endsWith" value=":fontawesome-solid-magnifying-glass-dollar:"/>
+    <token name="groupIcon-operator-floor" value=":fontawesome-solid-down-long:"/>
+    <token name="groupIcon-operator-getDate" value=":fontawesome-solid-calendar-week:"/>
+    <token name="groupIcon-operator-getMonth" value=":fontawesome-solid-calendar-days:"/>
+    <token name="groupIcon-operator-getUserImage" value=":fontawesome-solid-id-card-clip:"/>
+    <token name="groupIcon-operator-getYear" value=":fontawesome-solid-calendar-check:"/>
+    <token name="groupIcon-operator-indexOf" value=":fontawesome-solid-magnifying-glass:"/>
+    <token name="groupIcon-operator-join" value=":fontawesome-solid-plus:"/>
+    <token name="groupIcon-operator-lastIndexOf" value=":fontawesome-solid-magnifying-glass-arrow-right:"/>
+    <token name="groupIcon-operator-length" value=":fontawesome-solid-ruler:"/>
+    <token name="groupIcon-operator-loopIndex" value=":fontawesome-solid-arrows-to-dot:"/>
+    <token name="groupIcon-operator-Number" value=":fontawesome-solid-hashtag:"/>
+    <token name="groupIcon-operator-padEnd" value=":fontawesome-solid-forward-step:"/>
+    <token name="groupIcon-operator-padStart" value=":fontawesome-solid-backward-step:"/>
+    <token name="groupIcon-operator-pow" value=":fontawesome-solid-superscript:"/>
+    <token name="groupIcon-operator-removeFrom" value=":fontawesome-solid-circle-minus:"/>
+    <token name="groupIcon-operator-replace" value=":fontawesome-solid-plug:"/>
+    <token name="groupIcon-operator-sin" value=":fontawesome-solid-book-skull:"/>
+    <token name="groupIcon-operator-startsWith" value=":fontawesome-solid-magnifying-glass-location:"/>
+    <token name="groupIcon-operator-substring" value=":fontawesome-solid-scissors:"/>
+    <token name="groupIcon-operator-toLocaleDateString" value=":fontawesome-solid-hourglass-start:"/>
+    <token name="groupIcon-operator-toLocaleString" value=":fontawesome-solid-hourglass:"/>
+    <token name="groupIcon-operator-toLocaleTimeString" value=":fontawesome-solid-hourglass-end:"/>
+    <token name="groupIcon-operator-toLowerCase" value=":fontawesome-solid-wine-bottle:"/>
+    <token name="groupIcon-operator-toString" value=":fontawesome-solid-signature:"/>
+    <token name="groupIcon-operator-toUpperCase" value=":fontawesome-solid-cake-candles:"/>
+    
+    <token name="groupIcon-category-icons" value=":fontawesome-solid-circle-radiation:"/>
+    
+    <token name="groupIcon-token-@currentWeb" value=":fontawesome-solid-location-dot:"/>
+    <token name="groupIcon-token-@lcid" value=":fontawesome-solid-language:"/>
+    <token name="groupIcon-token-@me" value=":fontawesome-solid-person-falling:"/>
+    <token name="groupIcon-token-@now" value=":fontawesome-solid-clock:"/>
+    <token name="groupIcon-token-@rowIndex" value=":fontawesome-solid-arrow-down-1-9:"/>
+    <token name="groupIcon-token-@thumbnail" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-token-@window.innerHeight" value=":fontawesome-solid-arrows-up-down:"/>
+    <token name="groupIcon-token-@window.innerWidth" value=":fontawesome-solid-arrows-left-right:"/>
+    
+    <token name="groupIcon-columntype-Approval Status" value=":fontawesome-solid-circle-check:"/>
+    <token name="groupIcon-columntype-Average Rating" value=":fontawesome-solid-star-half-stroke:"/>
+    <token name="groupIcon-columntype-ContentType" value=":fontawesome-solid-box:"/>
+    <token name="groupIcon-columntype-Counter" value=":fontawesome-solid-fingerprint:"/>
+    <token name="groupIcon-columntype-Currency" value=":fontawesome-solid-coins:"/>
+    <token name="groupIcon-columntype-Date" value=":fontawesome-solid-calendar:"/>
+    <token name="groupIcon-columntype-General" value=":fontawesome-solid-person-military-rifle:"/>
+    <token name="groupIcon-columntype-Hyperlink" value=":fontawesome-solid-link:"/>
+    <token name="groupIcon-columntype-Image" value=":fontawesome-solid-file-image:"/>
+    <token name="groupIcon-columntype-Likes" value=":fontawesome-solid-thumbs-up:"/>
+    <token name="groupIcon-columntype-Location" value=":fontawesome-solid-map-location-dot:"/>
+    <token name="groupIcon-columntype-Lookup" value=":fontawesome-solid-code-merge:"/>
+    <token name="groupIcon-columntype-Managed Metadata" value=":fontawesome-solid-ribbon:"/>
+    <token name="groupIcon-columntype-Multi-Choice" value=":fontawesome-solid-xmarks-lines:"/>
+    <token name="groupIcon-columntype-Multi-Lookup" value=":fontawesome-solid-code-compare:"/>
+    <token name="groupIcon-columntype-Multi-Person" value=":fontawesome-solid-people-robbery:"/>
+    <token name="groupIcon-columntype-Number" value=":fontawesome-solid-hashtag:"/>
+    <token name="groupIcon-columntype-Person" value=":fontawesome-solid-person:"/>
+    <token name="groupIcon-columntype-Picture" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-columntype-Promoted State" value=":fontawesome-solid-newspaper:"/>
+    <token name="groupIcon-columntype-Yes/No" value=":fontawesome-solid-square-check:"/>
   </tokens>
 
   <templates>
+    <template name="ExpandCollapseAll">
+      @@iconExpandAll@@{.expand-all title="Expand All"}
+      @@iconCollapseAll@@{.collapse-all title="Collapse All"}
+      
+    </template>
+    
     <template name="ExpansionGroup">
       <![CDATA[<div class="expansiongroup">
-    <span class="sampleCount">@@GroupSize@@ samples</span>
+    <span class="sampleCount">@@GroupSize@@ sample$IF($EQUALS(@@GroupSize@@,#1),#&nbsp;,#s)</span>
 </div>
 ]]>
     </template>
-    <template name="GroupHeader">## @@GroupValue@@</template>
+    <template name="ExpansionGroupEmpty">
+      <![CDATA[<div class="expansiongroup empty">
+    <span class="sampleCount">0 samples</span>
+</div>
+]]>
+    </template>
+    <template name="ContributionLink">
+      [@@iconContributionOpportunity@@](../contributing/index.md){.ideaLink title="Contribution Opportunity!"}
+    </template>
+    <template name="ContributionLink2">
+      [@@iconContributionOpportunity@@](../../contributing/index.md){.ideaLink title="Contribution Opportunity!"}
+    </template>
+    
     <template name="GroupIcon_action">@@groupIcon-action-@@GroupValue@@@@</template>
+    <template name="GroupIcon_author">@@groupIcon-author@@</template>
+    <template name="GroupIcon_category">@@groupIcon-category-icons@@</template>
+    <template name="GroupIcon_columntype">@@groupIcon-columntype-@@GroupValue@@@@</template>
+    <template name="GroupIcon_feature">@@groupIcon-feature-@@GroupValue@@@@</template>
+    <template name="GroupIcon_operator">@@groupIcon-operator-@@GroupValue@@@@</template>
+    <template name="GroupIcon_token">@@groupIcon-token-@@GroupValue@@@@</template>
+    
+    <template name="GroupIcon_class-font">@@groupIcon-class-font@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-fontColor-,#),#--hover,#)}</template>
+    <template name="GroupIcon_class-background">@@groupIcon-class-background@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-bgColor-,#),#--hover,#)}</template>
+    <template name="GroupIcon_class-border">@@groupIcon-class-border@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-borderColor-,#),#--hover,#)}</template>
+    
+    <template name="GroupHeader">## @@GroupValue@@</template>
+    <template name="GroupHeader_columntype">
+      ## $IF($EQUALS(@@GroupValue@@,#General),#General - Text, Choice, Calculated,#@@GroupValue@@)
+    </template>
 
     <template name="SampleItem">
       - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Name]@@](@@[Link]@@){target=_blank}
@@ -34,23 +165,320 @@
       &lt;img src="@@telemetry@@@@OutputFilenameNoExtension@@" /&gt;
     </template>
   </templates>
+  
 
   <files>
-    <file path="action.md">
-      <section>
-        <![CDATA[Samples are grouped by their usage of `customRowAction` `action` properties. Expand to see the related samples.
-@@iconExpandAll@@{.expand-all title="Expand All"}
-@@iconCollapseAll@@{.collapse-all title="Collapse All"}
 
-]]>
+    <file path="columnsamples.md">
+      <section>
+        # List of Column Formatting Samples
+
+        This is an alphabetical list of all the **column formatting** samples available. Each sample has a dedicated readme file to explain setup instructions and demonstrated capability.
+
+        !!! Tip
+            Depending on what you are looking for, you may find the sample [groupings](./groupings/columntype.md) more helpful.
+            
       </section>
-      <loop csv="LFSamples.csv" orderBy="Name" groupBy="Actions" groupOrder="value" groupDesc="false" filter="ISNULL(Actions,'') &lt;&gt; ''" groupSeparator="|">
+      <loop csv="LFSamples.csv" orderBy="Name" filter="Type = 'Column'">
+        <item template="SampleItem" />
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+
+    <file path="formsamples.md">
+      <section>
+        # List of Form Formatting Samples
+
+        This is an alphabetical list of all the **form formatting** samples available. Each sample has a dedicated readme file to explain setup instructions and demonstrated capability.
+
+        !!! Tip
+            Depending on what you are looking for, you may find the sample [groupings](./groupings/operator.md) more helpful.
+
+      </section>
+      <loop csv="LFSamples.csv" orderBy="Name" filter="Type = 'Form'">
+        <item template="SampleItem" />
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+
+    <file path="viewsamples.md">
+      <section>
+        # List of View Formatting Samples
+
+        This is an alphabetical list of all the **view formatting** samples available. Each sample has a dedicated readme file to explain setup instructions and demonstrated capability.
+
+        !!! Tip
+            Depending on what you are looking for, you may find the sample [groupings](./groupings/category.md) more helpful.
+
+      </section>
+      <loop csv="LFSamples.csv" orderBy="Name" filter="Type = 'View'">
+        <item template="SampleItem" />
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+    
+    <file path="groupings/action.md">
+      <section>
+        #Samples by Action
+        
+        Samples are grouped by their usage of `customRowAction` `action` properties. Expand to see the related samples.
+        
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Actions" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Actions,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="defaultClick,delete,editProps,executeFlow,openContextMenu,setValue,share"
+            groupValuesIncludeMissing="true">
         <groupStart template="ExpansionGroup,GroupIcon_action,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_action,GroupHeader,ContributionLink"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+
+    <file path="groupings/author.md">
+      <section>
+        #Samples by Author
+
+        Samples are grouped by their _original_ creator. Later updates by additional contributors are not listed here. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name" groupBy="Author" groupOrder="value" groupDesc="false" groupSeparator="|">
+        <groupStart template="ExpansionGroup,GroupIcon_author,GroupHeader" />
         <item template="SampleItem" />
         <groupEnd />
       </loop>
       <section template="Telemetry" />
     </file>
+    
+
+    <file path="groupings/category.md">
+      <section>
+        # Samples by Category
+
+        Samples are grouped by topic or approach. This is not an exhaustive list.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name" groupBy="Categories" groupOrder="value" groupDesc="false" filter="ISNULL(Categories,'') &lt;&gt; ''" groupSeparator="|">
+        <groupStart template="ExpansionGroup,GroupIcon_category,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+      </loop>
+      <section template="Telemetry" />
+    </file>       
+    
+
+    <file path="groupings/columntype.md">
+      <section>
+        # Samples by Column Type
+
+        Samples are grouped by the column type they are applied to (column formats) or, in the case of view/form formats, by any columns they reference. Expand to see the related samples.
+        
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="ColumnTypes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(ColumnTypes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="Approval Status,Average Rating,ContentType,Counter,Currency,Date,General,Hyperlink,Image,Likes,Location,Lookup,Managed Metadata,Multi-Choice,Multi-Lookup,Multi-Person,Number,Person,Picture,Promoted State,Yes/No"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_columntype,GroupHeader_columntype" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_columntype,GroupHeader,ContributionLink"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+    
+    <file path="groupings/feature.md">
+      <section>
+        # Samples by Feature
+
+        Samples are grouped by their usage of key features. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Features" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Features,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="forEach,inlineEditField,columnFormatterReference,defaultHoverField,customCardProps,beakStyle,directionalHint,filePreviewProps,hideSelection,hideColumnHeader,additionalRowClass,rowFormatter,groupProps,headerFormatter,hideFooter,footerFormatter,fillHorizontally,monthProps,kanbanProps,calendarProps"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_feature,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_feature,GroupHeader,ContributionLink"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+
+    <file path="groupings/operator.md">
+      <section>
+        # Samples by Operator
+
+        Samples are grouped by their usage of advanced operators. This excludes common arithmetic operators (`+`, `-`, `/`, `*`) and conditional operators (`if`, `&lt;`, `&lt;=`, `>`, `>=`, `==`, `!=`, `||`, `&amp;&amp;`). Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Operators" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Operators,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="toLowerCase,toString,Number,Date,cos,sin,abs,loopIndex,toLocaleString,toLocaleDateString,toLocaleTimeString,indexOf,join,length,floor,ceiling,pow,substring,getDate,getMonth,getYear,toUpperCase,lastIndexOf,startsWith,endsWith,replace,padStart,padEnd,getUserImage,addDays,addMinutes,appendTo,removeFrom"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_operator,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_operator,GroupHeader,ContributionLink"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+
+    <file path="groupings/SP2019.md">
+      <section>
+        # SharePoint 2019 Format Samples
+
+        The following samples provide a version that works within SharePoint 2019.
+
+      </section>
+      <loop csv="LFSamples.csv" orderBy="Name" filter="SP2019 = 'Y'">
+        <item template="SampleItem" />
+      </loop>
+      <section>
+
+        !!! Note
+            View and Form formatting are **not** supported in SharePoint 2019 and so the above are all column format samples.
+            
+            Each of the above samples contain at least 2 json files. The SharePoint 2019 files end in AST.
+      </section>
+      <section template="Telemetry" />
+    </file>
+    
+
+    <file path="groupings/token.md">
+      <section>
+        # Samples by Placeholder Token
+
+        Samples are grouped by their usage of placeholder tokens. `@currentField` is excluded because it is used nearly everywhere. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Tokens" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Tokens,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="@currentWeb,@lcid,@me,@now,@rowIndex,@thumbnail,@window.innerHeight,@window.innerWidth,@groupfieldData,@group.count,@group.columnDisplayName,@aggregates,@columnAggregate.type,@columnAggregate.value,@columnAggregate.columnDisplayName"
+            groupValuesSeparator=","
+            groupValuesRestrict="false"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_token,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_token,GroupHeader,ContributionLink"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+  
+    <file path="groupings/classes/ms-bgColor.md">
+      <section>
+        # Samples by Class: ms-bgColor-*
+
+        The `ms-bgColor-*` classes apply a background color. Several standard, shared, theme, neutral, and more are included.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section>
+        !!! Note "Complimentary Classes"
+            These classes compliment the [ms-borderColor-*](./ms-borderClass.md) and [ms-fontColor-*](./ms-fontColor.md) classes and except where noted below contain equivalent colors.
+        
+        !!! Warning
+            The named color `alert` does not have a `ms-bgColor-` equivalent despite being present elsewhere
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="ms-bgColor-themePrimary,ms-bgColor-themeSecondary,ms-bgColor-themeTertiary,ms-bgColor-themeLight,ms-bgColor-themeLighter,ms-bgColor-themeLighterAlt,ms-bgColor-themeDark,ms-bgColor-themeDarker,ms-bgColor-themeDarkAlt,ms-bgColor-neutralDark,ms-bgColor-neutralPrimary,ms-bgColor-neutralPrimaryAlt,ms-bgColor-neutralSecondary,ms-bgColor-neutralSecondaryAlt,ms-bgColor-neutralTertiary,ms-bgColor-neutralTertiaryAlt,ms-bgColor-neutralQuaternary,ms-bgColor-neutralQuaternaryAlt,ms-bgColor-neutralLight,ms-bgColor-neutralLighter,ms-bgColor-neutralLighterAlt,ms-bgColor-white,ms-bgColor-black,ms-bgColor-yellow,ms-bgColor-yellowLight,ms-bgColor-orange,ms-bgColor-orangeLight,ms-bgColor-orangeLighter,ms-bgColor-red,ms-bgColor-redDark,ms-bgColor-magentaDark,ms-bgColor-magenta,ms-bgColor-magentaLight,ms-bgColor-purpleDark,ms-bgColor-purple,ms-bgColor-purpleLight,ms-bgColor-blueDark,ms-bgColor-blueMid,ms-bgColor-blue,ms-bgColor-blueLight,ms-bgColor-tealDark,ms-bgColor-teal,ms-bgColor-tealLight,ms-bgColor-greenDark,ms-bgColor-green,ms-bgColor-greenLight,ms-bgColor-info,ms-bgColor-success,ms-bgColor-severeWarning,ms-bgColor-warning,ms-bgColor-error,ms-bgColor-contrastBlackDisabled,ms-bgColor-contrastWhiteDisabled,ms-bgColor-contrastBlackSelected,ms-bgColor-contrastWhiteSelected,ms-bgColor-communicationShade30,ms-bgColor-communicationShade20,ms-bgColor-communicationShade10,ms-bgColor-communicationPrimary,ms-bgColor-communicationTint10,ms-bgColor-communicationTint20,ms-bgColor-communicationTint30,ms-bgColor-communicationTint40,ms-bgColor-gray220,ms-bgColor-gray210,ms-bgColor-gray200,ms-bgColor-gray190,ms-bgColor-gray180,ms-bgColor-gray170,ms-bgColor-gray160,ms-bgColor-gray150,ms-bgColor-gray140,ms-bgColor-gray130,ms-bgColor-gray120,ms-bgColor-gray110,ms-bgColor-gray100,ms-bgColor-gray90,ms-bgColor-gray80,ms-bgColor-gray70,ms-bgColor-gray60,ms-bgColor-gray50,ms-bgColor-gray40,ms-bgColor-gray30,ms-bgColor-gray20,ms-bgColor-gray10,ms-bgColor-sharedPinkRed10,ms-bgColor-sharedRed20,ms-bgColor-sharedRed10,ms-bgColor-sharedRed20,ms-bgColor-sharedRed10,ms-bgColor-sharedRedOrange20,ms-bgColor-sharedRedOrange10,ms-bgColor-sharedOrange30,ms-bgColor-sharedOrange20,ms-bgColor-sharedOrange10,ms-bgColor-sharedYellow10,ms-bgColor-sharedOrangeYellow20,ms-bgColor-sharedOrangeYellow10,ms-bgColor-sharedYellowGreen10,ms-bgColor-sharedGreen20,ms-bgColor-sharedGreen10,ms-bgColor-sharedGreenCyan10,ms-bgColor-sharedCyan40,ms-bgColor-sharedCyan30,ms-bgColor-sharedCyan20,ms-bgColor-sharedCyan10,ms-bgColor-sharedCyanBlue20,ms-bgColor-sharedCyanBlue10,ms-bgColor-sharedBlue10,ms-bgColor-sharedBlueMagenta40,ms-bgColor-sharedBlueMagenta30,ms-bgColor-sharedBlueMagenta20,ms-bgColor-sharedBlueMagenta10,ms-bgColor-sharedMagenta20,ms-bgColor-sharedMagenta10,ms-bgColor-sharedMagentaPink20,ms-bgColor-sharedMagentaPink10,ms-bgColor-sharedGray40,ms-bgColor-sharedGray30,ms-bgColor-sharedGray20,ms-bgColor-sharedGray10,ms-bgColor-themePrimary--hover,ms-bgColor-themeSecondary--hover,ms-bgColor-themeTertiary--hover,ms-bgColor-themeLight--hover,ms-bgColor-themeLighter--hover,ms-bgColor-themeLighterAlt--hover,ms-bgColor-themeDark--hover,ms-bgColor-themeDarker--hover,ms-bgColor-themeDarkAlt--hover,ms-bgColor-neutralDark--hover,ms-bgColor-neutralPrimary--hover,ms-bgColor-neutralPrimaryAlt--hover,ms-bgColor-neutralSecondary--hover,ms-bgColor-neutralSecondaryAlt--hover,ms-bgColor-neutralTertiary--hover,ms-bgColor-neutralTertiaryAlt--hover,ms-bgColor-neutralQuaternary--hover,ms-bgColor-neutralQuaternaryAlt--hover,ms-bgColor-neutralLight--hover,ms-bgColor-neutralLighter--hover,ms-bgColor-neutralLighterAlt--hover,ms-bgColor-white--hover,ms-bgColor-black--hover,ms-bgColor-yellow--hover,ms-bgColor-yellowLight--hover,ms-bgColor-orange--hover,ms-bgColor-orangeLight--hover,ms-bgColor-orangeLighter--hover,ms-bgColor-red--hover,ms-bgColor-redDark--hover,ms-bgColor-magentaDark--hover,ms-bgColor-magenta--hover,ms-bgColor-magentaLight--hover,ms-bgColor-purpleDark--hover,ms-bgColor-purple--hover,ms-bgColor-purpleLight--hover,ms-bgColor-blueDark--hover,ms-bgColor-blueMid--hover,ms-bgColor-blue--hover,ms-bgColor-blueLight--hover,ms-bgColor-tealDark--hover,ms-bgColor-teal--hover,ms-bgColor-tealLight--hover,ms-bgColor-greenDark--hover,ms-bgColor-green--hover,ms-bgColor-greenLight--hover,ms-bgColor-info--hover,ms-bgColor-success--hover,ms-bgColor-severeWarning--hover,ms-bgColor-warning--hover,ms-bgColor-error--hover,ms-bgColor-contrastBlackDisabled--hover,ms-bgColor-contrastWhiteDisabled--hover,ms-bgColor-contrastBlackSelected--hover,ms-bgColor-contrastWhiteSelected--hover,ms-bgColor-communicationShade30--hover,ms-bgColor-communicationShade20--hover,ms-bgColor-communicationShade10--hover,ms-bgColor-communicationPrimary--hover,ms-bgColor-communicationTint10--hover,ms-bgColor-communicationTint20--hover,ms-bgColor-communicationTint30--hover,ms-bgColor-communicationTint40--hover,ms-bgColor-gray220--hover,ms-bgColor-gray210--hover,ms-bgColor-gray200--hover,ms-bgColor-gray190--hover,ms-bgColor-gray180--hover,ms-bgColor-gray170--hover,ms-bgColor-gray160--hover,ms-bgColor-gray150--hover,ms-bgColor-gray140--hover,ms-bgColor-gray130--hover,ms-bgColor-gray120--hover,ms-bgColor-gray110--hover,ms-bgColor-gray100--hover,ms-bgColor-gray90--hover,ms-bgColor-gray80--hover,ms-bgColor-gray70--hover,ms-bgColor-gray60--hover,ms-bgColor-gray50--hover,ms-bgColor-gray40--hover,ms-bgColor-gray30--hover,ms-bgColor-gray20--hover,ms-bgColor-gray10--hover,ms-bgColor-sharedPinkRed10--hover,ms-bgColor-sharedRed20--hover,ms-bgColor-sharedRed10--hover,ms-bgColor-sharedRed20--hover,ms-bgColor-sharedRed10--hover,ms-bgColor-sharedRedOrange20--hover,ms-bgColor-sharedRedOrange10--hover,ms-bgColor-sharedOrange30--hover,ms-bgColor-sharedOrange20--hover,ms-bgColor-sharedOrange10--hover,ms-bgColor-sharedYellow10--hover,ms-bgColor-sharedOrangeYellow20--hover,ms-bgColor-sharedOrangeYellow10--hover,ms-bgColor-sharedYellowGreen10--hover,ms-bgColor-sharedGreen20--hover,ms-bgColor-sharedGreen10--hover,ms-bgColor-sharedGreenCyan10--hover,ms-bgColor-sharedCyan40--hover,ms-bgColor-sharedCyan30--hover,ms-bgColor-sharedCyan20--hover,ms-bgColor-sharedCyan10--hover,ms-bgColor-sharedCyanBlue20--hover,ms-bgColor-sharedCyanBlue10--hover,ms-bgColor-sharedBlue10--hover,ms-bgColor-sharedBlueMagenta40--hover,ms-bgColor-sharedBlueMagenta30--hover,ms-bgColor-sharedBlueMagenta20--hover,ms-bgColor-sharedBlueMagenta10--hover,ms-bgColor-sharedMagenta20--hover,ms-bgColor-sharedMagenta10--hover,ms-bgColor-sharedMagentaPink20--hover,ms-bgColor-sharedMagentaPink10--hover,ms-bgColor-sharedGray40--hover,ms-bgColor-sharedGray30--hover,ms-bgColor-sharedGray20--hover,ms-bgColor-sharedGray10--hover"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-background,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-background,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+    <file path="groupings/classes/ms-borderColor.md">
+      <section>
+        # Samples by Class: ms-borderColor-*
+
+        The `ms-borderColor-*` classes apply a border color (still requires a `border-width` and `border-style` to display). Several standard, shared, theme, neutral, and more are included.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section>
+        !!! Note "Complimentary Classes"
+            These classes compliment the [ms-fontColor-*](./ms-fontColor.md) and [ms-bgColor-*](./ms-bgColor.md) classes and except where noted below contain equivalent colors.
+
+        !!! Warning
+            The named colors `alert`, `severeWarning`, `warning`, and `error` do not have `ms-borderColor-` equivalents despite being present elsewhere
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="ms-borderColor-themePrimary,ms-borderColor-themeSecondary,ms-borderColor-themeTertiary,ms-borderColor-themeLight,ms-borderColor-themeLighter,ms-borderColor-themeLighterAlt,ms-borderColor-themeDark,ms-borderColor-themeDarker,ms-borderColor-themeDarkAlt,ms-borderColor-neutralDark,ms-borderColor-neutralPrimary,ms-borderColor-neutralPrimaryAlt,ms-borderColor-neutralSecondary,ms-borderColor-neutralSecondaryAlt,ms-borderColor-neutralTertiary,ms-borderColor-neutralTertiaryAlt,ms-borderColor-neutralQuaternary,ms-borderColor-neutralQuaternaryAlt,ms-borderColor-neutralLight,ms-borderColor-neutralLighter,ms-borderColor-neutralLighterAlt,ms-borderColor-white,ms-borderColor-black,ms-borderColor-yellow,ms-borderColor-yellowLight,ms-borderColor-orange,ms-borderColor-orangeLight,ms-borderColor-orangeLighter,ms-borderColor-red,ms-borderColor-redDark,ms-borderColor-magentaDark,ms-borderColor-magenta,ms-borderColor-magentaLight,ms-borderColor-purpleDark,ms-borderColor-purple,ms-borderColor-purpleLight,ms-borderColor-blueDark,ms-borderColor-blueMid,ms-borderColor-blue,ms-borderColor-blueLight,ms-borderColor-tealDark,ms-borderColor-teal,ms-borderColor-tealLight,ms-borderColor-greenDark,ms-borderColor-green,ms-borderColor-greenLight,ms-borderColor-contrastBlackDisabled,ms-borderColor-contrastWhiteDisabled,ms-borderColor-contrastBlackSelected,ms-borderColor-contrastWhiteSelected,ms-borderColor-communicationShade30,ms-borderColor-communicationShade20,ms-borderColor-communicationShade10,ms-borderColor-communicationPrimary,ms-borderColor-communicationTint10,ms-borderColor-communicationTint20,ms-borderColor-communicationTint30,ms-borderColor-communicationTint40,ms-borderColor-gray220,ms-borderColor-gray210,ms-borderColor-gray200,ms-borderColor-gray190,ms-borderColor-gray180,ms-borderColor-gray170,ms-borderColor-gray160,ms-borderColor-gray150,ms-borderColor-gray140,ms-borderColor-gray130,ms-borderColor-gray120,ms-borderColor-gray110,ms-borderColor-gray100,ms-borderColor-gray90,ms-borderColor-gray80,ms-borderColor-gray70,ms-borderColor-gray60,ms-borderColor-gray50,ms-borderColor-gray40,ms-borderColor-gray30,ms-borderColor-gray20,ms-borderColor-gray10,ms-borderColor-sharedPinkRed10,ms-borderColor-sharedRed20,ms-borderColor-sharedRed10,ms-borderColor-sharedRed20,ms-borderColor-sharedRed10,ms-borderColor-sharedRedOrange20,ms-borderColor-sharedRedOrange10,ms-borderColor-sharedOrange30,ms-borderColor-sharedOrange20,ms-borderColor-sharedOrange10,ms-borderColor-sharedYellow10,ms-borderColor-sharedOrangeYellow20,ms-borderColor-sharedOrangeYellow10,ms-borderColor-sharedYellowGreen10,ms-borderColor-sharedGreen20,ms-borderColor-sharedGreen10,ms-borderColor-sharedGreenCyan10,ms-borderColor-sharedCyan40,ms-borderColor-sharedCyan30,ms-borderColor-sharedCyan20,ms-borderColor-sharedCyan10,ms-borderColor-sharedCyanBlue20,ms-borderColor-sharedCyanBlue10,ms-borderColor-sharedBlue10,ms-borderColor-sharedBlueMagenta40,ms-borderColor-sharedBlueMagenta30,ms-borderColor-sharedBlueMagenta20,ms-borderColor-sharedBlueMagenta10,ms-borderColor-sharedMagenta20,ms-borderColor-sharedMagenta10,ms-borderColor-sharedMagentaPink20,ms-borderColor-sharedMagentaPink10,ms-borderColor-sharedGray40,ms-borderColor-sharedGray30,ms-borderColor-sharedGray20,ms-borderColor-sharedGray10,ms-borderColor-themePrimary--hover,ms-borderColor-themeSecondary--hover,ms-borderColor-themeTertiary--hover,ms-borderColor-themeLight--hover,ms-borderColor-themeLighter--hover,ms-borderColor-themeLighterAlt--hover,ms-borderColor-themeDark--hover,ms-borderColor-themeDarker--hover,ms-borderColor-themeDarkAlt--hover,ms-borderColor-neutralDark--hover,ms-borderColor-neutralPrimary--hover,ms-borderColor-neutralPrimaryAlt--hover,ms-borderColor-neutralSecondary--hover,ms-borderColor-neutralSecondaryAlt--hover,ms-borderColor-neutralTertiary--hover,ms-borderColor-neutralTertiaryAlt--hover,ms-borderColor-neutralQuaternary--hover,ms-borderColor-neutralQuaternaryAlt--hover,ms-borderColor-neutralLight--hover,ms-borderColor-neutralLighter--hover,ms-borderColor-neutralLighterAlt--hover,ms-borderColor-white--hover,ms-borderColor-black--hover,ms-borderColor-yellow--hover,ms-borderColor-yellowLight--hover,ms-borderColor-orange--hover,ms-borderColor-orangeLight--hover,ms-borderColor-orangeLighter--hover,ms-borderColor-red--hover,ms-borderColor-redDark--hover,ms-borderColor-magentaDark--hover,ms-borderColor-magenta--hover,ms-borderColor-magentaLight--hover,ms-borderColor-purpleDark--hover,ms-borderColor-purple--hover,ms-borderColor-purpleLight--hover,ms-borderColor-blueDark--hover,ms-borderColor-blueMid--hover,ms-borderColor-blue--hover,ms-borderColor-blueLight--hover,ms-borderColor-tealDark--hover,ms-borderColor-teal--hover,ms-borderColor-tealLight--hover,ms-borderColor-greenDark--hover,ms-borderColor-green--hover,ms-borderColor-greenLight--hover,ms-borderColor-contrastBlackDisabled--hover,ms-borderColor-contrastWhiteDisabled--hover,ms-borderColor-contrastBlackSelected--hover,ms-borderColor-contrastWhiteSelected--hover,ms-borderColor-communicationShade30--hover,ms-borderColor-communicationShade20--hover,ms-borderColor-communicationShade10--hover,ms-borderColor-communicationPrimary--hover,ms-borderColor-communicationTint10--hover,ms-borderColor-communicationTint20--hover,ms-borderColor-communicationTint30--hover,ms-borderColor-communicationTint40--hover,ms-borderColor-gray220--hover,ms-borderColor-gray210--hover,ms-borderColor-gray200--hover,ms-borderColor-gray190--hover,ms-borderColor-gray180--hover,ms-borderColor-gray170--hover,ms-borderColor-gray160--hover,ms-borderColor-gray150--hover,ms-borderColor-gray140--hover,ms-borderColor-gray130--hover,ms-borderColor-gray120--hover,ms-borderColor-gray110--hover,ms-borderColor-gray100--hover,ms-borderColor-gray90--hover,ms-borderColor-gray80--hover,ms-borderColor-gray70--hover,ms-borderColor-gray60--hover,ms-borderColor-gray50--hover,ms-borderColor-gray40--hover,ms-borderColor-gray30--hover,ms-borderColor-gray20--hover,ms-borderColor-gray10--hover,ms-borderColor-sharedPinkRed10--hover,ms-borderColor-sharedRed20--hover,ms-borderColor-sharedRed10--hover,ms-borderColor-sharedRed20--hover,ms-borderColor-sharedRed10--hover,ms-borderColor-sharedRedOrange20--hover,ms-borderColor-sharedRedOrange10--hover,ms-borderColor-sharedOrange30--hover,ms-borderColor-sharedOrange20--hover,ms-borderColor-sharedOrange10--hover,ms-borderColor-sharedYellow10--hover,ms-borderColor-sharedOrangeYellow20--hover,ms-borderColor-sharedOrangeYellow10--hover,ms-borderColor-sharedYellowGreen10--hover,ms-borderColor-sharedGreen20--hover,ms-borderColor-sharedGreen10--hover,ms-borderColor-sharedGreenCyan10--hover,ms-borderColor-sharedCyan40--hover,ms-borderColor-sharedCyan30--hover,ms-borderColor-sharedCyan20--hover,ms-borderColor-sharedCyan10--hover,ms-borderColor-sharedCyanBlue20--hover,ms-borderColor-sharedCyanBlue10--hover,ms-borderColor-sharedBlue10--hover,ms-borderColor-sharedBlueMagenta40--hover,ms-borderColor-sharedBlueMagenta30--hover,ms-borderColor-sharedBlueMagenta20--hover,ms-borderColor-sharedBlueMagenta10--hover,ms-borderColor-sharedMagenta20--hover,ms-borderColor-sharedMagenta10--hover,ms-borderColor-sharedMagentaPink20--hover,ms-borderColor-sharedMagentaPink10--hover,ms-borderColor-sharedGray40--hover,ms-borderColor-sharedGray30--hover,ms-borderColor-sharedGray20--hover,ms-borderColor-sharedGray10--hover"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-border,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-border,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
+    <file path="groupings/classes/ms-fontColor.md">
+      <section>
+        # Samples by Class: ms-fontColor-*
+
+        The `ms-fontColor-*` classes apply a font color. Several standard, shared, theme, neutral, and more are included.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section>
+        !!! Note "Complimentary Classes"
+            These classes compliment the [ms-borderClass-*](./ms-borderClass.md) and [ms-bgColor-*](./ms-bgColor.md) classes and except where noted below contain equivalent colors.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="themePrimary,ms-fontColor-themeSecondary,ms-fontColor-themeTertiary,ms-fontColor-themeLight,ms-fontColor-themeLighter,ms-fontColor-themeLighterAlt,ms-fontColor-themeDark,ms-fontColor-themeDarker,ms-fontColor-themeDarkAlt,ms-fontColor-neutralDark,ms-fontColor-neutralPrimary,ms-fontColor-neutralPrimaryAlt,ms-fontColor-neutralSecondary,ms-fontColor-neutralSecondaryAlt,ms-fontColor-neutralTertiary,ms-fontColor-neutralTertiaryAlt,ms-fontColor-neutralQuaternary,ms-fontColor-neutralQuaternaryAlt,ms-fontColor-neutralLight,ms-fontColor-neutralLighter,ms-fontColor-neutralLighterAlt,ms-fontColor-white,ms-fontColor-black,ms-fontColor-yellow,ms-fontColor-yellowLight,ms-fontColor-orange,ms-fontColor-orangeLight,ms-fontColor-orangeLighter,ms-fontColor-red,ms-fontColor-redDark,ms-fontColor-magentaDark,ms-fontColor-magenta,ms-fontColor-magentaLight,ms-fontColor-purpleDark,ms-fontColor-purple,ms-fontColor-purpleLight,ms-fontColor-blueDark,ms-fontColor-blueMid,ms-fontColor-blue,ms-fontColor-blueLight,ms-fontColor-tealDark,ms-fontColor-teal,ms-fontColor-tealLight,ms-fontColor-greenDark,ms-fontColor-green,ms-fontColor-greenLight,ms-fontColor-info,ms-fontColor-success,ms-fontColor-alert,ms-fontColor-severeWarning,ms-fontColor-warning,ms-fontColor-error,ms-fontColor-contrastBlackDisabled,ms-fontColor-contrastWhiteDisabled,ms-fontColor-contrastBlackSelected,ms-fontColor-contrastWhiteSelected,ms-fontColor-communicationShade30,ms-fontColor-communicationShade20,ms-fontColor-communicationShade10,ms-fontColor-communicationPrimary,ms-fontColor-communicationTint10,ms-fontColor-communicationTint20,ms-fontColor-communicationTint30,ms-fontColor-communicationTint40,ms-fontColor-gray220,ms-fontColor-gray210,ms-fontColor-gray200,ms-fontColor-gray190,ms-fontColor-gray180,ms-fontColor-gray170,ms-fontColor-gray160,ms-fontColor-gray150,ms-fontColor-gray140,ms-fontColor-gray130,ms-fontColor-gray120,ms-fontColor-gray110,ms-fontColor-gray100,ms-fontColor-gray90,ms-fontColor-gray80,ms-fontColor-gray70,ms-fontColor-gray60,ms-fontColor-gray50,ms-fontColor-gray40,ms-fontColor-gray30,ms-fontColor-gray20,ms-fontColor-gray10,ms-fontColor-sharedPinkRed10,ms-fontColor-sharedRed20,ms-fontColor-sharedRed10,ms-fontColor-sharedRed20,ms-fontColor-sharedRed10,ms-fontColor-sharedRedOrange20,ms-fontColor-sharedRedOrange10,ms-fontColor-sharedOrange30,ms-fontColor-sharedOrange20,ms-fontColor-sharedOrange10,ms-fontColor-sharedYellow10,ms-fontColor-sharedOrangeYellow20,ms-fontColor-sharedOrangeYellow10,ms-fontColor-sharedYellowGreen10,ms-fontColor-sharedGreen20,ms-fontColor-sharedGreen10,ms-fontColor-sharedGreenCyan10,ms-fontColor-sharedCyan40,ms-fontColor-sharedCyan30,ms-fontColor-sharedCyan20,ms-fontColor-sharedCyan10,ms-fontColor-sharedCyanBlue20,ms-fontColor-sharedCyanBlue10,ms-fontColor-sharedBlue10,ms-fontColor-sharedBlueMagenta40,ms-fontColor-sharedBlueMagenta30,ms-fontColor-sharedBlueMagenta20,ms-fontColor-sharedBlueMagenta10,ms-fontColor-sharedMagenta20,ms-fontColor-sharedMagenta10,ms-fontColor-sharedMagentaPink20,ms-fontColor-sharedMagentaPink10,ms-fontColor-sharedGray40,ms-fontColor-sharedGray30,ms-fontColor-sharedGray20,ms-fontColor-sharedGray10,themePrimary--hover,ms-fontColor-themeSecondary--hover,ms-fontColor-themeTertiary--hover,ms-fontColor-themeLight--hover,ms-fontColor-themeLighter--hover,ms-fontColor-themeLighterAlt--hover,ms-fontColor-themeDark--hover,ms-fontColor-themeDarker--hover,ms-fontColor-themeDarkAlt--hover,ms-fontColor-neutralDark--hover,ms-fontColor-neutralPrimary--hover,ms-fontColor-neutralPrimaryAlt--hover,ms-fontColor-neutralSecondary--hover,ms-fontColor-neutralSecondaryAlt--hover,ms-fontColor-neutralTertiary--hover,ms-fontColor-neutralTertiaryAlt--hover,ms-fontColor-neutralQuaternary--hover,ms-fontColor-neutralQuaternaryAlt--hover,ms-fontColor-neutralLight--hover,ms-fontColor-neutralLighter--hover,ms-fontColor-neutralLighterAlt--hover,ms-fontColor-white--hover,ms-fontColor-black--hover,ms-fontColor-yellow--hover,ms-fontColor-yellowLight--hover,ms-fontColor-orange--hover,ms-fontColor-orangeLight--hover,ms-fontColor-orangeLighter--hover,ms-fontColor-red--hover,ms-fontColor-redDark--hover,ms-fontColor-magentaDark--hover,ms-fontColor-magenta--hover,ms-fontColor-magentaLight--hover,ms-fontColor-purpleDark--hover,ms-fontColor-purple--hover,ms-fontColor-purpleLight--hover,ms-fontColor-blueDark--hover,ms-fontColor-blueMid--hover,ms-fontColor-blue--hover,ms-fontColor-blueLight--hover,ms-fontColor-tealDark--hover,ms-fontColor-teal--hover,ms-fontColor-tealLight--hover,ms-fontColor-greenDark--hover,ms-fontColor-green--hover,ms-fontColor-greenLight--hover,ms-fontColor-info--hover,ms-fontColor-success--hover,ms-fontColor-alert--hover,ms-fontColor-severeWarning--hover,ms-fontColor-warning--hover,ms-fontColor-error--hover,ms-fontColor-contrastBlackDisabled--hover,ms-fontColor-contrastWhiteDisabled--hover,ms-fontColor-contrastBlackSelected--hover,ms-fontColor-contrastWhiteSelected--hover,ms-fontColor-communicationShade30--hover,ms-fontColor-communicationShade20--hover,ms-fontColor-communicationShade10--hover,ms-fontColor-communicationPrimary--hover,ms-fontColor-communicationTint10--hover,ms-fontColor-communicationTint20--hover,ms-fontColor-communicationTint30--hover,ms-fontColor-communicationTint40--hover,ms-fontColor-gray220--hover,ms-fontColor-gray210--hover,ms-fontColor-gray200--hover,ms-fontColor-gray190--hover,ms-fontColor-gray180--hover,ms-fontColor-gray170--hover,ms-fontColor-gray160--hover,ms-fontColor-gray150--hover,ms-fontColor-gray140--hover,ms-fontColor-gray130--hover,ms-fontColor-gray120--hover,ms-fontColor-gray110--hover,ms-fontColor-gray100--hover,ms-fontColor-gray90--hover,ms-fontColor-gray80--hover,ms-fontColor-gray70--hover,ms-fontColor-gray60--hover,ms-fontColor-gray50--hover,ms-fontColor-gray40--hover,ms-fontColor-gray30--hover,ms-fontColor-gray20--hover,ms-fontColor-gray10--hover,ms-fontColor-sharedPinkRed10--hover,ms-fontColor-sharedRed20--hover,ms-fontColor-sharedRed10--hover,ms-fontColor-sharedRed20--hover,ms-fontColor-sharedRed10--hover,ms-fontColor-sharedRedOrange20--hover,ms-fontColor-sharedRedOrange10--hover,ms-fontColor-sharedOrange30--hover,ms-fontColor-sharedOrange20--hover,ms-fontColor-sharedOrange10--hover,ms-fontColor-sharedYellow10--hover,ms-fontColor-sharedOrangeYellow20--hover,ms-fontColor-sharedOrangeYellow10--hover,ms-fontColor-sharedYellowGreen10--hover,ms-fontColor-sharedGreen20--hover,ms-fontColor-sharedGreen10--hover,ms-fontColor-sharedGreenCyan10--hover,ms-fontColor-sharedCyan40--hover,ms-fontColor-sharedCyan30--hover,ms-fontColor-sharedCyan20--hover,ms-fontColor-sharedCyan10--hover,ms-fontColor-sharedCyanBlue20--hover,ms-fontColor-sharedCyanBlue10--hover,ms-fontColor-sharedBlue10--hover,ms-fontColor-sharedBlueMagenta40--hover,ms-fontColor-sharedBlueMagenta30--hover,ms-fontColor-sharedBlueMagenta20--hover,ms-fontColor-sharedBlueMagenta10--hover,ms-fontColor-sharedMagenta20--hover,ms-fontColor-sharedMagenta10--hover,ms-fontColor-sharedMagentaPink20--hover,ms-fontColor-sharedMagentaPink10--hover,ms-fontColor-sharedGray40--hover,ms-fontColor-sharedGray30--hover,ms-fontColor-sharedGray20--hover,ms-fontColor-sharedGray10--hover"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-font,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-font,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
   </files>
 
 </forge>
