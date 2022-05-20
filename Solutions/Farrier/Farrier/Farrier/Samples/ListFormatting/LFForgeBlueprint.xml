@@ -26,6 +26,10 @@
     <token name="groupIcon-class-fontWeight" value=":fontawesome-solid-scale-balanced:"/>
     <token name="groupIcon-class-fontWeightLight" value=":fontawesome-solid-scale-unbalanced:"/>
     <token name="groupIcon-class-fontWeightBold" value=":fontawesome-solid-scale-unbalanced-flip:"/>
+    <token name="groupIcon-class-fontSize" value=":fontawesome-solid-hand-lizard:"/>
+    <token name="groupIcon-class-fontSize-small" value=":fontawesome-solid-cubes-stacked:"/>
+    <token name="groupIcon-class-fontSize-medium" value=":fontawesome-solid-cubes:"/>
+    <token name="groupIcon-class-fontSize-large" value=":fontawesome-solid-cube:"/>
     
     <token name="groupIcon-feature-additionalRowClass" value=":fontawesome-solid-paint-roller:"/>
     <token name="groupIcon-feature-beakStyle" value=":fontawesome-solid-crow:"/>
@@ -155,6 +159,7 @@
     <template name="GroupIcon_class-background">@@groupIcon-class-background@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-bgColor-,#),#--hover,#)}</template>
     <template name="GroupIcon_class-border">@@groupIcon-class-border@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-borderColor-,#),#--hover,#)}</template>
     <template name="GroupIcon_class-fontWeight">$IF($CONTAINS(@@GroupValue@@,#bold),#@@groupIcon-class-fontWeightBold@@,#$IF($CONTAINS(@@GroupValue@@,#light),#@@groupIcon-class-fontWeightLight@@,#@@groupIcon-class-fontWeight@@))</template>
+    <template name="GroupIcon_class-fontSize">$IF($LT(@@GroupIndex@@,#$MULTIPLY($SUBTRACT(@@TotalGroups@@,#1),#0.33)),#@@groupIcon-class-fontSize-small@@,#$IF($LTE(@@GroupIndex@@,#$MULTIPLY($SUBTRACT(@@TotalGroups@@,#1),#0.66)),#@@groupIcon-class-fontSize-medium@@,#@@groupIcon-class-fontSize-large@@))</template>
     
     <template name="GroupHeader">## @@GroupValue@@</template>
     <template name="GroupHeader_columntype">
@@ -396,12 +401,12 @@
 
 
     <!--******** SAMPLES BY CLASS ********-->
-  
+    <!-- ms-bgColor-* -->
     <file path="groupings/classes/ms-bgColor.md">
       <section>
         # Samples by Class: ms-bgColor-*
 
-        The `ms-bgColor-*` classes apply a background color. Several standard, shared, theme, neutral, and more are included.
+        The `ms-bgColor-*` classes apply a **background color**. Several standard, shared, theme, neutral, and more are included.
 
         Samples are grouped by classes used. Expand to see the related samples.
 
@@ -428,11 +433,12 @@
       <section template="Telemetry" />
     </file>
     
+    <!-- ms-borderColor-* -->
     <file path="groupings/classes/ms-borderColor.md">
       <section>
         # Samples by Class: ms-borderColor-*
 
-        The `ms-borderColor-*` classes apply a border color (still requires a `border-width` and `border-style` to display). Several standard, shared, theme, neutral, and more are included.
+        The `ms-borderColor-*` classes apply a **border color** (still requires a `border-width` and `border-style` to display). Several standard, shared, theme, neutral, and more are included.
 
         Samples are grouped by classes used. Expand to see the related samples.
 
@@ -460,11 +466,12 @@
       <section template="Telemetry" />
     </file>
     
+    <!-- ms-fontColor-* -->
     <file path="groupings/classes/ms-fontColor.md">
       <section>
         # Samples by Class: ms-fontColor-*
 
-        The `ms-fontColor-*` classes apply a font color. Several standard, shared, theme, neutral, and more are included.
+        The `ms-fontColor-*` classes apply a font **color**. Several standard, shared, theme, neutral, and more are included.
 
         Samples are grouped by classes used. Expand to see the related samples.
 
@@ -489,11 +496,12 @@
       <section template="Telemetry" />
     </file>
 
+    <!-- ms-fontWeight-* -->
     <file path="groupings/classes/ms-fontWeight.md">
       <section>
         # Samples by Class: ms-fontWeight-*
 
-        The `ms-fontWeight-*` classes apply various levels of bold.
+        The `ms-fontWeight-*` classes apply various levels of **bold**.
 
         Samples are grouped by classes used. Expand to see the related samples.
 
@@ -517,7 +525,7 @@
       <section>
         # Samples by Class: ms-font-*
 
-        The `ms-font-*` classes apply various combinations of text size and font weight. Alternative text size classes can be found in [ms-fontSize-*](./ms-fontSize.md) and [sp-field-fontSize-*](./sp-field-fontSize.md).
+        The `ms-font-*` classes apply various combinations of text **size** and **font weight**. To apply just size or just weight use the [ms-fontSize-*](./ms-fontSize.md) and [ms-fontWeight-*](./ms-fontWeight.md) classes respectively.
 
         Samples are grouped by classes used. Expand to see the related samples.
 
@@ -529,14 +537,38 @@
             groupValues="ms-font-mi,ms-font-xs,ms-font-s,ms-font-s-plus,ms-font-m,ms-font-m-plus,ms-font-l,ms-font-xl,ms-font-xl-plus,ms-font-xxl,ms-font-su"
             groupValuesRestrict="true"
             groupValuesIncludeMissing="true">
-        <groupStart template="ExpansionGroup,GroupIcon_class-fontWeight,GroupHeader" />
+        <groupStart template="ExpansionGroup,GroupIcon_class-fontSize,GroupHeader" />
         <item template="SampleItem" />
         <groupEnd />
-        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-fontWeight,GroupHeader,ContributionLink2"/>
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-fontSize,GroupHeader,ContributionLink2"/>
       </loop>
       <section template="Telemetry" />
     </file>
-    
+
+    <file path="groupings/classes/ms-fontSize.md">
+      <section>
+        # Samples by Class: ms-fontSize-*
+
+        The `ms-fontSize-*` classes apply various text **size**.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="match"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="ms-fontSize-mi,ms-fontSize-10,ms-fontSize-xs,ms-fontSize-s,ms-fontSize-12,ms-fontSize-sPlus,ms-fontSize-m,ms-fontSize-14,ms-fontSize-mPlus,ms-fontSize-16,ms-fontSize-l,ms-fontSize-18,ms-fontSize-20,ms-fontSize-xl,ms-fontSize-xlPlus,ms-fontSize-24,ms-fontSize-xxl,ms-fontSize-28,ms-fontSize-32,ms-fontSize-su,ms-fontSize-42,ms-fontSize-68"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-fontSize,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-fontSize,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
   </files>
 
 </forge>

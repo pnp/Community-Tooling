@@ -209,21 +209,21 @@ namespace Farrier.Parser
             return p;
         }
 
-        private int[] FunctionNumberParameters(string keyword, string innards, int expected)
+        private double[] FunctionNumberParameters(string keyword, string innards, int expected)
         {
             try
             {
                 var p = functionParameters(keyword, innards, expected);
-                var i = new int[p.Length];
+                var i = new double[p.Length];
                 for (int j = 0; j < p.Length; j++)
                 {
-                    i[j] = int.Parse(p[j]);
+                    i[j] = double.Parse(p[j]);
                 }
                 return i;
             }
             catch
             {
-                throw new Exception(keyword + " requires all parameters to be integers!");
+                throw new Exception(keyword + " requires all parameters to be numbers! (found " + innards + ")");
             }
         }
     }
