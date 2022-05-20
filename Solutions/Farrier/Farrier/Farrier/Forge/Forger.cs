@@ -225,7 +225,7 @@ namespace Farrier.Forge
                     var rawOrderBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["orderBy"]);
                     var rawOrderDesc = XmlHelper.XmlAttributeToString(loopNode.Attributes["orderDesc"]);
                     var rawGroupBy = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupBy"]);
-                    bool groupOrderBySize = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupOrder"]) == "size";
+                    var rawGroupOrder = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupOrder"]);
                     var rawGroupDesc = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupDesc"]);
                     var rawFilter = XmlHelper.XmlAttributeToString(loopNode.Attributes["filter"]);
                     var rawGroupSeparator = XmlHelper.XmlAttributeToString(loopNode.Attributes["groupSeparator"]);
@@ -237,6 +237,7 @@ namespace Farrier.Forge
                     var orderBy = _rootTokens.DecodeString(rawOrderBy, false, fileTokens);
                     var orderDesc = _rootTokens.DecodeString(rawOrderDesc, false, fileTokens) == "true";
                     var groupBy = _rootTokens.DecodeString(rawGroupBy, false, fileTokens);
+                    var groupOrder = _rootTokens.DecodeString(rawGroupOrder, false, fileTokens);
                     var groupDesc = _rootTokens.DecodeString(rawGroupDesc, false, fileTokens) == "true";
                     var filter = _rootTokens.DecodeString(rawFilter, false, fileTokens);
                     var groupSeparator = _rootTokens.DecodeString(rawGroupSeparator, false, fileTokens);
@@ -248,7 +249,7 @@ namespace Farrier.Forge
                     var groupValuesIncludeMissing = _rootTokens.DecodeString(rawgroupValuesIncludeMissing, false, fileTokens) == "true";
 
 
-                    LoopData loopData = new LoopData(csvPath, orderBy, orderDesc, groupBy, groupOrderBySize, groupDesc, filter, groupSeparator, groupValues, groupValuesSeparator, groupValuesRestrict, groupValuesIncludeMissing, log: _log);
+                    LoopData loopData = new LoopData(csvPath, orderBy, orderDesc, groupBy, groupOrder, groupDesc, filter, groupSeparator, groupValues, groupValuesSeparator, groupValuesRestrict, groupValuesIncludeMissing, log: _log);
 
                     XmlNode itemNode = loopNode.SelectSingleNode("f:item", nsmgr);
                     if (itemNode == null)

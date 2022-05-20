@@ -19,7 +19,7 @@ namespace Farrier.Models
 
         public List<List<DataRow>> GroupedData { get; }
 
-        public LoopData(string csvFilePath, string orderBy = "", bool orderDesc = false, string groupBy = "", bool groupOrderBySize = false, bool groupDesc = false, string filter = "", string groupSeparator = "", string groupValues = "", string groupValuesSeparator = ",", bool groupValuesRestrict = false, bool groupValuesIncludeMissing = false, LogRouter log = null)
+        public LoopData(string csvFilePath, string orderBy = "", bool orderDesc = false, string groupBy = "", string groupOrder = "value", bool groupDesc = false, string filter = "", string groupSeparator = "", string groupValues = "", string groupValuesSeparator = ",", bool groupValuesRestrict = false, bool groupValuesIncludeMissing = false, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -140,7 +140,7 @@ namespace Farrier.Models
                                 GroupedData.Add(groupRows);
 
                                 //Initial grouping always ends up with grouping by value, but a custom sort is applied if by size is requested
-                                if (groupOrderBySize)
+                                if (groupOrder == "size")
                                 {
                                     if (!groupDesc)
                                     {
@@ -150,6 +150,22 @@ namespace Farrier.Models
                                     {
                                         GroupedData.Sort((x, y) => y.Count.CompareTo(x.Count));
                                     }
+                                }
+                                if (groupOrder == "match")
+                                {
+                                    var groupItems = groupValues.Split(groupValuesSeparator);
+                                    if (groupDesc)
+                                        groupItems = groupItems.Reverse().ToArray();
+                                    GroupedData.Sort((x, y) =>
+                                    {
+                                        var xIndex = Array.IndexOf(groupItems,x.First()[groupBy].ToString().Replace(" [MISSING!]",""));
+                                        if (xIndex < 0)
+                                            xIndex = groupItems.Length;
+                                        var yIndex = Array.IndexOf(groupItems,y.First()[groupBy].ToString().Replace(" [MISSING!]", ""));
+                                        if (yIndex < 0)
+                                            yIndex = groupItems.Length;
+                                        return xIndex.CompareTo(yIndex);
+                                    });
                                 }
                             }
                             else

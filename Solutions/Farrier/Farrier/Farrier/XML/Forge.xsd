@@ -208,6 +208,13 @@
               </xsd:documentation>
             </xsd:annotation>
           </xsd:enumeration>
+          <xsd:enumeration value="match">
+            <xsd:annotation>
+              <xsd:documentation>
+                Group item order will match the order presented in the groupValues property. When groupValuesRestrict is false, extra values will be added to the end (by value). When groupDesc is true, the order will be the reverse of the groupValues property.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>

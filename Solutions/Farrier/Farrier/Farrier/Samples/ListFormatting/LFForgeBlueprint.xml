@@ -23,6 +23,9 @@
     <token name="groupIcon-class-background" value=":fontawesome-solid-fill-drip:"/>
     <token name="groupIcon-class-border" value=":fontawesome-solid-border-all:"/>
     <token name="groupIcon-class-font" value=":fontawesome-solid-font:"/>
+    <token name="groupIcon-class-fontWeight" value=":fontawesome-solid-scale-balanced:"/>
+    <token name="groupIcon-class-fontWeightLight" value=":fontawesome-solid-scale-unbalanced:"/>
+    <token name="groupIcon-class-fontWeightBold" value=":fontawesome-solid-scale-unbalanced-flip:"/>
     
     <token name="groupIcon-feature-additionalRowClass" value=":fontawesome-solid-paint-roller:"/>
     <token name="groupIcon-feature-beakStyle" value=":fontawesome-solid-crow:"/>
@@ -151,6 +154,7 @@
     <template name="GroupIcon_class-font">@@groupIcon-class-font@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-fontColor-,#),#--hover,#)}</template>
     <template name="GroupIcon_class-background">@@groupIcon-class-background@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-bgColor-,#),#--hover,#)}</template>
     <template name="GroupIcon_class-border">@@groupIcon-class-border@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-borderColor-,#),#--hover,#)}</template>
+    <template name="GroupIcon_class-fontWeight">$IF($CONTAINS(@@GroupValue@@,#bold),#@@groupIcon-class-fontWeightBold@@,#$IF($CONTAINS(@@GroupValue@@,#light),#@@groupIcon-class-fontWeightLight@@,#@@groupIcon-class-fontWeight@@))</template>
     
     <template name="GroupHeader">## @@GroupValue@@</template>
     <template name="GroupHeader_columntype">
@@ -168,6 +172,8 @@
   
 
   <files>
+    
+    <!--******** SAMPLES BY TYPE ********-->
 
     <file path="columnsamples.md">
       <section>
@@ -218,7 +224,9 @@
       </loop>
       <section template="Telemetry" />
     </file>
-    
+
+
+    <!--******** GROUPED SAMPLES ********-->
     
     <file path="groupings/action.md">
       <section>
@@ -385,7 +393,9 @@
       </loop>
       <section template="Telemetry" />
     </file>
-    
+
+
+    <!--******** SAMPLES BY CLASS ********-->
   
     <file path="groupings/classes/ms-bgColor.md">
       <section>
@@ -475,6 +485,54 @@
         <item template="SampleItem" />
         <groupEnd />
         <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-font,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file path="groupings/classes/ms-fontWeight.md">
+      <section>
+        # Samples by Class: ms-fontWeight-*
+
+        The `ms-fontWeight-*` classes apply various levels of bold.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="match" 
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="ms-fontWeight-semilight,ms-fontWeight-light,ms-fontWeight-regular,ms-fontWeight-semibold,ms-fontWeight-bold"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-fontWeight,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-fontWeight,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file path="groupings/classes/ms-font.md">
+      <section>
+        # Samples by Class: ms-font-*
+
+        The `ms-font-*` classes apply various combinations of text size and font weight. Alternative text size classes can be found in [ms-fontSize-*](./ms-fontSize.md) and [sp-field-fontSize-*](./sp-field-fontSize.md).
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="match"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="ms-font-mi,ms-font-xs,ms-font-s,ms-font-s-plus,ms-font-m,ms-font-m-plus,ms-font-l,ms-font-xl,ms-font-xl-plus,ms-font-xxl,ms-font-su"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-fontWeight,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-fontWeight,GroupHeader,ContributionLink2"/>
       </loop>
       <section template="Telemetry" />
     </file>
