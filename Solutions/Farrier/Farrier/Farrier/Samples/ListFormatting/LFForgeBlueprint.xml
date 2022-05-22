@@ -148,7 +148,7 @@
     </template>
     
     <template name="GroupIcon_action">@@groupIcon-action-@@GroupValue@@@@</template>
-    <template name="GroupIcon_author">@@groupIcon-author@@</template>
+    <template name="GroupIcon_author">$IF($EQUALS(@@[AuthorGH]@@,#[NA]),#@@groupIcon-author@@{title="No GitHub account provided"},#[![@@[AuthorGH]@@](https://github.com/@@[AuthorGH]@@.png?size=24!}!](https://github.com/@@[AuthorGH]@@!}!{.authorImage title="@@[AuthorGH]@@" target="_blank"})</template>
     <template name="GroupIcon_category">@@groupIcon-category-icons@@</template>
     <template name="GroupIcon_columntype">@@groupIcon-columntype-@@GroupValue@@@@</template>
     <template name="GroupIcon_feature">@@groupIcon-feature-@@GroupValue@@@@</template>
@@ -167,7 +167,7 @@
     </template>
 
     <template name="SampleItem">
-      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Name]@@](@@[Link]@@){target=_blank}
+      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Title]@@](@@[Link]@@){target=_blank title="@@[Name]@@: $REPLACE(@@[Description]@@,#`,#)"}
     </template>
 
     <template name="Telemetry">
@@ -263,7 +263,7 @@
 
       </section>
       <section template="ExpandCollapseAll"/>
-      <loop csv="LFSamples.csv" orderBy="Name" groupBy="Author" groupOrder="value" groupDesc="false" groupSeparator="|">
+      <loop csv="LFSamples.csv" orderBy="Title" groupBy="Author" groupOrder="value" groupDesc="false" groupSeparator="|">
         <groupStart template="ExpansionGroup,GroupIcon_author,GroupHeader" />
         <item template="SampleItem" />
         <groupEnd />
@@ -521,6 +521,7 @@
       <section template="Telemetry" />
     </file>
 
+    <!-- ms-font-* -->
     <file path="groupings/classes/ms-font.md">
       <section>
         # Samples by Class: ms-font-*
@@ -545,6 +546,7 @@
       <section template="Telemetry" />
     </file>
 
+    <!-- ms-fontSize-* -->
     <file path="groupings/classes/ms-fontSize.md">
       <section>
         # Samples by Class: ms-fontSize-*

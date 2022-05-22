@@ -92,7 +92,7 @@ namespace Farrier.Parser
 
             foreach (DataColumn col in cols)
             {
-                tokens.AddToken(col.ColumnName, row[col].ToString(), true);
+                tokens.AddToken(col.ColumnName, fr.EscapeText(row[col].ToString()), true);
             }
 
             return tokens;
@@ -104,7 +104,7 @@ namespace Farrier.Parser
             string tokenKey = buildKey(key, asColumn);
             if(!_tokens.ContainsKey(tokenKey))
             {
-                _tokens.Add(tokenKey, DecodeString(value, false, additionalTokens));
+                _tokens.Add(tokenKey, DecodeString(value, false, false, additionalTokens));
             }
         }
 
@@ -116,7 +116,7 @@ namespace Farrier.Parser
             {
                 if (count == 0)
                 {
-                    _tokens.Add(tokenKey, DecodeString(value, false, additionalTokens));
+                    _tokens.Add(tokenKey, DecodeString(value, false, false, additionalTokens));
                 }
                 else
                 {
@@ -129,7 +129,7 @@ namespace Farrier.Parser
                 var bumpedvalue = _tokens[tokenKey];
                 if(count == 1)
                 {
-                    _tokens[tokenKey] = DecodeString(value, false, additionalTokens);
+                    _tokens[tokenKey] = DecodeString(value, false, false, additionalTokens);
                 }
                 else
                 {
@@ -198,11 +198,11 @@ namespace Farrier.Parser
             }
         }
 
-        public string DecodeString(string encodedValue, bool skipFunctions = false, params TokenManager[] additionalTokens)
+        public string DecodeString(string encodedValue, bool skipFunctions = false, bool escapeValues = true, params TokenManager[] additionalTokens)
         {
             foreach (TokenManager additionalToken in additionalTokens)
             {
-                encodedValue = additionalToken.DecodeString(encodedValue, true);
+                encodedValue = additionalToken.DecodeString(encodedValue, true, escapeValues);
             }
             foreach (KeyValuePair<string, string> tokenKVP in _tokens)
             {
@@ -211,7 +211,10 @@ namespace Farrier.Parser
             if (skipFunctions)
                 return encodedValue;
             else
-                return _functionResolver.ResolveFunctions(encodedValue);
+                if(escapeValues)
+                    return _functionResolver.UnescapeText(_functionResolver.ResolveFunctions(encodedValue));
+                else
+                    return _functionResolver.ResolveFunctions(encodedValue);
         }
 
 

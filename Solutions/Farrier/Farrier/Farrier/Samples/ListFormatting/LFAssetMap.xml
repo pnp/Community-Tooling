@@ -7,7 +7,9 @@
     <column name="Title" path="$[0].title"/>
     <column name="Link" path="$[0].url"/>
     <column name="Author" path="$.[0].authors.[*].name"/>
+    <column name="AuthorGH" path="$.[0].authors.[0].gitHubAccount"/>
     <column name="ScreenshotUrl" path="$.[0].thumbnails[0].url"/>
+    <column name="Description" path="$.[0].shortDescription"/>
 
     <!-- Checks for the presence of 2019 -->
     <column name="SP2019"

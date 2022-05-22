@@ -13,18 +13,44 @@ namespace Farrier.Parser
     {
         public string FUNCPATTERN { get; }
         public string PARAMSTART { get; }
+        public Dictionary<string, string> ESCAPES { get; }
 
         private LogRouter _log;
 
-        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|PROPER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|IN|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE)\\(", string paramstart = ",#", LogRouter log = null)
+        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|PROPER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|IN|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE)\\(", string paramstart = ",#", Dictionary<string,string> escapes = null, LogRouter log = null)
         {
             FUNCPATTERN = pattern;
             PARAMSTART = paramstart;
+            if(escapes != null)
+                ESCAPES = escapes;
+            else
+            {
+                ESCAPES = new Dictionary<string, string>();
+                ESCAPES.Add("!}!", ")");
+            }
 
             if (log == null)
                 _log = new LogRouter();
             else
                 _log = log;
+        }
+
+        public string UnescapeText(string text)
+        {
+            foreach (KeyValuePair<string, string> escape in ESCAPES)
+            {
+                text = text.Replace(escape.Key, escape.Value);
+            }
+            return text;
+        }
+
+        public string EscapeText(string text)
+        {
+            foreach (KeyValuePair<string, string> escape in ESCAPES)
+            {
+                text = text.Replace(escape.Value, escape.Key);
+            }
+            return text;
         }
 
         public string ResolveFunctions(string expression)

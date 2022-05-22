@@ -296,7 +296,7 @@ namespace Farrier.RoundUp
             foreach(var mappedColumn in mappedColumns)
             {
                 var transform = mappedColumn.Transform.Replace("@@currentvalue@@", row[mappedColumn.Name].ToString());
-                row[mappedColumn.Name] = _rootTokens.DecodeString(transform, false, rowTokens);
+                row[mappedColumn.Name] = _rootTokens.DecodeString(transform, false, true, rowTokens);
             }
 
             return row;
