@@ -456,6 +456,13 @@
                   </xsd:documentation>
                 </xsd:annotation>
               </xsd:enumeration>
+              <xsd:enumeration value="length">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if the string length of the first match returned matches the value, if value not supplied then the length will be evaluated against the min/max values. If min provided, length &lt; min returns false. If max provided, length > max returns false. If both provided, length must be within range. If neither provided AND value not provided, will return true.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
             </xsd:restriction>
           </xsd:simpleType>
         </xsd:attribute>

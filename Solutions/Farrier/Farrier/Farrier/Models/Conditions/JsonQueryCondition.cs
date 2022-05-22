@@ -37,7 +37,7 @@ namespace Farrier.Models.Conditions
         {
             messages.Clear();
             var comparison = tokens.DecodeString(rawComparison);
-            if (comparison != "equals" && comparison != "notequals" && comparison != "count" && comparison != "contains" && comparison != "notcontains" && comparison != "matches" && comparison != "notmatches")
+            if (comparison != "equals" && comparison != "notequals" && comparison != "count" && comparison != "contains" && comparison != "notcontains" && comparison != "matches" && comparison != "notmatches" && comparison != "length")
             {
                 this.setFailureMessage(tokens, $"Invalid Json Query comparison value ({comparison})");
                 return false;
@@ -195,6 +195,86 @@ namespace Farrier.Models.Conditions
                                 {
                                     this.setFailureMessage(tokens, $"Pattern {(comparison == "matches" ? "doesn't match" : "matches")} query result");
                                     return false;
+                                }
+                            case "length":
+                                var length = queryValue.Matches.Count > 0 ? queryValue.Matches[0].Value.ToString().Length : 0;
+                                if (!String.IsNullOrEmpty(rawValue))
+                                {
+                                    int numValue;
+                                    if (!int.TryParse(rawValue, out numValue))
+                                    {
+                                        this.setFailureMessage(tokens, $"If value is included when comparison length, it must be a number ({rawValue})");
+                                        return false;
+                                    }
+                                    if (numValue != length)
+                                    {
+                                        this.setFailureMessage(tokens, $"Query result length is not equal (got {length} expected {numValue})");
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        return true;
+                                    }
+                                }
+                                else
+                                {
+                                    bool minOK = false;
+                                    bool maxOK = false;
+                                    if (!String.IsNullOrEmpty(rawMin))
+                                    {
+                                        int min;
+                                        if (!int.TryParse(rawMin, out min))
+                                        {
+                                            this.setFailureMessage(tokens, $"If min is included when comparison length, it must be a number ({rawMin})");
+                                            return false;
+                                        }
+                                        if (min > length)
+                                        {
+                                            this.setFailureMessage(tokens, $"Query result length is under min (got {length} min {min})");
+                                            return false;
+                                        }
+                                        else
+                                        {
+                                            minOK = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        minOK = true;
+                                    }
+
+                                    if (!String.IsNullOrEmpty(rawMax))
+                                    {
+                                        int max;
+                                        if (!int.TryParse(rawMax, out max))
+                                        {
+                                            this.setFailureMessage(tokens, $"If max is included when comparison length, it must be a number ({rawMax})");
+                                            return false;
+                                        }
+                                        if (max < length)
+                                        {
+                                            this.setFailureMessage(tokens, $"Query result length is over max (got {length} max {max})");
+                                            return false;
+                                        }
+                                        else
+                                        {
+                                            maxOK = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        maxOK = true;
+                                    }
+
+                                    if (minOK && maxOK)
+                                    {
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        this.setFailureMessage(tokens, $"Query result length out of range ({length})");
+                                        return false;
+                                    }
                                 }
                             default:
                                 //Equals/NotEquals

@@ -6,6 +6,8 @@
     <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
     <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
     <token name="TilesSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
+    <token name="CalendarSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/calendar-formatting.schema.json"/>
+    <token name="BoardSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/board-formatting.schema.json"/>
     <token name="FormattedSchemaTemplate">
       <![CDATA[{
   "$schema": "SCHEMAURLHERE",]]>
@@ -14,6 +16,8 @@
     <token name="ColumnSchemaAST" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrlAST@@)"/>
     <token name="ViewSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ViewSchemaUrl@@)"/>
     <token name="TilesSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@TilesSchemaUrl@@)"/>
+    <token name="CalendarSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@CalendarSchemaUrl@@)"/>
+    <token name="BoardSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@BoardSchemaUrl@@)"/>
     <token name="DebugMode1">
       <![CDATA["debugMode": true]]>
     </token>
@@ -113,6 +117,13 @@
               <log name="Column Type" text="Set to Managed Metadata" warn="true"/>
             </if>
           </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#promotedstate-)">
+            <!-- Promoted State -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="Promoted State" matchcase="true" />
+              <log name="Column Type" text="Set to Promoted State" warn="true"/>
+            </if>
+          </only>
           <only when="$OR($STARTSWITH(@@SampleKey@@,#generic-),#$STARTSWITH(@@SampleKey@@,#text-))">
             <!-- generic or text -->
             <if>
@@ -123,7 +134,7 @@
         </only>
         
         <!-- Checks for use of placeholder tokens (magic strings) -->
-        <foreachitem items="@me,@now,@currentWeb,@rowIndex,@window.innerHeight,@window.innerWidth,@thumbnail" quiet="true">
+        <foreachitem items="@currentWeb,@lcid,@me,@now,@rowIndex,@thumbnail,@window.innerHeight,@window.innerWidth" quiet="true">
           <run rule="CheckForToken" input="@@Each@@" quiet="true"/>
         </foreachitem>
         <only when="$EQUALS(@@SampleType@@,#View)">
@@ -147,7 +158,7 @@
           <run rule="CheckForProperty" input="@@Each@@" quiet="true"/>
         </foreachitem>
         <only when="$EQUALS(@@SampleType@@,#View)">
-          <foreachitem items="hideSelection,hideColumnHeader,additionalRowClass,rowFormatter,groupProps,headerFormatter,hideFooter,footerFormatter,fillHorizontally" quiet="true">
+          <foreachitem items="hideSelection,hideColumnHeader,additionalRowClass,rowFormatter,groupProps,headerFormatter,hideFooter,footerFormatter,fillHorizontally,monthProps,kanbanProps,calendarProps" quiet="true">
             <run rule="CheckForProperty" input="@@Each@@" quiet="true"/>
           </foreachitem>
         </only>
@@ -155,14 +166,24 @@
         
         <!-- Checks class usage (of limited use since many classes are assembled) -->
         
-        <!-- .ms-border-*, .ms-bgColor-*, .ms-fontColor-*, and hover versions -->
-        <foreachitem items="themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellowDark,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,constrastWhiteDisabled,constrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOranged20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
-          <run rule="CheckForClass" input="ms-fontColor-@@Each@@" quiet="true"/>
-          <run rule="CheckForClass" input="ms-fontColor-@@Each@@--hover" quiet="true"/>
-          <run rule="CheckForClass" input="ms-borderColor-@@Each@@" quiet="true"/>
-          <run rule="CheckForClass" input="ms-borderColor-@@Each@@--hover" quiet="true"/>
+        <!-- .ms-bgColor-* and hover versions
+                no: alert -->
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
           <run rule="CheckForClass" input="ms-bgColor-@@Each@@" quiet="true"/>
           <run rule="CheckForClass" input="ms-bgColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+        
+        <!-- .ms-border-* and hover versions
+                no: info,success,alert,severeWarning,warning,error -->
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="ms-borderColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-borderColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+        
+        <!-- .ms-fontColor-* and hover versions -->
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="ms-fontColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-fontColor-@@Each@@--hover" quiet="true"/>
         </foreachitem>
 
         <!-- .ms-fontWeight-* -->
@@ -387,7 +408,7 @@
       <conditions>
         <if>
           <!-- Check for presence of class in JSON -->
-          <filecontains path="@@FilePath@@" text="@@Input@@"/>
+          <regexmatches path="@@FilePath@@" pattern="(?&lt;=[&quot; '])@@Input@@(?=[&quot; '])"/>
           <if>
             <!-- Make sure it's in sample.json -->
             <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
@@ -469,6 +490,7 @@
         <jsonquery name="Sample Reponame" path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
         <jsonquery name="Sample Source" path="@@SampleJsonPath@@" query="$[0].source" value="pnp" matchcase="true" failuremessage="source mismatch in sample.json (@@SampleKey@@) - should be 'pnp'"/>
         <jsonquery name="Sample Title" path="@@SampleJsonPath@@" query="$[0].title" comparison="count" value="1" failuremessage="title missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Title Length" path="@@SampleJsonPath@@" query="$[0].title" comparison="length" max="50" />
         <jsonquery name="Sample SD" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="count" value="1" failuremessage="shortDescription missing or blank in sample.json (@@SampleKey@@)"/>
         <jsonquery name="Sample Url" path="@@SampleJsonPath@@" query="$[0].url" value="@@SampleUrl@@" failuremessage="url mismatch in sample.json (@@SampleKey@@) - should be '@@SampleUrl@@'"/>
         <jsonquery name="Sample LD" path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="count" min="1" failuremessage="longDescription missing or blank in sample.json (@@SampleKey@@)"/>
@@ -520,6 +542,8 @@
             <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
               <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
               <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema calendar" path="@@Each@@" text="@@CalendarSchema@@" failuremessage="Calendar (View) Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema board" path="@@Each@@" text="@@BoardSchema@@" failuremessage="Board (View) Formatting $schema not present/valid (@@Each@@)"/>
             </or>
           </only>
           <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property (@@Each@@)"/>
@@ -542,9 +566,25 @@
 
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="49" limit="1">
+        <log name="☺" text="Validating Column Samples..."/>
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="generic-start-flow-conditionally" skip="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
+        <log name="☻" text="Column Samples Validated!"/>
+        <log name="☻" text="-----------------------------------------"/>
+        
+        <log name="☺" text="Validating Form Samples..."/>
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="300" limit="1">
+          <run rule="ValidateSample"/>
+        </foreachfolder>
+        <log name="☻" text="Form Samples Validated!"/>
+        <log name="☻" text="-----------------------------------------"/>
+      
+        <log name="☺" text="Validating View Samples..."/>
+        <foreachfolder name="FormSamples" path="view-samples" pattern="*" skip="300" limit="1">
+          <run rule="ValidateSample"/>
+        </foreachfolder>
+        <log name="☻" text="View Samples Validated!"/>
       </conditions>
     </rule>
     
