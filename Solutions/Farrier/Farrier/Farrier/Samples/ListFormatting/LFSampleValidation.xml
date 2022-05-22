@@ -492,8 +492,10 @@
         <jsonquery name="Sample Title" path="@@SampleJsonPath@@" query="$[0].title" comparison="count" value="1" failuremessage="title missing or blank in sample.json (@@SampleKey@@)"/>
         <jsonquery name="Sample Title Length" path="@@SampleJsonPath@@" query="$[0].title" comparison="length" max="50" />
         <jsonquery name="Sample SD" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="count" value="1" failuremessage="shortDescription missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample SD Link" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="notmatches" value="\[.*\]\(.*\)" failuremessage="shortDescription cannot contain markdown links (@@SampleKey@@)"/>
         <jsonquery name="Sample Url" path="@@SampleJsonPath@@" query="$[0].url" value="@@SampleUrl@@" failuremessage="url mismatch in sample.json (@@SampleKey@@) - should be '@@SampleUrl@@'"/>
         <jsonquery name="Sample LD" path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="count" min="1" failuremessage="longDescription missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample LD Link" path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="notmatches" value="\[.*\]\(.*\)" failuremessage="longDescription cannot contain markdown links (@@SampleKey@@)"/>
         <jsonquery name="Sample Creation" path="@@SampleJsonPath@@" query="$[0].creationDateTime" comparison="count" value="1" failuremessage="creationDateTime missing or blank in sample.json (@@SampleKey@@)"/>
         <jsonquery name="Sample Update" path="@@SampleJsonPath@@" query="$[0].updateDateTime" comparison="count" value="1" failuremessage="updateDateTime missing or blank in sample.json (@@SampleKey@@)"/>
         <jsonquery name="Sample Products" path="@@SampleJsonPath@@" query="$[0].products" comparison="count" value="1" failuremessage="products missing or blank in sample.json (@@SampleKey@@) - should include 'SharePoint' and 'Microsoft Lists'"/>
@@ -567,7 +569,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="generic-start-flow-conditionally" skip="0">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="78">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
