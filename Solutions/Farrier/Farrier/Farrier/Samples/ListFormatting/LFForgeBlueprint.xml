@@ -23,13 +23,70 @@
     <token name="groupIcon-class-background" value=":fontawesome-solid-fill-drip:"/>
     <token name="groupIcon-class-border" value=":fontawesome-solid-border-all:"/>
     <token name="groupIcon-class-font" value=":fontawesome-solid-font:"/>
+    
     <token name="groupIcon-class-fontWeight" value=":fontawesome-solid-scale-balanced:"/>
     <token name="groupIcon-class-fontWeightLight" value=":fontawesome-solid-scale-unbalanced:"/>
     <token name="groupIcon-class-fontWeightBold" value=":fontawesome-solid-scale-unbalanced-flip:"/>
+    
     <token name="groupIcon-class-fontSize" value=":fontawesome-solid-hand-lizard:"/>
     <token name="groupIcon-class-fontSize-small" value=":fontawesome-solid-cubes-stacked:"/>
     <token name="groupIcon-class-fontSize-medium" value=":fontawesome-solid-cubes:"/>
     <token name="groupIcon-class-fontSize-large" value=":fontawesome-solid-cube:"/>
+    
+    <token name="groupIcon-class-motion-fade" value=":fontawesome-solid-ghost:"/>
+    <token name="groupIcon-class-motion-scaleDown" value=":fontawesome-solid-minimize:"/>
+    <token name="groupIcon-class-motion-scaleUp" value=":fontawesome-solid-maximize:"/>
+    <token name="groupIcon-class-motion-down" value=":fontawesome-solid-arrow-down:"/>
+    <token name="groupIcon-class-motion-left" value=":fontawesome-solid-arrow-left:"/>
+    <token name="groupIcon-class-motion-right" value=":fontawesome-solid-arrow-right:"/>
+    <token name="groupIcon-class-motion-up" value=":fontawesome-solid-arrow-up:"/>
+    <token name="groupIcon-class-motion-rotate" value=":fontawesome-solid-rotate-right:"/>
+    <token name="groupIcon-class-motion-expand" value=":fontawesome-solid-expand:"/>
+
+    <token name="groupIcon-class-sp-card-boldText" value=":fontawesome-solid-bold:"/>
+    <token name="groupIcon-class-sp-card-borderHighlight" value=":fontawesome-solid-vector-square:"/>
+    <token name="groupIcon-class-sp-card-bottomCommandBar" value=":fontawesome-solid-ellipsis:"/>
+    <token name="groupIcon-class-sp-card-container" value=":fontawesome-solid-square:"/>
+    <token name="groupIcon-class-sp-card-container-noPadding" value=":fontawesome-solid-square-person-confined:"/>
+    <token name="groupIcon-class-sp-card-content" value=":fontawesome-solid-paragraph:"/>
+    <token name="groupIcon-class-sp-card-defaultClickButton" value=":fontawesome-solid-arrow-pointer:"/>
+    <token name="groupIcon-class-sp-card-defaultImage" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-class-sp-card-defaultImageOverlay" value=":fontawesome-solid-images:"/>
+    <token name="groupIcon-class-sp-card-displayColumnContainer" value=":fontawesome-solid-table-columns:"/>
+    <token name="groupIcon-class-sp-card-emptyFillStar" value=":fontawesome-solid-star:"/>
+    <token name="groupIcon-class-sp-card-formatterRef" value=":fontawesome-solid-tent-arrow-turn-left:"/>
+    <token name="groupIcon-class-sp-card-halfFillStar" value=":fontawesome-solid-star-half:"/>
+    <token name="groupIcon-class-sp-card-heartIcon" value=":fontawesome-solid-heart:"/>
+    <token name="groupIcon-class-sp-card-highlightedContent" value=":fontawesome-solid-highlighter:"/>
+    <token name="groupIcon-class-sp-card-imageContainer" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-class-sp-card-imageContainer-shortened" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-class-sp-card-imagePreview" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-class-sp-card-imagePreview-stretched" value=":fontawesome-solid-panorama:"/>
+    <token name="groupIcon-class-sp-card-imagePreviewBackground" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-class-sp-card-imagePreviewBackground-shortened" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-class-sp-card-keyboard-focusable" value=":fontawesome-solid-keyboard:"/>
+    <token name="groupIcon-class-sp-card-label" value=":fontawesome-solid-tag:"/>
+    <token name="groupIcon-class-sp-card-lastTextColumnContainer" value=":fontawesome-solid-book:"/>
+    <token name="groupIcon-class-sp-card-likes" value=":fontawesome-solid-thumbs-up:"/>
+    <token name="groupIcon-class-sp-card-lookupInlineValues" value=":fontawesome-solid-arrows-to-eye:"/>
+    <token name="groupIcon-class-sp-card-multiline" value=":fontawesome-solid-burger:"/>
+    <token name="groupIcon-class-sp-card-personCallout" value=":fontawesome-solid-person-through-window:"/>
+    <token name="groupIcon-class-sp-card-previewColumnContainer" value=":fontawesome-solid-file-image:"/>
+    <token name="groupIcon-class-sp-card-ratingCount" value=":fontawesome-solid-star-half-stroke:"/>
+    <token name="groupIcon-class-sp-card-showOnHover" value=":fontawesome-solid-spaghetti-monster-flying:"/>
+    <token name="groupIcon-class-sp-card-showOnHoverChild" value=":fontawesome-solid-child:"/>
+    <token name="groupIcon-class-sp-card-showOnHoverParent" value=":fontawesome-solid-person-cane:"/>
+    <token name="groupIcon-class-sp-card-starRating" value=":fontawesome-solid-star:"/>
+    <token name="groupIcon-class-sp-card-subContainer" value=":fontawesome-solid-water:"/>
+    <token name="groupIcon-class-sp-card-subContainer-borderRadius" value=":fontawesome-solid-earth-oceania:"/>
+    <token name="groupIcon-class-sp-card-urlContent" value=":fontawesome-solid-link:"/>
+    <token name="groupIcon-class-sp-card-userContainer" value=":fontawesome-solid-person-through-window:"/>
+    <token name="groupIcon-class-sp-card-userContent" value=":fontawesome-solid-user:"/>
+    <token name="groupIcon-class-sp-card-userCustomCard" value=":fontawesome-solid-address-card:"/>
+    <token name="groupIcon-class-sp-card-userEmptyText" value=":fontawesome-solid-user-xmark:"/>
+    <token name="groupIcon-class-sp-card-userOthers" value=":fontawesome-solid-users:"/>
+    <token name="groupIcon-class-sp-card-userThumbnail" value=":fontawesome-solid-circle-user:"/>
+    <token name="groupIcon-class-sp-card-userTitle" value=":fontawesome-solid-user-graduate:"/>
     
     <token name="groupIcon-feature-additionalRowClass" value=":fontawesome-solid-paint-roller:"/>
     <token name="groupIcon-feature-beakStyle" value=":fontawesome-solid-crow:"/>
@@ -160,6 +217,13 @@
     <template name="GroupIcon_class-border">@@groupIcon-class-border@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#ms-borderColor-,#),#--hover,#)}</template>
     <template name="GroupIcon_class-fontWeight">$IF($CONTAINS(@@GroupValue@@,#bold),#@@groupIcon-class-fontWeightBold@@,#$IF($CONTAINS(@@GroupValue@@,#light),#@@groupIcon-class-fontWeightLight@@,#@@groupIcon-class-fontWeight@@))</template>
     <template name="GroupIcon_class-fontSize">$IF($LT(@@GroupIndex@@,#$MULTIPLY($SUBTRACT(@@TotalGroups@@,#1),#0.33)),#@@groupIcon-class-fontSize-small@@,#$IF($LTE(@@GroupIndex@@,#$MULTIPLY($SUBTRACT(@@TotalGroups@@,#1),#0.66)),#@@groupIcon-class-fontSize-medium@@,#@@groupIcon-class-fontSize-large@@))</template>
+    <template name="GroupIcon_class-listColor">@@groupIcon-class-background@@{.classDisplay .cd-$REPLACE(@@GroupValue@@,#sp-List-color,#listColor)}</template>
+    <template name="GroupIcon_class-motion">$IF($CONTAINS(@@GroupValue@@,#fade),#@@groupIcon-class-motion-fade@@,#$IF($CONTAINS(@@GroupValue@@,#scaleDown),#@@groupIcon-class-motion-scaleDown@@,#$IF($CONTAINS(@@GroupValue@@,#scaleUp),#@@groupIcon-class-motion-scaleUp@@,#$IF($CONTAINS(@@GroupValue@@,#rotate),#@@groupIcon-class-motion-rotate@@,#$IF($CONTAINS(@@GroupValue@@,#expand),#@@groupIcon-class-motion-expand@@,#$IF($CONTAINS(@@GroupValue@@,#Down),#@@groupIcon-class-motion-down@@,#$IF($CONTAINS(@@GroupValue@@,#Left),#@@groupIcon-class-motion-left@@,#$IF($CONTAINS(@@GroupValue@@,#Right),#@@groupIcon-class-motion-right@@,#@@groupIcon-class-motion-up@@))))))))</template>
+    <template name="GroupIcon_class-backgroundSP">@@groupIcon-class-background@@{.classDisplay .cd-$REPLACE(@@GroupValue@@,#sp-css-backgroundColor-,#)}</template>
+    <template name="GroupIcon_class-colorSP">@@groupIcon-class-font@@{.classDisplay .cd-$REPLACE(@@GroupValue@@,#sp-css-color-,#)}</template>
+    <template name="GroupIcon_class-borderSP">@@groupIcon-class-border@@{.classDisplay .cd-$REPLACE($REPLACE($REPLACE($REPLACE($REPLACE(@@GroupValue@@,#sp-css-borderColor-,#),#sp-css-borderTopColor-,#),#sp-css-borderLeftColor-,#),#sp-css-borderRightColor-,#),#sp-css-borderBottomColor-,#)}</template>
+    <template name="GroupIcon_class-borderSP2">@@groupIcon-class-border@@{.classDisplay .cd-$REPLACE($REPLACE(@@GroupValue@@,#sp-css-borderTop-,#),#sp-css-borderRight-,#)}</template>
+    <template name="GroupIcon_class-card">@@groupIcon-class-@@GroupValue@@@@</template>
     
     <template name="GroupHeader">## @@GroupValue@@</template>
     <template name="GroupHeader_columntype">
@@ -412,7 +476,7 @@
       </section>
       <section>
         !!! Note "Complimentary Classes"
-            These classes compliment the [ms-borderColor-*](./ms-borderClass.md) and [ms-fontColor-*](./ms-fontColor.md) classes and except where noted below contain equivalent colors.
+            These classes compliment the [ms-borderColor-*](./ms-borderColor.md) and [ms-fontColor-*](./ms-fontColor.md) classes and except where noted below contain equivalent colors.
         
         !!! Warning
             The named color `alert` does not have a `ms-bgColor-` equivalent despite being present elsewhere
@@ -432,7 +496,6 @@
       <section template="Telemetry" />
     </file>
     
-    <!-- ms-borderColor-* -->
     <file name="ms-borderColor" path="groupings/classes/ms-borderColor.md">
       <section>
         # Samples by Class: ms-borderColor-*
@@ -465,7 +528,6 @@
       <section template="Telemetry" />
     </file>
     
-    <!-- ms-fontColor-* -->
     <file name="ms-fontColor" path="groupings/classes/ms-fontColor.md">
       <section>
         # Samples by Class: ms-fontColor-*
@@ -477,7 +539,7 @@
       </section>
       <section>
         !!! Note "Complimentary Classes"
-            These classes compliment the [ms-borderClass-*](./ms-borderClass.md) and [ms-bgColor-*](./ms-bgColor.md) classes and except where noted below contain equivalent colors.
+            These classes compliment the [ms-borderColor-*](./ms-borderColor.md) and [ms-bgColor-*](./ms-bgColor.md) classes and except where noted (on those pages) contain equivalent colors.
 
       </section>
       <section template="ExpandCollapseAll"/>
@@ -495,14 +557,13 @@
       <section template="Telemetry" />
     </file>
 
-    <!-- ms-fontWeight-* -->
     <file name="ms-fontWeight" path="groupings/classes/ms-fontWeight.md">
       <section>
         # Samples by Class: ms-fontWeight-*
 
         The `ms-fontWeight-*` classes apply various levels of **bold**.
 
-        Samples are grouped by classes used. Expand to see the related samples.
+        Samples are grouped by classes used and listed from lightest to boldest. Expand to see the related samples.
 
       </section>
       <section template="ExpandCollapseAll"/>
@@ -520,14 +581,13 @@
       <section template="Telemetry" />
     </file>
 
-    <!-- ms-font-* -->
     <file name="ms-font" path="groupings/classes/ms-font.md">
       <section>
         # Samples by Class: ms-font-*
 
         The `ms-font-*` classes apply various combinations of text **size** and **font weight**. To apply just size or just weight use the [ms-fontSize-*](./ms-fontSize.md) and [ms-fontWeight-*](./ms-fontWeight.md) classes respectively.
 
-        Samples are grouped by classes used. Expand to see the related samples.
+        Samples are grouped by classes used and listed from smallest to biggest. Expand to see the related samples.
 
       </section>
       <section template="ExpandCollapseAll"/>
@@ -545,14 +605,13 @@
       <section template="Telemetry" />
     </file>
 
-    <!-- ms-fontSize-* -->
     <file name="ms-fontSize" path="groupings/classes/ms-fontSize.md">
       <section>
         # Samples by Class: ms-fontSize-*
 
         The `ms-fontSize-*` classes apply various text **size**.
 
-        Samples are grouped by classes used. Expand to see the related samples.
+        Samples are grouped by classes used and listed from smallest to biggest. Expand to see the related samples.
 
       </section>
       <section template="ExpandCollapseAll"/>
@@ -570,6 +629,200 @@
       <section template="Telemetry" />
     </file>
 
+    <file name="sp-field-fontSize" path="groupings/classes/sp-field-fontSize.md">
+      <section>
+        # Samples by Class: sp-field-fontSize*
+
+        The `sp-field-fontSize*` classes apply various text **size**.
+
+        Samples are grouped by classes used and listed from smallest to biggest. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="match"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-field-fontSizeSmall,sp-field-fontSizeMedium,sp-field-fontSize14,sp-field-fontSize15,sp-field-fontSizeLarge,sp-field-fontSize17,sp-field-fontSizeXLarge,sp-field-fontSize21,sp-field-fontSize24,sp-field-fontSize28,sp-field-fontSize32,sp-field-fontSize36,sp-field-fontSize42"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-fontSize,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-fontSize,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="sp-List-color" path="groupings/classes/sp-List-color.md">
+      <section>
+        # Samples by Class: sp-List-color*
+
+        The `sp-List-color*` classes apply various **background-colors** that correspond to Microsoft Lists color choices (shown in their icons).
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="match"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-List-color0,sp-List-color1,sp-List-color2,sp-List-color3,sp-List-color4,sp-List-color5,sp-List-color6,sp-List-color7,sp-List-color8,sp-List-color9,sp-List-color10,sp-List-color11"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-listColor,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-listColor,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="animation" path="groupings/classes/animation.md">
+      <section>
+        # Samples by Class: Animation
+
+        The `ms-motion-*` and `ms-*` classes apply various **transitions** and **timings** to apply to elements as they appear/disappear.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="ms-motion-fadeIn,ms-motion-fadeOut,ms-motion-scaleDownIn,ms-motion-scaleDownOut,ms-motion-slideLeftOut,ms-motion-slideRightOut,ms-motion-slideDownOut,ms-motion-slideUpOut,ms-motion-slideLeftIn,ms-motion-slideRightIn,ms-motion-slideDownIn,ms-motion-slideUpIn,ms-slideRightIn10,ms-slideRightIn20,ms-slideRightIn40,ms-slideRightIn400,ms-slideRightOut40,ms-slideRightOut400,ms-slideLeftIn10,ms-slideLeftIn20,ms-slideLeftIn40,ms-slideLeftIn400,ms-slideLeftOut40,ms-slideLeftOut400,ms-slideUpIn10,ms-slideUpIn20,ms-slideDownIn10,ms-slideDownIn20,ms-slideUpOut10,ms-slideUpOut20,ms-slideDownOut10,ms-slideDownOut20,ms-scaleUpIn100,ms-scaleUpOut103,ms-scaleDownIn100,ms-scaleDownOut98,ms-rotateN90deg,ms-rotate90deg,ms-fadeIn100,ms-fadeIn200,ms-fadeIn400,ms-fadeIn500,ms-fadeOut100,ms-fadeOut200,ms-fadeOut400,ms-fadeOut500,ms-expandCollapse100,ms-expandCollapse200,ms-expandCollapse400"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-motion,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-motion,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="sp-css-backgroundColor" path="groupings/classes/sp-css-backgroundColor.md">
+      <section>
+        # Samples by Class: sp-css-backgroundColor-*
+
+        The `sp-css-backgroundColor-*` classes apply a **background color**. Several standard, named, theme, neutral, and more are included.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-css-backgroundColor-BgDarkRed,sp-css-backgroundColor-BgRed,sp-css-backgroundColor-BgOrange,sp-css-backgroundColor-BgBrown,sp-css-backgroundColor-BgGreen,sp-css-backgroundColor-BgTeal,sp-css-backgroundColor-BgDarkGreen,sp-css-backgroundColor-BgBlue,sp-css-backgroundColor-bgLavender,sp-css-backgroundColor-BgDarkBlue,sp-css-backgroundColor-BgDarkPurple,sp-css-backgroundColor-BgPurple,sp-css-backgroundColor-BgDarkPink,sp-css-backgroundColor-BgGray,sp-css-backgroundColor-BgCoral,sp-css-backgroundColor-BgDustRose,sp-css-backgroundColor-BgPeak,sp-css-backgroundColor-BgGold,sp-css-backgroundColor-BgMintGreen,sp-css-backgroundColor-BgCyan,sp-css-backgroundColor-BgSage,sp-css-backgroundColor-BgCornflowerBlue,sp-css-backgroundColor-BgLightPurple,sp-css-backgroundColor-BgLightBlue,sp-css-backgroundColor-BgViolet,sp-css-backgroundColor-BgMauve,sp-css-backgroundColor-BgLilac,sp-css-backgroundColor-BgLightGray,sp-css-backgroundColor-BgCoral30,sp-css-backgroundColor-BgDustRose30,sp-css-backgroundColor-BgPeach40,sp-css-backgroundColor-BgGold60,sp-css-backgroundColor-BgMintGreen30,sp-css-backgroundColor-BgCyan30,sp-css-backgroundColor-BgSage20,sp-css-backgroundColor-BgCornflower40,sp-css-backgroundColor-BgLightPurple30,sp-css-backgroundColor-BgLightBlue20,sp-css-backgroundColor-BgViolet40,sp-css-backgroundColor-BgMauve50,sp-css-backgroundColor-BgLilac30,sp-css-backgroundColor-BgLightGray30,sp-css-backgroundColor-DarkRedText,sp-css-backgroundColor-RedText,sp-css-backgroundColor-OrangeText,sp-css-backgroundColor-BrownText,sp-css-backgroundColor-GreenText,sp-css-backgroundColor-TealText,sp-css-backgroundColor-DarkGreenText,sp-css-backgroundColor-BlueText,sp-css-backgroundColor-LavenderText,sp-css-backgroundColor-DarkBlueText,sp-css-backgroundColor-DarkPurpleText,sp-css-backgroundColor-PurpleText,sp-css-backgroundColor-LightPurpleText,sp-css-backgroundColor-GrayText,sp-css-backgroundColor-WhiteText,sp-css-backgroundColor-BlackText,sp-css-backgroundColor-CoralFont,sp-css-backgroundColor-DustRoseFont,sp-css-backgroundColor-PeachFont,sp-css-backgroundColor-GoldFont,sp-css-backgroundColor-MintGreenFont,sp-css-backgroundColor-CyanFont,sp-css-backgroundColor-SageFont,sp-css-backgroundColor-CornflowerBlueFont,sp-css-backgroundColor-LightPurpleFont,sp-css-backgroundColor-LightBlueFont,sp-css-backgroundColor-VioletFont,sp-css-backgroundColor-MauveFont,sp-css-backgroundColor-LilacFont,sp-css-backgroundColor-LightGrayFont,sp-css-backgroundColor-WhiteFont,sp-css-backgroundColor-BlackFont,sp-css-backgroundColor-bodyBackground,sp-css-backgroundColor-bodyText,sp-css-backgroundColor-bodySubtext,sp-css-backgroundColor-bodyDivider,sp-css-backgroundColor-disabledBackground,sp-css-backgroundColor-disabledText,sp-css-backgroundColor-disabledSubtext,sp-css-backgroundColor-errorBackground,sp-css-backgroundColor-errorText,sp-css-backgroundColor-listBackground,sp-css-backgroundColor-listTextColor,sp-css-backgroundColor-listItemBackgroundChecked,sp-css-backgroundColor-warningBackground,sp-css-backgroundColor-successBackground,sp-css-backgroundColor-blockingBackground,sp-css-backgroundColor-themePrimary,sp-css-backgroundColor-themeSeconary,sp-css-backgroundColor-themeTertiary,sp-css-backgroundColor-themeLight,sp-css-backgroundColor-themeLighter,sp-css-backgroundColor-themeLighterAlt,sp-css-backgroundColor-themeDark,sp-css-backgroundColor-themeDarker,sp-css-backgroundColor-themeDarkAlt,sp-css-backgroundColor-neutralDark,sp-css-backgroundColor-neutralPrimary,sp-css-backgroundColor-neutralPrimaryAlt,sp-css-backgroundColor-neutralSecondary,sp-css-backgroundColor-neutralTertiary,sp-css-backgroundColor-neutralTertiaryAlt,sp-css-backgroundColor-neutralQuaternary,sp-css-backgroundColor-neutralQuaternaryAlt,sp-css-backgroundColor-neutralLight,sp-css-backgroundColor-neutralLighter,sp-css-backgroundColor-neutralLighterAlt,sp-css-backgroundColor-white,sp-css-backgroundColor-black,sp-css-backgroundColor-blue,sp-css-backgroundColor-yellow,sp-css-backgroundColor-yellowLight,sp-css-backgroundColor-red,sp-css-backgroundColor-redDark,sp-css-backgroundColor-green,sp-css-backgroundColor-greenLight,sp-css-backgroundColor-blueLight,sp-css-backgroundColor-blueDark,sp-css-backgroundColor-purple,sp-css-backgroundColor-neutralBackground30,sp-css-backgroundColor-neutralBackground20,sp-css-backgroundColor-neutralBackground10,sp-css-backgroundColor-neutralBackground,sp-css-backgroundColor-blueBackground37,sp-css-backgroundColor-blueBackground27,sp-css-backgroundColor-blueBackground17,sp-css-backgroundColor-blueBackground07,sp-css-backgroundColor-successBackground50,sp-css-backgroundColor-successBackground40,sp-css-backgroundColor-successBackground30,sp-css-backgroundColor-warningBackground50,sp-css-backgroundColor-warningBackground40,sp-css-backgroundColor-warningBackground30,sp-css-backgroundColor-blockingBackground50,sp-css-backgroundColor-blockingBackground40,sp-css-backgroundColor-blockingBackground30,sp-css-backgroundColor-errorBackground50,sp-css-backgroundColor-errorBackground40,sp-css-backgroundColor-errorBackground30,sp-css-backgroundColor-noFill"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-backgroundSP,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-backgroundSP,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="sp-css-color" path="groupings/classes/sp-css-color.md">
+      <section>
+        # Samples by Class: sp-css-color-*
+
+        The `sp-css-color-*` classes apply a font **color**. Several standard, named, theme, neutral, and more are included.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-css-color-DarkRedText,sp-css-color-RedText,sp-css-color-OrangeText,sp-css-color-BrownText,sp-css-color-GreenText,sp-css-color-TealText,sp-css-color-DarkGreenText,sp-css-color-BlueText,sp-css-color-LavenderText,sp-css-color-DarkBlueText,sp-css-color-DarkPurpleText,sp-css-color-PurpleText,sp-css-color-LightPurpleText,sp-css-color-GrayText,sp-css-color-WhiteText,sp-css-color-BlackText,sp-css-color-CoralFont,sp-css-color-DustRoseFont,sp-css-color-PeachFont,sp-css-color-GoldFont,sp-css-color-MintGreenFont,sp-css-color-CyanFont,sp-css-color-SageFont,sp-css-color-CornflowerBlueFont,sp-css-color-LightPurpleFont,sp-css-color-LightBlueFont,sp-css-color-VioletFont,sp-css-color-MauveFont,sp-css-color-LilacFont,sp-css-color-LightGrayFont,sp-css-color-WhiteFont,sp-css-color-BlackFont,sp-css-color-bodyBackground,sp-css-color-bodyText,sp-css-color-bodySubtext,sp-css-color-bodyDivider,sp-css-color-disabledBackground,sp-css-color-disabledText,sp-css-color-disabledSubtext,sp-css-color-errorBackground,sp-css-color-errorText,sp-css-color-listBackground,sp-css-color-listTextColor,sp-css-color-listItemBackgroundChecked,sp-css-color-warningBackground,sp-css-color-successBackground,sp-css-color-blockingBackground,sp-css-color-themeDarker,sp-css-color-themeDark,sp-css-color-themeDarkAlt,sp-css-color-themePrimary,sp-css-color-themeSecondary,sp-css-color-themeTertiary,sp-css-color-themeLight,sp-css-color-themeLighter,sp-css-color-themeLighterAlt,sp-css-color-black,sp-css-color-neutralDark,sp-css-color-neutralPrimary,sp-css-color-neutralPrimaryAlt,sp-css-color-neutralSecondary,sp-css-color-neutralTertiary,sp-css-color-neutralTertiaryAlt,sp-css-color-neutralQuaternary,sp-css-color-neutralQuaternaryAlt,sp-css-color-neutralLight,sp-css-color-neutralLighter,sp-css-color-neutralLighterAlt,sp-css-color-white,sp-css-color-blue,sp-css-color-redDark,sp-css-color-red,sp-css-color-yellow,sp-css-color-yellowLight,sp-css-color-greenLight,sp-css-color-green,sp-css-color-blueLight,sp-css-color-blueDark,sp-css-color-purple"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-colorSP,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-colorSP,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="sp-css-borderColor" path="groupings/classes/sp-css-borderColor.md">
+      <section>
+        # Samples by Class: sp-css-borderColor-*
+
+        The `sp-css-borderColor-*` classes apply a **border color** (still requires a `border-width` and `border-style` to display). Several standard, named, theme, neutral, and more are included.
+
+        The `sp-css-borderColor-*` classes apply to _all_ four borders. To apply colors only to specific borders use the `sp-css-borderTopColor-*`,`sp-css-borderLeftColor-*`,`sp-css-borderBottomColor-*`, or `sp-css-borderRightColor-*` classes also listed below.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-css-borderColor-DarkRedText,sp-css-borderColor-RedText,sp-css-borderColor-OrangeText,sp-css-borderColor-BrownText,sp-css-borderColor-GreenText,sp-css-borderColor-TealText,sp-css-borderColor-DarkGreenText,sp-css-borderColor-BlueText,sp-css-borderColor-LavenderText,sp-css-borderColor-DarkBlueText,sp-css-borderColor-DarkPurpleText,sp-css-borderColor-PurpleText,sp-css-borderColor-LightPurpleText,sp-css-borderColor-GrayText,sp-css-borderColor-WhiteText,sp-css-borderColor-BlackText,sp-css-borderColor-CoralFont,sp-css-borderColor-DustRoseFont,sp-css-borderColor-PeachFont,sp-css-borderColor-GoldFont,sp-css-borderColor-MintGreenFont,sp-css-borderColor-CyanFont,sp-css-borderColor-SageFont,sp-css-borderColor-CornflowerBlueFont,sp-css-borderColor-LightPurpleFont,sp-css-borderColor-LightBlueFont,sp-css-borderColor-VioletFont,sp-css-borderColor-MauveFont,sp-css-borderColor-LilacFont,sp-css-borderColor-LightGrayFont,sp-css-borderColor-WhiteFont,sp-css-borderColor-BlackFont,sp-css-borderColor-bodyBackground,sp-css-borderColor-bodyText,sp-css-borderColor-bodySubtext,sp-css-borderColor-bodyDivider,sp-css-borderColor-disabledBackground,sp-css-borderColor-disabledText,sp-css-borderColor-disabledSubtext,sp-css-borderColor-errorBackground,sp-css-borderColor-errorText,sp-css-borderColor-listBackground,sp-css-borderColor-listTextColor,sp-css-borderColor-listItemBackgroundChecked,sp-css-borderColor-warningBackground,sp-css-borderColor-successBackground,sp-css-borderColor-blockingBackground,sp-css-borderColor-themeDarker,sp-css-borderColor-themeDark,sp-css-borderColor-themeDarkAlt,sp-css-borderColor-themePrimary,sp-css-borderColor-themeSecondary,sp-css-borderColor-themeTertiary,sp-css-borderColor-themeLight,sp-css-borderColor-themeLighter,sp-css-borderColor-themeLighterAlt,sp-css-borderColor-black,sp-css-borderColor-neutralDark,sp-css-borderColor-neutralPrimary,sp-css-borderColor-neutralPrimaryAlt,sp-css-borderColor-neutralSecondary,sp-css-borderColor-neutralTertiary,sp-css-borderColor-neutralTertiaryAlt,sp-css-borderColor-neutralQuaternary,sp-css-borderColor-neutralQuaternaryAlt,sp-css-borderColor-neutralLight,sp-css-borderColor-neutralLighter,sp-css-borderColor-neutralLighterAlt,sp-css-borderColor-white,sp-css-borderColor-blue,sp-css-borderColor-redDark,sp-css-borderColor-red,sp-css-borderColor-yellow,sp-css-borderColor-yellowLight,sp-css-borderColor-greenLight,sp-css-borderColor-green,sp-css-borderColor-blueLight,sp-css-borderColor-blueDark,sp-css-borderColor-purple,sp-css-borderTopColor-DarkRedText,sp-css-borderTopColor-RedText,sp-css-borderTopColor-OrangeText,sp-css-borderTopColor-BrownText,sp-css-borderTopColor-GreenText,sp-css-borderTopColor-TealText,sp-css-borderTopColor-DarkGreenText,sp-css-borderTopColor-BlueText,sp-css-borderTopColor-LavenderText,sp-css-borderTopColor-DarkBlueText,sp-css-borderTopColor-DarkPurpleText,sp-css-borderTopColor-PurpleText,sp-css-borderTopColor-LightPurpleText,sp-css-borderTopColor-GrayText,sp-css-borderTopColor-WhiteText,sp-css-borderTopColor-BlackText,sp-css-borderTopColor-CoralFont,sp-css-borderTopColor-DustRoseFont,sp-css-borderTopColor-PeachFont,sp-css-borderTopColor-GoldFont,sp-css-borderTopColor-MintGreenFont,sp-css-borderTopColor-CyanFont,sp-css-borderTopColor-SageFont,sp-css-borderTopColor-CornflowerBlueFont,sp-css-borderTopColor-LightPurpleFont,sp-css-borderTopColor-LightBlueFont,sp-css-borderTopColor-VioletFont,sp-css-borderTopColor-MauveFont,sp-css-borderTopColor-LilacFont,sp-css-borderTopColor-LightGrayFont,sp-css-borderTopColor-WhiteFont,sp-css-borderTopColor-BlackFont,sp-css-borderTopColor-bodyBackground,sp-css-borderTopColor-bodyText,sp-css-borderTopColor-bodySubtext,sp-css-borderTopColor-bodyDivider,sp-css-borderTopColor-disabledBackground,sp-css-borderTopColor-disabledText,sp-css-borderTopColor-disabledSubtext,sp-css-borderTopColor-errorBackground,sp-css-borderTopColor-errorText,sp-css-borderTopColor-listBackground,sp-css-borderTopColor-listTextColor,sp-css-borderTopColor-listItemBackgroundChecked,sp-css-borderTopColor-warningBackground,sp-css-borderTopColor-successBackground,sp-css-borderTopColor-blockingBackground,sp-css-borderTopColor-themeDarker,sp-css-borderTopColor-themeDark,sp-css-borderTopColor-themeDarkAlt,sp-css-borderTopColor-themePrimary,sp-css-borderTopColor-themeSecondary,sp-css-borderTopColor-themeTertiary,sp-css-borderTopColor-themeLight,sp-css-borderTopColor-themeLighter,sp-css-borderTopColor-themeLighterAlt,sp-css-borderTopColor-black,sp-css-borderTopColor-neutralDark,sp-css-borderTopColor-neutralPrimary,sp-css-borderTopColor-neutralPrimaryAlt,sp-css-borderTopColor-neutralSecondary,sp-css-borderTopColor-neutralTertiary,sp-css-borderTopColor-neutralTertiaryAlt,sp-css-borderTopColor-neutralQuaternary,sp-css-borderTopColor-neutralQuaternaryAlt,sp-css-borderTopColor-neutralLight,sp-css-borderTopColor-neutralLighter,sp-css-borderTopColor-neutralLighterAlt,sp-css-borderTopColor-white,sp-css-borderTopColor-blue,sp-css-borderTopColor-redDark,sp-css-borderTopColor-red,sp-css-borderTopColor-yellow,sp-css-borderTopColor-yellowLight,sp-css-borderTopColor-greenLight,sp-css-borderTopColor-green,sp-css-borderTopColor-blueLight,sp-css-borderTopColor-blueDark,sp-css-borderTopColor-purple,sp-css-borderLeftColor-DarkRedText,sp-css-borderLeftColor-RedText,sp-css-borderLeftColor-OrangeText,sp-css-borderLeftColor-BrownText,sp-css-borderLeftColor-GreenText,sp-css-borderLeftColor-TealText,sp-css-borderLeftColor-DarkGreenText,sp-css-borderLeftColor-BlueText,sp-css-borderLeftColor-LavenderText,sp-css-borderLeftColor-DarkBlueText,sp-css-borderLeftColor-DarkPurpleText,sp-css-borderLeftColor-PurpleText,sp-css-borderLeftColor-LightPurpleText,sp-css-borderLeftColor-GrayText,sp-css-borderLeftColor-WhiteText,sp-css-borderLeftColor-BlackText,sp-css-borderLeftColor-CoralFont,sp-css-borderLeftColor-DustRoseFont,sp-css-borderLeftColor-PeachFont,sp-css-borderLeftColor-GoldFont,sp-css-borderLeftColor-MintGreenFont,sp-css-borderLeftColor-CyanFont,sp-css-borderLeftColor-SageFont,sp-css-borderLeftColor-CornflowerBlueFont,sp-css-borderLeftColor-LightPurpleFont,sp-css-borderLeftColor-LightBlueFont,sp-css-borderLeftColor-VioletFont,sp-css-borderLeftColor-MauveFont,sp-css-borderLeftColor-LilacFont,sp-css-borderLeftColor-LightGrayFont,sp-css-borderLeftColor-WhiteFont,sp-css-borderLeftColor-BlackFont,sp-css-borderLeftColor-bodyBackground,sp-css-borderLeftColor-bodyText,sp-css-borderLeftColor-bodySubtext,sp-css-borderLeftColor-bodyDivider,sp-css-borderLeftColor-disabledBackground,sp-css-borderLeftColor-disabledText,sp-css-borderLeftColor-disabledSubtext,sp-css-borderLeftColor-errorBackground,sp-css-borderLeftColor-errorText,sp-css-borderLeftColor-listBackground,sp-css-borderLeftColor-listTextColor,sp-css-borderLeftColor-listItemBackgroundChecked,sp-css-borderLeftColor-warningBackground,sp-css-borderLeftColor-successBackground,sp-css-borderLeftColor-blockingBackground,sp-css-borderLeftColor-themeDarker,sp-css-borderLeftColor-themeDark,sp-css-borderLeftColor-themeDarkAlt,sp-css-borderLeftColor-themePrimary,sp-css-borderLeftColor-themeSecondary,sp-css-borderLeftColor-themeTertiary,sp-css-borderLeftColor-themeLight,sp-css-borderLeftColor-themeLighter,sp-css-borderLeftColor-themeLighterAlt,sp-css-borderLeftColor-black,sp-css-borderLeftColor-neutralDark,sp-css-borderLeftColor-neutralPrimary,sp-css-borderLeftColor-neutralPrimaryAlt,sp-css-borderLeftColor-neutralSecondary,sp-css-borderLeftColor-neutralTertiary,sp-css-borderLeftColor-neutralTertiaryAlt,sp-css-borderLeftColor-neutralQuaternary,sp-css-borderLeftColor-neutralQuaternaryAlt,sp-css-borderLeftColor-neutralLight,sp-css-borderLeftColor-neutralLighter,sp-css-borderLeftColor-neutralLighterAlt,sp-css-borderLeftColor-white,sp-css-borderLeftColor-blue,sp-css-borderLeftColor-redDark,sp-css-borderLeftColor-red,sp-css-borderLeftColor-yellow,sp-css-borderLeftColor-yellowLight,sp-css-borderLeftColor-greenLight,sp-css-borderLeftColor-green,sp-css-borderLeftColor-blueLight,sp-css-borderLeftColor-blueDark,sp-css-borderLeftColor-purple,sp-css-borderBottomColor-DarkRedText,sp-css-borderBottomColor-RedText,sp-css-borderBottomColor-OrangeText,sp-css-borderBottomColor-BrownText,sp-css-borderBottomColor-GreenText,sp-css-borderBottomColor-TealText,sp-css-borderBottomColor-DarkGreenText,sp-css-borderBottomColor-BlueText,sp-css-borderBottomColor-LavenderText,sp-css-borderBottomColor-DarkBlueText,sp-css-borderBottomColor-DarkPurpleText,sp-css-borderBottomColor-PurpleText,sp-css-borderBottomColor-LightPurpleText,sp-css-borderBottomColor-GrayText,sp-css-borderBottomColor-WhiteText,sp-css-borderBottomColor-BlackText,sp-css-borderBottomColor-CoralFont,sp-css-borderBottomColor-DustRoseFont,sp-css-borderBottomColor-PeachFont,sp-css-borderBottomColor-GoldFont,sp-css-borderBottomColor-MintGreenFont,sp-css-borderBottomColor-CyanFont,sp-css-borderBottomColor-SageFont,sp-css-borderBottomColor-CornflowerBlueFont,sp-css-borderBottomColor-LightPurpleFont,sp-css-borderBottomColor-LightBlueFont,sp-css-borderBottomColor-VioletFont,sp-css-borderBottomColor-MauveFont,sp-css-borderBottomColor-LilacFont,sp-css-borderBottomColor-LightGrayFont,sp-css-borderBottomColor-WhiteFont,sp-css-borderBottomColor-BlackFont,sp-css-borderBottomColor-bodyBackground,sp-css-borderBottomColor-bodyText,sp-css-borderBottomColor-bodySubtext,sp-css-borderBottomColor-bodyDivider,sp-css-borderBottomColor-disabledBackground,sp-css-borderBottomColor-disabledText,sp-css-borderBottomColor-disabledSubtext,sp-css-borderBottomColor-errorBackground,sp-css-borderBottomColor-errorText,sp-css-borderBottomColor-listBackground,sp-css-borderBottomColor-listTextColor,sp-css-borderBottomColor-listItemBackgroundChecked,sp-css-borderBottomColor-warningBackground,sp-css-borderBottomColor-successBackground,sp-css-borderBottomColor-blockingBackground,sp-css-borderBottomColor-themeDarker,sp-css-borderBottomColor-themeDark,sp-css-borderBottomColor-themeDarkAlt,sp-css-borderBottomColor-themePrimary,sp-css-borderBottomColor-themeSecondary,sp-css-borderBottomColor-themeTertiary,sp-css-borderBottomColor-themeLight,sp-css-borderBottomColor-themeLighter,sp-css-borderBottomColor-themeLighterAlt,sp-css-borderBottomColor-black,sp-css-borderBottomColor-neutralDark,sp-css-borderBottomColor-neutralPrimary,sp-css-borderBottomColor-neutralPrimaryAlt,sp-css-borderBottomColor-neutralSecondary,sp-css-borderBottomColor-neutralTertiary,sp-css-borderBottomColor-neutralTertiaryAlt,sp-css-borderBottomColor-neutralQuaternary,sp-css-borderBottomColor-neutralQuaternaryAlt,sp-css-borderBottomColor-neutralLight,sp-css-borderBottomColor-neutralLighter,sp-css-borderBottomColor-neutralLighterAlt,sp-css-borderBottomColor-white,sp-css-borderBottomColor-blue,sp-css-borderBottomColor-redDark,sp-css-borderBottomColor-red,sp-css-borderBottomColor-yellow,sp-css-borderBottomColor-yellowLight,sp-css-borderBottomColor-greenLight,sp-css-borderBottomColor-green,sp-css-borderBottomColor-blueLight,sp-css-borderBottomColor-blueDark,sp-css-borderBottomColor-purple,sp-css-borderRightColor-DarkRedText,sp-css-borderRightColor-RedText,sp-css-borderRightColor-OrangeText,sp-css-borderRightColor-BrownText,sp-css-borderRightColor-GreenText,sp-css-borderRightColor-TealText,sp-css-borderRightColor-DarkGreenText,sp-css-borderRightColor-BlueText,sp-css-borderRightColor-LavenderText,sp-css-borderRightColor-DarkBlueText,sp-css-borderRightColor-DarkPurpleText,sp-css-borderRightColor-PurpleText,sp-css-borderRightColor-LightPurpleText,sp-css-borderRightColor-GrayText,sp-css-borderRightColor-WhiteText,sp-css-borderRightColor-BlackText,sp-css-borderRightColor-CoralFont,sp-css-borderRightColor-DustRoseFont,sp-css-borderRightColor-PeachFont,sp-css-borderRightColor-GoldFont,sp-css-borderRightColor-MintGreenFont,sp-css-borderRightColor-CyanFont,sp-css-borderRightColor-SageFont,sp-css-borderRightColor-CornflowerBlueFont,sp-css-borderRightColor-LightPurpleFont,sp-css-borderRightColor-LightBlueFont,sp-css-borderRightColor-VioletFont,sp-css-borderRightColor-MauveFont,sp-css-borderRightColor-LilacFont,sp-css-borderRightColor-LightGrayFont,sp-css-borderRightColor-WhiteFont,sp-css-borderRightColor-BlackFont,sp-css-borderRightColor-bodyBackground,sp-css-borderRightColor-bodyText,sp-css-borderRightColor-bodySubtext,sp-css-borderRightColor-bodyDivider,sp-css-borderRightColor-disabledBackground,sp-css-borderRightColor-disabledText,sp-css-borderRightColor-disabledSubtext,sp-css-borderRightColor-errorBackground,sp-css-borderRightColor-errorText,sp-css-borderRightColor-listBackground,sp-css-borderRightColor-listTextColor,sp-css-borderRightColor-listItemBackgroundChecked,sp-css-borderRightColor-warningBackground,sp-css-borderRightColor-successBackground,sp-css-borderRightColor-blockingBackground,sp-css-borderRightColor-themeDarker,sp-css-borderRightColor-themeDark,sp-css-borderRightColor-themeDarkAlt,sp-css-borderRightColor-themePrimary,sp-css-borderRightColor-themeSecondary,sp-css-borderRightColor-themeTertiary,sp-css-borderRightColor-themeLight,sp-css-borderRightColor-themeLighter,sp-css-borderRightColor-themeLighterAlt,sp-css-borderRightColor-black,sp-css-borderRightColor-neutralDark,sp-css-borderRightColor-neutralPrimary,sp-css-borderRightColor-neutralPrimaryAlt,sp-css-borderRightColor-neutralSecondary,sp-css-borderRightColor-neutralTertiary,sp-css-borderRightColor-neutralTertiaryAlt,sp-css-borderRightColor-neutralQuaternary,sp-css-borderRightColor-neutralQuaternaryAlt,sp-css-borderRightColor-neutralLight,sp-css-borderRightColor-neutralLighter,sp-css-borderRightColor-neutralLighterAlt,sp-css-borderRightColor-white,sp-css-borderRightColor-blue,sp-css-borderRightColor-redDark,sp-css-borderRightColor-red,sp-css-borderRightColor-yellow,sp-css-borderRightColor-yellowLight,sp-css-borderRightColor-greenLight,sp-css-borderRightColor-green,sp-css-borderRightColor-blueLight,sp-css-borderRightColor-blueDark,sp-css-borderRightColor-purple"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-borderSP,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-borderSP,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="sp-css-border" path="groupings/classes/sp-css-border.md">
+      <section>
+        # Samples by Class: sp-css-border Other
+
+        In addition to the [`sp-css-borderColor-*`](./sp-css-borderColor.md) classes, there are a few additional border classes that apply unique colors and, in some cases, styles and widths.
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-css-borderRight-neutralTertiaryDashed,sp-css-borderTop-neutralBorder,sp-css-borderTop-blueBorder,sp-css-borderTop-successBorder,sp-css-borderTop-warningBorder,sp-css-borderTop-blockingBorder,sp-css-borderTop-errorBorder"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-borderSP2,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-borderSP2,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+
+    <file name="sp-card" path="groupings/classes/sp-card.md">
+      <section>
+        # Samples by Class: sp-card-*
+
+        The `sp-card-*` classes are intended to be used in gallery views (but are available for other formats as well).
+
+        Samples are grouped by classes used. Expand to see the related samples.
+
+      </section>
+      <section template="ExpandCollapseAll"/>
+      <loop csv="LFSamples.csv" orderBy="Name"
+            groupBy="Classes" groupOrder="value" groupDesc="false"
+            filter="ISNULL(Classes,'') &lt;&gt; ''" groupSeparator="|"
+            groupValues="sp-card-borderHighlight,sp-card-personCallout,sp-card-container,sp-card-keyboard-focusable,sp-card-defaultClickButton,sp-card-subContainer,sp-card-displayColumnContainer,sp-card-previewColumnContainer,sp-card-lastTextColumnContainer,sp-card-label,sp-card-content,sp-card-userContent,sp-card-boldText,sp-card-highlightedContent,sp-card-urlContent,sp-card-formatterRef,sp-card-imagePreviewBackground,sp-card-imagePreviewBackground-shortened,sp-card-userEmptyText,sp-card-userContainer,sp-card-userThumbnail,sp-card-userOthers,sp-card-userTitle,sp-card-userCustomCard,sp-card-lookupInlineValues,sp-card-defaultImage,sp-card-defaultImageOverlay,sp-card-starRating,sp-card-emptyFillStar,sp-card-halfFillStar,sp-card-ratingCount,sp-card-bottomCommandBar,sp-card-likes,sp-card-heartIcon,sp-card-multiline,sp-card-container-noPadding,sp-card-showOnHoverParent,sp-card-showOnHoverChild,sp-card-showOnHover,sp-card-imagePreview,sp-card-imagePreview-stretched,sp-card-subContainer-borderRadius,sp-card-imageContainer,sp-card-imageContainer-shortened"
+            groupValuesRestrict="true"
+            groupValuesIncludeMissing="true">
+        <groupStart template="ExpansionGroup,GroupIcon_class-card,GroupHeader" />
+        <item template="SampleItem" />
+        <groupEnd />
+        <emptyGroup template="ExpansionGroupEmpty,GroupIcon_class-card,GroupHeader,ContributionLink2"/>
+      </loop>
+      <section template="Telemetry" />
+    </file>
+    
   </files>
 
 </forge>

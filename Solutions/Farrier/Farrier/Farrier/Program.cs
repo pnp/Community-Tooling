@@ -32,7 +32,7 @@ namespace Farrier
 
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\" };
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3".Split();
-                    args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\ -f ms-font".Split();
+                    args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\ -f sp-card".Split();
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())
