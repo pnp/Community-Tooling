@@ -26,5 +26,8 @@ namespace Farrier.Helpers
 
         [Option(Required = false, Default = false, HelpText = "Add to skip XML validation for the configuration file (not recommended)")]
         public bool SkipXMLValidation { get; set; }
+
+        [Option('f', "file", Required = false, HelpText = "Specify a single file to forge (name from the blueprint). No other files will be forged when specified. If multiple files share a name, only the first file will be processed. Case sensitive.")]
+        public string File { get; set; }
     }
 }

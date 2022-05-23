@@ -167,7 +167,7 @@
     </template>
 
     <template name="SampleItem">
-      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Title]@@](@@[Link]@@){target=_blank title="@@[Name]@@: $REPLACE(@@[Description]@@,#`,#)"}
+      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Title]@@](@@[Link]@@){target=_blank title="@@[Name]@@ (@@[Type]@@): $REPLACE(@@[Description]@@,#`,#)"}
     </template>
 
     <template name="Telemetry">
@@ -180,7 +180,7 @@
     
     <!--******** SAMPLES BY TYPE ********-->
 
-    <file path="columnsamples.md">
+    <file name="columnsamples" path="columnsamples.md">
       <section>
         # List of Column Formatting Samples
 
@@ -197,7 +197,7 @@
     </file>
     
 
-    <file path="formsamples.md">
+    <file name="formsamples" path="formsamples.md">
       <section>
         # List of Form Formatting Samples
 
@@ -214,7 +214,7 @@
     </file>
     
 
-    <file path="viewsamples.md">
+    <file name="viewsamples" path="viewsamples.md">
       <section>
         # List of View Formatting Samples
 
@@ -233,7 +233,7 @@
 
     <!--******** GROUPED SAMPLES ********-->
     
-    <file path="groupings/action.md">
+    <file name="action" path="groupings/action.md">
       <section>
         #Samples by Action
         
@@ -255,7 +255,7 @@
     </file>
     
 
-    <file path="groupings/author.md">
+    <file name="author" path="groupings/author.md">
       <section>
         #Samples by Author
 
@@ -272,7 +272,7 @@
     </file>
     
 
-    <file path="groupings/category.md">
+    <file name="category" path="groupings/category.md">
       <section>
         # Samples by Category
 
@@ -289,7 +289,7 @@
     </file>       
     
 
-    <file path="groupings/columntype.md">
+    <file name="columntype" path="groupings/columntype.md">
       <section>
         # Samples by Column Type
 
@@ -311,7 +311,7 @@
     </file>
     
     
-    <file path="groupings/feature.md">
+    <file name="feature" path="groupings/feature.md">
       <section>
         # Samples by Feature
 
@@ -333,7 +333,7 @@
     </file>
     
 
-    <file path="groupings/operator.md">
+    <file name="operator" path="groupings/operator.md">
       <section>
         # Samples by Operator
 
@@ -355,7 +355,7 @@
     </file>
     
 
-    <file path="groupings/SP2019.md">
+    <file name="SP2019" path="groupings/SP2019.md">
       <section>
         # SharePoint 2019 Format Samples
 
@@ -376,7 +376,7 @@
     </file>
     
 
-    <file path="groupings/token.md">
+    <file name="token" path="groupings/token.md">
       <section>
         # Samples by Placeholder Token
 
@@ -401,8 +401,7 @@
 
 
     <!--******** SAMPLES BY CLASS ********-->
-    <!-- ms-bgColor-* -->
-    <file path="groupings/classes/ms-bgColor.md">
+    <file name="ms-bgColor" path="groupings/classes/ms-bgColor.md">
       <section>
         # Samples by Class: ms-bgColor-*
 
@@ -434,7 +433,7 @@
     </file>
     
     <!-- ms-borderColor-* -->
-    <file path="groupings/classes/ms-borderColor.md">
+    <file name="ms-borderColor" path="groupings/classes/ms-borderColor.md">
       <section>
         # Samples by Class: ms-borderColor-*
 
@@ -467,7 +466,7 @@
     </file>
     
     <!-- ms-fontColor-* -->
-    <file path="groupings/classes/ms-fontColor.md">
+    <file name="ms-fontColor" path="groupings/classes/ms-fontColor.md">
       <section>
         # Samples by Class: ms-fontColor-*
 
@@ -497,7 +496,7 @@
     </file>
 
     <!-- ms-fontWeight-* -->
-    <file path="groupings/classes/ms-fontWeight.md">
+    <file name="ms-fontWeight" path="groupings/classes/ms-fontWeight.md">
       <section>
         # Samples by Class: ms-fontWeight-*
 
@@ -522,7 +521,7 @@
     </file>
 
     <!-- ms-font-* -->
-    <file path="groupings/classes/ms-font.md">
+    <file name="ms-font" path="groupings/classes/ms-font.md">
       <section>
         # Samples by Class: ms-font-*
 
@@ -547,7 +546,7 @@
     </file>
 
     <!-- ms-fontSize-* -->
-    <file path="groupings/classes/ms-fontSize.md">
+    <file name="ms-fontSize" path="groupings/classes/ms-fontSize.md">
       <section>
         # Samples by Class: ms-fontSize-*
 

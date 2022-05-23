@@ -48,7 +48,7 @@ namespace Farrier.Forge
             _rootTokens.AddTokens(tokens);
         }
 
-        public void Forge()
+        public void Forge(string file = null)
         {
             try
             {
@@ -93,11 +93,31 @@ namespace Farrier.Forge
                 XmlNodeList fileNodes = doc.SelectNodes("//f:file", nsmgr);
                 if (fileNodes != null && fileNodes.Count > 0)
                 {
-                    _log.Info($"Processing {fileNodes.Count} files");
-
-                    foreach (XmlNode fileNode in fileNodes)
+                    if(!String.IsNullOrEmpty(file))
                     {
-                        BuildFile(fileNode);
+                        _log.Info($"Found {fileNodes.Count} files, but only processing {file}");
+                        var fileFound = false;
+                        foreach (XmlNode fileNode in fileNodes)
+                        {
+                            string name = XmlHelper.XmlAttributeToString(fileNode.Attributes["name"]);
+                            if(!String.IsNullOrEmpty(name) && name == file)
+                            {
+                                fileFound = true;
+                                BuildFile(fileNode);
+                                break;
+                            }
+                        }
+                        if (!fileFound)
+                            _log.Error($"No file node found with a name of {file} in {_blueprint}. This value is case-sensitive, please verify the value and run again.");
+                    }
+                    else
+                    {
+                        _log.Info($"Processing {fileNodes.Count} files");
+
+                        foreach (XmlNode fileNode in fileNodes)
+                        {
+                            BuildFile(fileNode);
+                        }
                     }
                 }
                 else

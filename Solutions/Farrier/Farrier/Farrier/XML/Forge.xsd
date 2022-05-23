@@ -112,6 +112,13 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute name="name" use="optional" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The identifier for a file. Only required if using the file parameter. Not guaranteed (or required) to be unique. First file node with a matching name will be used when the file parameter is specified. Case sensitive.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
   </xsd:complexType>
 
   <xsd:group name="fileItems">

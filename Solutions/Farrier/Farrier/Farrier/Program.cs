@@ -32,7 +32,7 @@ namespace Farrier
 
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\" };
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3".Split();
-                    args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\".Split();
+                    args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\ -f ms-font".Split();
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())
@@ -101,6 +101,7 @@ namespace Farrier
                 log.Debug($"Param: listtokens={options.ListTokens}");
                 log.Debug($"Param: skipxmlformattingfix={options.SkipXMLFormattingFix}");
                 log.Debug($"Param: skipxmlvalidation={options.SkipXMLValidation}");
+                log.Debug($"Param: file={options.File}");
 
                 var f = new Forger(options.Blueprint,
                                    options.OutputPath,
@@ -109,7 +110,7 @@ namespace Farrier
                                    options.SkipXMLFormattingFix,
                                    options.SkipXMLValidation,
                                    log);
-                f.Forge();
+                f.Forge(options.File);
             }
 
             void RunRoundUp(RoundUpOptions options)
