@@ -183,11 +183,29 @@ namespace Farrier.Parser
                         var lteP = FunctionNumberParameters(keyword, innards, 2);
                         return lteP[0] <= lteP[1] ? "true" : "false";
                     case "AND":
-                        var andP = functionParameters(keyword, innards, 2);
-                        return andP[0] == "true" && andP[1] == "true" ? "true" : "false";
+                        var andP = functionParameters(keyword, innards);
+                        if (andP.Length < 2)
+                        {
+                            throw new Exception(keyword + " requires a minimum of two parameters (value followed by 1 or more values)");
+                        }
+                        foreach (string andParam in andP)
+                        {
+                            if (andParam != "true")
+                                return "false";
+                        }
+                        return "true";
                     case "OR":
-                        var orP = functionParameters(keyword, innards, 2);
-                        return orP[0] == "true" || orP[1] == "true" ? "true" : "false";
+                        var orP = functionParameters(keyword, innards);
+                        if (orP.Length < 2)
+                        {
+                            throw new Exception(keyword + " requires a minimum of two parameters (value followed by 1 or more values)");
+                        }
+                        foreach (string orParam in orP)
+                        {
+                            if (orParam == "true")
+                                return "true";
+                        }
+                        return "false";
                     case "NOT":
                         return innards == "true" ? "false" : "true";
                     case "ISEMPTY":
