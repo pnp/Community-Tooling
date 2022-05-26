@@ -37,8 +37,11 @@ namespace Farrier.RoundUp
         private int _limit;
         private int _pathdepth;
         private bool _skipXMLValidation;
+        private string _joinedfilename;
+        private bool _combineFiles;
+        private List<JsonDocument> _jsonFileContents;
 
-        public Wrangler(string map, string outputpath = "", string outputfilename = "roundup.csv", string startpath = "", string jsonfilepattern = "*.json", bool listjsonfiles = false, Dictionary<string, string> tokens = null, bool ListTokens = false, bool Overwrite = false, bool SkipHeaders = false, bool FirstOnly = false, string MultiValueSeparator = "|", int Skip = 0, int Limit = 10000, int PathDepth = 0, bool SkipXMLValidation = false, LogRouter log = null)
+        public Wrangler(string map, string outputpath = "", string outputfilename = "roundup.csv", string startpath = "", string jsonfilepattern = "*.json", bool listjsonfiles = false, Dictionary<string, string> tokens = null, bool ListTokens = false, bool Overwrite = false, bool SkipHeaders = false, bool FirstOnly = false, string MultiValueSeparator = "|", int Skip = 0, int Limit = 10000, int PathDepth = 0, bool SkipXMLValidation = false, string JoinedFilename = null, LogRouter log = null)
         {
             if (log == null)
                 _log = new LogRouter();
@@ -62,6 +65,9 @@ namespace Farrier.RoundUp
             _firstonly = FirstOnly;
             _multivalueseparator = MultiValueSeparator;
             _skipXMLValidation = SkipXMLValidation;
+            _joinedfilename = JoinedFilename;
+            _combineFiles = !String.IsNullOrEmpty(_joinedfilename);
+            _jsonFileContents = new List<JsonDocument>();
             
             _skip = Skip;
             if (_skip < 0)
@@ -96,6 +102,13 @@ namespace Farrier.RoundUp
                 if (!_overwrite && File.Exists(resultPath))
                 {
                     throw new Exception($"File {resultPath} already exists! Please specify --overwrite or remove the file and try again.");
+                }
+
+                
+                var combinedFilePath = Path.Combine(_outputpath, _joinedfilename);
+                if(_combineFiles && !_overwrite && File.Exists(combinedFilePath))
+                {
+                    throw new Exception($"File {combinedFilePath} already exists! Please specify --overwrite or remove the file and try again.");
                 }
 
                 var startingDirectory = new DirectoryInfo(_startpath);
@@ -216,6 +229,28 @@ namespace Farrier.RoundUp
                     }
 
                     WriteResults(resultPath, results, !_skipHeaders);
+
+                    if(_combineFiles)
+                    {
+                        using FileStream fs = File.Create(combinedFilePath);
+                        using var writer = new Utf8JsonWriter(fs, new JsonWriterOptions { Indented = true });
+                        writer.WriteStartArray();
+                        foreach (var jsonFile in _jsonFileContents)
+                        {
+                            var root = jsonFile.RootElement;
+                            if(root.ValueKind == JsonValueKind.Object)
+                                jsonFile.WriteTo(writer);
+                            if(root.ValueKind == JsonValueKind.Array)
+                            {
+                                foreach(var element in root.EnumerateArray())
+                                {
+                                    element.WriteTo(writer);
+                                }
+                            }
+                        }
+                        writer.WriteEndArray();
+                        writer.Flush();
+                    }
                 }
                 else
                 {
@@ -250,6 +285,9 @@ namespace Farrier.RoundUp
                 _log.Warn($"{indent}Values from {identifier} will NOT be included in results!");
                 return null;
             }
+
+            if (_combineFiles)
+                _jsonFileContents.Add(doc);
 
             //Pull out raw values (just using paths, no transformation)
             foreach(var mappedColumn in mappedColumns)

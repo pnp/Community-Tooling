@@ -56,5 +56,8 @@ namespace Farrier.Helpers
 
         [Option(Required = false, Default = false, HelpText = "Add to skip XML validation for the map file (not recommended)")]
         public bool SkipXMLValidation { get; set; }
+
+        [Option(Required = false, HelpText = "When included, all JSON files will be written to a single JSON file as an array of objects.")]
+        public string JoinedFilename { get; set; }
     }
 }
