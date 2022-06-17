@@ -9,6 +9,8 @@ using Farrier.Parser;
 using Farrier.Forge;
 using Farrier.RoundUp;
 using Farrier.Inspect;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Farrier
 {
@@ -31,8 +33,9 @@ namespace Farrier
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
 
                     //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\" };
-                    args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --joinedfilename samples.json".Split();
+                    //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --joinedfilename samples.json -o D:\Code\PnP\Community-Tooling\Solutions\Farrier\Farrier\Farrier\Samples\ListFormatting -f LFSamples.csv".Split();
                     //args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\ -f sp-field-border".Split();
+                    args = @"fromfile -f Samples/ListFormatting/Farrier.txt".Split();
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())
@@ -68,6 +71,33 @@ namespace Farrier
                 case RoundUpOptions r:
                     RunRoundUp(r);
                     break;
+                case FromFileOptions ff:
+                    RunFromFile(ff);
+                    break;
+            }
+
+            void RunFromFile(FromFileOptions options)
+            {
+                logger.Info("Running from file!");
+                log.Debug($"Param: file={options.File}");
+
+                if (!File.Exists(options.File))
+                {
+                    log.Error($"File not found at: {options.File}");
+                    return;
+                }
+
+                var commands = File.ReadAllLines(options.File);
+                foreach (var command in commands)
+                {
+                    if(!command.StartsWith('#'))
+                    {
+                        var parameters = Regex.Matches(command, @"[\""].+?[\""]|[^ ]+")
+                                     .Cast<Match>()
+                                     .Select(x => x.Value.Trim('"'));
+                        CommandLine.Parser.Default.ParseArguments(parameters, LoadVerbs()).WithParsed(PerformOperation);
+                    }
+                }
             }
 
             void RunInspect(InspectOptions options)
