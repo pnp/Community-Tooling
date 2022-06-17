@@ -4,7 +4,8 @@
   <tokens>
     <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
     <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
-    <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/view-formatting.schema.json"/>
+    <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/view-formatting.schema.json"/>
+    <token name="RowSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json"/>
     <token name="TilesSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
     <token name="CalendarSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/calendar-formatting.schema.json"/>
     <token name="BoardSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/board-formatting.schema.json"/>
@@ -15,6 +16,7 @@
     <token name="ColumnSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrl@@)"/>
     <token name="ColumnSchemaAST" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrlAST@@)"/>
     <token name="ViewSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ViewSchemaUrl@@)"/>
+    <token name="RowSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@RowSchemaUrl@@)"/>
     <token name="TilesSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@TilesSchemaUrl@@)"/>
     <token name="CalendarSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@CalendarSchemaUrl@@)"/>
     <token name="BoardSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@BoardSchemaUrl@@)"/>
@@ -83,8 +85,78 @@
             <log name="Category" text="Add Inline Editing" warn="true"/>
           </if>
         </if>
+
+        <!-- Suggests the Hover Cards category if defaultHoverField or customCardProps are used or the inlineEditField-->
+        <if>
+          <or>
+            <filecontains path="@@FilePath@@" text="&quot;defaultHoverField&quot;:"/>
+            <filecontains path="@@FilePath@@" text="&quot;customCardProps&quot;:"/>
+          </or>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Hover Cards" matchcase="true"/>
+            <log name="Category" text="Add Hover Cards" warn="true"/>
+          </if>
+        </if>
+        
         <only when="$EQUALS(@@SampleType@@,#View)">
-          <log text="More stuff for views coming!"/>
+          <!-- Suggests the Board category if the Board Schema or kanbanProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;kanbanProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="@@BoardSchema@@"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Board" matchcase="true"/>
+              <log name="Category" text="Add Board" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the Calendar category if the Calendar schema or calendarProps/monthProps are used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;monthProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="&quot;calendarProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="@@CalendarSchema@@"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Calendar" matchcase="true"/>
+              <log name="Category" text="Add Calendar" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the Gallery category if the Tiles schema or tileProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;tileProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="@@TilesSchema@@"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Gallery" matchcase="true"/>
+              <log name="Category" text="Add Gallery" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the Grouped category if groupProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;groupProps&quot;:"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Grouped" matchcase="true"/>
+              <log name="Category" text="Add Grouped" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the CommandBar Customization category if groupProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;commandBarProps&quot;:"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="CommandBar Customization" matchcase="true"/>
+              <log name="Category" text="Add CommandBar Customization" warn="true"/>
+            </if>
+          </if>
         </only>
 
         <!-- Column Type validation / recommendation -->
@@ -168,20 +240,20 @@
         
         <!-- .ms-bgColor-* and hover versions
                 no: alert -->
-        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
           <run rule="CheckForClass" input="ms-bgColor-@@Each@@" quiet="true"/>
           <run rule="CheckForClass" input="ms-bgColor-@@Each@@--hover" quiet="true"/>
         </foreachitem>
         
         <!-- .ms-border-* and hover versions
                 no: info,success,alert,severeWarning,warning,error -->
-        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
           <run rule="CheckForClass" input="ms-borderColor-@@Each@@" quiet="true"/>
           <run rule="CheckForClass" input="ms-borderColor-@@Each@@--hover" quiet="true"/>
         </foreachitem>
         
         <!-- .ms-fontColor-* and hover versions -->
-        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
           <run rule="CheckForClass" input="ms-fontColor-@@Each@@" quiet="true"/>
           <run rule="CheckForClass" input="ms-fontColor-@@Each@@--hover" quiet="true"/>
         </foreachitem>
@@ -258,18 +330,19 @@
         </foreachitem>
 
         <!-- .sp-field-* -->
-        <foreachitem items="customFormatter,customFormatBackground-margin,neutral,neutral20,neutral30,blue,blue17,blue27,blue37,severity--good,severity00good30,severity--good40,severity--good50,severity--low,severity--warning,severity--warning30,severity--warning40,severity--warning50,severity--severeWarning,severity--severeWarning30,severity--severeWarning40,severity--severeWarning50,severity--blocked,severity--blocked30,severity--blocked40,severity--blocked50,dataBars,trending--up,trending--down,quickAction,iconPadding,bold,italic,underline,strikeThrough,underlineStrikeThrough,iconRightAligned,iconLeftAligned,dashedBorderRight,editorBorder" quiet="true">
+        <foreachitem items="blue,blue17,blue27,blue37,bold,customFormatBackground-margin,customFormatter,dashedBorderRight,dataBars,editorBorder,iconLeftAligned,iconPadding,iconRightAligned,italic,neutral,neutral20,neutral30,quickAction,severity--blocked,severity--blocked30,severity--blocked40,severity--blocked50,severity--good,severity--good30,severity--good40,severity--good50,severity--low,severity--severeWarning,severity--severeWarning30,severity--severeWarning40,severity--severeWarning50,severity--warning,severity--warning30,severity--warning40,severity--warning50,strikeThrough,trending--down,trending--up,underline,underlineStrikeThrough" quiet="true">
           <run rule="CheckForClass" input="sp-field-@@Each@@" quiet="true"/>
         </foreachitem>
 
         <!-- .sp-field-border*Regular, .sp-field-border*Semibold, .sp-field-border*Bold,
              .sp-field-border*Dashed, .sp-field-border*Dotted -->
-        <foreachitem items="All,Top,Bottom,Left,Right,TopBottom,LeftRight" quiet="true">
+        <foreachitem items="All,Bottom,Left,LeftRight,Right,Top,TopBottom" quiet="true">
           <run rule="CheckForClass" input="sp-field-border@@Each@@Regular" quiet="true"/>
           <run rule="CheckForClass" input="sp-field-border@@Each@@Semibold" quiet="true"/>
           <run rule="CheckForClass" input="sp-field-border@@Each@@Bold" quiet="true"/>
           <run rule="CheckForClass" input="sp-field-border@@Each@@Dashed" quiet="true"/>
           <run rule="CheckForClass" input="sp-field-border@@Each@@Dotted" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Solid" quiet="true"/>
         </foreachitem>
 
         <!-- Catch Alls (to attempt to catch missed assembled classes) -->
@@ -444,8 +517,14 @@
       <conditions>
         <!-- Files/Folders all exist (with correct casing) -->
         <log name="☺" text="Verifying all expected files are present (@@SampleKey@@)"/>
-        <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
-        <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
+        <only when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
+          <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
+          <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
+        </only>
+        <only when="$EQUALS(@@SampleType@@,#Form)">
+          <!-- Having a .json file with the same name is not required for forms since it is very common to have a header and a footer to make a full solution -->
+          <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)" warn="true"/>
+        </only>
         <fileexists path="@@READMEPath@@" failuremessage="README not found! (@@SampleKey@@)"/>
         <fileexists path="@@READMEPath@@" matchcase="true" warn="true"/>
         <folderexists path="@@AssetsPath@@" failuremessage="assets folder missing! (@@SampleKey@@)"/>
@@ -473,11 +552,17 @@
           <filecontains name="README Screenshot png" path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
           <filecontains name="README Screenshot gif" path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
         </or>
-        <filecontains name="README VR" path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+        <only when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
+          <filecontains name="README VR" path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+          <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
+        </only>
+        <only when="$EQUALS(@@SampleType@@,#Form)">
+          <filecontains name="README FR" path="@@READMEPath@@" text="## Form requirements" failuremessage="README missing Form requirements section (@@SampleKey@@)"/>
+          <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README might have incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'" warn="true"/>
+        </only>
         <filecontains name="README Sample" path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
         <filecontains name="README Github Link" path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
         <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
-        <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
         <filecontains name="README VH" path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
         <filecontains name="Telemetry Tag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
         <filecontains name="Telemetry Tag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@) - use '@@TelemetryTag@@'"/>
@@ -543,6 +628,7 @@
           <only when="$EQUALS(@@SampleType@@,#View)">
             <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
               <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema row" path="@@Each@@" text="@@RowSchema@@" failuremessage="Row Formatting $schema not present/valid (@@Each@@)"/>
               <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
               <filecontains name="$schema calendar" path="@@Each@@" text="@@CalendarSchema@@" failuremessage="Calendar (View) Formatting $schema not present/valid (@@Each@@)"/>
               <filecontains name="$schema board" path="@@Each@@" text="@@BoardSchema@@" failuremessage="Board (View) Formatting $schema not present/valid (@@Each@@)"/>
@@ -551,7 +637,10 @@
           <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property (@@Each@@)"/>
           <regexmatches name="Empty Object" path="@@Each@@" pattern=": {\s*}" not="true" warn="true" failuremessage="JSON has an empty object {} (@@Each@@)"/>
           <regexmatches name="Empty Array" path="@@Each@@" pattern=": \[\s*\]" not="true" warn="true" failuremessage="JSON has an empty array [] (@@Each@@)"/>
-          <filecontains name="Extra Space" path="@@Each@@" text=" &quot;\r\n" not="true" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)"/>
+          <and name="Extra Space" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)">
+            <filecontains path="@@Each@@" text=" &quot;\r\n" not="true"/>
+            <filecontains path="@@Each@@" text=" &quot;,\r\n" not="true"/>
+          </and>
           <regexmatches name="Extra Space" path="@@Each@@" pattern=": &quot;\s(?!&quot;)" not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
 
           <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
@@ -569,21 +658,21 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="78">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="300" limit="1">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="FormSamples" path="view-samples" pattern="*" skip="300" limit="1">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
