@@ -74,6 +74,9 @@ namespace Farrier
                 case FromFileOptions ff:
                     RunFromFile(ff);
                     break;
+                case CopyFileOptions c:
+                    CopyFile(c);
+                    break;
             }
 
             void RunFromFile(FromFileOptions options)
@@ -98,6 +101,34 @@ namespace Farrier
                         CommandLine.Parser.Default.ParseArguments(parameters, LoadVerbs()).WithParsed(PerformOperation);
                     }
                 }
+            }
+
+            void CopyFile(CopyFileOptions options)
+            {
+                logger.Info("Copying a file!");
+                log.Debug($"Param: file={options.File}");
+                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: overwrite={options.Overwrite}");
+
+                var source = new FileInfo(options.File);
+                if (!source.Exists)
+                {
+                    log.Error($"File not found at: {options.File}");
+                    return;
+                }
+                if (!Directory.Exists(options.OutputPath))
+                {
+                    log.Error($"Directory not found at: {options.OutputPath}");
+                    return;
+                }
+                var destination = Path.Combine(options.OutputPath, source.Name);
+                if(File.Exists(destination) && !options.Overwrite)
+                {
+                    log.Error($"File already exists at destination. Add overwrite option to do it anyway.");
+                    return;
+                }
+                source.CopyTo(destination, options.Overwrite);
+                log.Info($"File copied to {destination}");
             }
 
             void RunInspect(InspectOptions options)

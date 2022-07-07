@@ -575,7 +575,7 @@
         <jsonquery name="Sample Reponame" path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
         <jsonquery name="Sample Source" path="@@SampleJsonPath@@" query="$[0].source" value="pnp" matchcase="true" failuremessage="source mismatch in sample.json (@@SampleKey@@) - should be 'pnp'"/>
         <jsonquery name="Sample Title" path="@@SampleJsonPath@@" query="$[0].title" comparison="count" value="1" failuremessage="title missing or blank in sample.json (@@SampleKey@@)"/>
-        <jsonquery name="Sample Title Length" path="@@SampleJsonPath@@" query="$[0].title" comparison="length" max="50" />
+        <jsonquery name="Sample Title Length" path="@@SampleJsonPath@@" query="$[0].title" comparison="length" max="60" />
         <jsonquery name="Sample SD" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="count" value="1" failuremessage="shortDescription missing or blank in sample.json (@@SampleKey@@)"/>
         <jsonquery name="Sample SD Link" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="notmatches" value="\[.*\]\(.*\)" failuremessage="shortDescription cannot contain markdown links (@@SampleKey@@)"/>
         <jsonquery name="Sample Url" path="@@SampleJsonPath@@" query="$[0].url" value="@@SampleUrl@@" failuremessage="url mismatch in sample.json (@@SampleKey@@) - should be '@@SampleUrl@@'"/>
@@ -658,21 +658,21 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="0">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="300">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="0">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="300">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="0">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="46">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
