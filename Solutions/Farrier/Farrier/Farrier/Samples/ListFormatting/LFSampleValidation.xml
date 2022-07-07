@@ -1,0 +1,683 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<inspection xmlns="https://pnp.github.io/inspection" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tokens>
+    <token name="ColumnSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json"/>
+    <token name="ColumnSchemaUrlAST" value="https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json"/>
+    <token name="ViewSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/view-formatting.schema.json"/>
+    <token name="RowSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json"/>
+    <token name="TilesSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/tile-formatting.schema.json"/>
+    <token name="CalendarSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/calendar-formatting.schema.json"/>
+    <token name="BoardSchemaUrl" value="https://developer.microsoft.com/json-schemas/sp/v2/board-formatting.schema.json"/>
+    <token name="FormattedSchemaTemplate">
+      <![CDATA[{
+  "$schema": "SCHEMAURLHERE",]]>
+    </token>
+    <token name="ColumnSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrl@@)"/>
+    <token name="ColumnSchemaAST" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ColumnSchemaUrlAST@@)"/>
+    <token name="ViewSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@ViewSchemaUrl@@)"/>
+    <token name="RowSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@RowSchemaUrl@@)"/>
+    <token name="TilesSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@TilesSchemaUrl@@)"/>
+    <token name="CalendarSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@CalendarSchemaUrl@@)"/>
+    <token name="BoardSchema" value="$REPLACE(@@FormattedSchemaTemplate@@,#SCHEMAURLHERE,#@@BoardSchemaUrl@@)"/>
+    <token name="DebugMode1">
+      <![CDATA["debugMode": true]]>
+    </token>
+    <token name="DebugMode2">
+      <![CDATA["debugMode": "true"]]>
+    </token>
+    <token name="DebugModeOff1">
+      <![CDATA["debugMode": false]]>
+    </token>
+    <token name="DebugModeOff2">
+      <![CDATA["debugMode": "false"]]>
+    </token>
+  </tokens>
+
+  <rules>
+    <rule name="Analyze">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="AssetsPath" value="@@FolderPath@@\assets"/>
+        <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
+        <token name="FilePath" value="@@MainJsonPath@@"/>
+      </tokens>
+      <conditions>
+        <log name="☺" text="Checking for recomendations for Metadata in sample.json..."/>
+        <!-- Suggests the Icons category if iconName is used -->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;iconName&quot;:"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Icons" matchcase="true"/>
+            <log name="Category" text="Add Icons" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the SVG category if an svg element is used -->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;elmType&quot;: &quot;svg&quot;"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="SVG" matchcase="true"/>
+            <log name="Category" text="Add SVG" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Power Automate category if an executeFlow action is used-->
+        <if>
+          <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;executeFlow&quot;"/>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notcontains" value="executeFlow" matchcase="true"/>
+            <log name="Category" text="Add Power Automate" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Inline Editing category if a setValue action is used or the inlineEditField-->
+        <if>
+          <or>
+            <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;setValue&quot;"/>
+            <filecontains path="@@FilePath@@" text="&quot;inlineEditField&quot;:"/>
+          </or>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Inline Editing" matchcase="true"/>
+            <log name="Category" text="Add Inline Editing" warn="true"/>
+          </if>
+        </if>
+
+        <!-- Suggests the Hover Cards category if defaultHoverField or customCardProps are used or the inlineEditField-->
+        <if>
+          <or>
+            <filecontains path="@@FilePath@@" text="&quot;defaultHoverField&quot;:"/>
+            <filecontains path="@@FilePath@@" text="&quot;customCardProps&quot;:"/>
+          </or>
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Hover Cards" matchcase="true"/>
+            <log name="Category" text="Add Hover Cards" warn="true"/>
+          </if>
+        </if>
+        
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <!-- Suggests the Board category if the Board Schema or kanbanProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;kanbanProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="@@BoardSchema@@"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Board" matchcase="true"/>
+              <log name="Category" text="Add Board" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the Calendar category if the Calendar schema or calendarProps/monthProps are used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;monthProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="&quot;calendarProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="@@CalendarSchema@@"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Calendar" matchcase="true"/>
+              <log name="Category" text="Add Calendar" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the Gallery category if the Tiles schema or tileProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;tileProps&quot;:"/>
+              <filecontains path="@@FilePath@@" text="@@TilesSchema@@"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Gallery" matchcase="true"/>
+              <log name="Category" text="Add Gallery" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the Grouped category if groupProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;groupProps&quot;:"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Grouped" matchcase="true"/>
+              <log name="Category" text="Add Grouped" warn="true"/>
+            </if>
+          </if>
+
+          <!-- Suggests the CommandBar Customization category if groupProps is used -->
+          <if>
+            <or>
+              <filecontains path="@@FilePath@@" text="&quot;commandBarProps&quot;:"/>
+            </or>
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="CommandBar Customization" matchcase="true"/>
+              <log name="Category" text="Add CommandBar Customization" warn="true"/>
+            </if>
+          </if>
+        </only>
+
+        <!-- Column Type validation / recommendation -->
+        <only when="$EQUALS(@@SampleType@@,#Column)">
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$IN($LOWER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF(@@SampleKey@@,#-))),#currency,#date,#hyperlink,#image,#location,#number,#person,#picture))">
+            <!-- column type matches prefix -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="$PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF(@@SampleKey@@,#-)))" matchcase="true" />
+              <log name="Column Type" text="Set to $PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF(@@SampleKey@@,#-)))" warn="true"/>
+            </if>
+          </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#multi-)">
+            <!-- multi column types -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="$PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF($REPLACE(@@SampleKey@@,#multi-,#multi_),#-)))" matchcase="true" />
+              <log name="Column Type" text="Set to $PROPER($SUBSTRING(@@SampleKey@@,#0,#$INDEXOF($REPLACE(@@SampleKey@@,#multi-,#multi_),#-)))" warn="true"/>
+            </if>
+          </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#yesno-)">
+            <!-- yes/no -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="Yes/No" matchcase="true" />
+              <log name="Column Type" text="Set to Yes/No" warn="true"/>
+            </if>
+          </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#managed-metadata-)">
+            <!-- managed-metadata -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="Managed Metadata" matchcase="true" />
+              <log name="Column Type" text="Set to Managed Metadata" warn="true"/>
+            </if>
+          </only>
+          <only when="$STARTSWITH(@@SampleKey@@,#promotedstate-)">
+            <!-- Promoted State -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="Promoted State" matchcase="true" />
+              <log name="Column Type" text="Set to Promoted State" warn="true"/>
+            </if>
+          </only>
+          <only when="$OR($STARTSWITH(@@SampleKey@@,#generic-),#$STARTSWITH(@@SampleKey@@,#text-))">
+            <!-- generic or text -->
+            <if>
+              <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')].value" comparison="notequals" value="General" matchcase="true" />
+              <log name="Column Type" text="Set to General" warn="true"/>
+            </if>
+          </only>
+        </only>
+        
+        <!-- Checks for use of placeholder tokens (magic strings) -->
+        <foreachitem items="@currentWeb,@lcid,@me,@now,@rowIndex,@thumbnail,@window.innerHeight,@window.innerWidth" quiet="true">
+          <run rule="CheckForToken" input="@@Each@@" quiet="true"/>
+        </foreachitem>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <foreachitem items="@groupfieldData,@group.count,@group.columnDisplayName,@aggregates,@columnAggregate.type,@columnAggregate.value,@columnAggregate.columnDisplayName" quiet="true">
+            <run rule="CheckForToken" input="@@Each@@" quiet="true"/>
+          </foreachitem>
+        </only>
+
+        <!-- Basic operators like arithmetic and comparsion are excluded -->
+        <foreachitem items="toLowerCase,toString,Number,Date,cos,sin,abs,loopIndex,toLocaleString,toLocaleDateString,toLocaleTimeString,indexOf,join,length,floor,ceiling,pow,substring,getDate,getMonth,getYear,toUpperCase,lastIndexOf,startsWith,endsWith,replace,padStart,padEnd,getUserImage,addDays,addMinutes,appendTo,removeFrom" quiet="true">
+          <run rule="CheckForOperator" input="@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- Checks for use of customRowActions -->
+        <foreachitem items="defaultClick,setValue,executeFlow,share,delete,editProps,openContextMenu" quiet="true">
+          <run rule="CheckForAction" input="@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- Checks for "features" largely by detecting the presence of specific properties -->
+        <foreachitem items="forEach,inlineEditField,columnFormatterReference,defaultHoverField,customCardProps,beakStyle,directionalHint,filePreviewProps" quiet="true">
+          <run rule="CheckForProperty" input="@@Each@@" quiet="true"/>
+        </foreachitem>
+        <only when="$EQUALS(@@SampleType@@,#View)">
+          <foreachitem items="hideSelection,hideColumnHeader,additionalRowClass,rowFormatter,groupProps,headerFormatter,hideFooter,footerFormatter,fillHorizontally,monthProps,kanbanProps,calendarProps" quiet="true">
+            <run rule="CheckForProperty" input="@@Each@@" quiet="true"/>
+          </foreachitem>
+        </only>
+        
+        
+        <!-- Checks class usage (of limited use since many classes are assembled) -->
+        
+        <!-- .ms-bgColor-* and hover versions
+                no: alert -->
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="ms-bgColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-bgColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+        
+        <!-- .ms-border-* and hover versions
+                no: info,success,alert,severeWarning,warning,error -->
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="ms-borderColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-borderColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+        
+        <!-- .ms-fontColor-* and hover versions -->
+        <foreachitem items="themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralSecondaryAlt,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,yellow,yellowLight,orange,orangeLight,orangeLighter,red,redDark,magentaDark,magenta,magentaLight,purpleDark,purple,purpleLight,blueDark,blueMid,blue,blueLight,tealDark,teal,tealLight,greenDark,green,greenLight,info,success,alert,severeWarning,warning,error,contrastBlackDisabled,contrastWhiteDisabled,contrastBlackSelected,contrastWhiteSelected,communicationShade30,communicationShade20,communicationShade10,communicationPrimary,communicationTint10,communicationTint20,communicationTint30,communicationTint40,gray220,gray210,gray200,gray190,gray180,gray170,gray160,gray150,gray140,gray130,gray120,gray110,gray100,gray90,gray80,gray70,gray60,gray50,gray40,gray30,gray20,gray10,sharedPinkRed10,sharedRed20,sharedRed10,sharedRedOrange20,sharedRedOrange10,sharedOrange30,sharedOrange20,sharedOrange10,sharedYellow10,sharedOrangeYellow20,sharedOrangeYellow10,sharedYellowGreen10,sharedGreen20,sharedGreen10,sharedGreenCyan10,sharedCyan40,sharedCyan30,sharedCyan20,sharedCyan10,sharedCyanBlue20,sharedCyanBlue10,sharedBlue10,sharedBlueMagenta40,sharedBlueMagenta30,sharedBlueMagenta20,sharedBlueMagenta10,sharedMagenta20,sharedMagenta10,sharedMagentaPink20,sharedMagentaPink10,sharedGray40,sharedGray30,sharedGray20,sharedGray10" quiet="true">
+          <run rule="CheckForClass" input="ms-fontColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="ms-fontColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-fontWeight-* -->
+        <foreachitem items="regular,semibold,bold,semilight,light" quiet="true">
+          <run rule="CheckForClass" input="ms-fontWeight-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-font-* -->
+        <foreachitem items="su,xxl,xl-plus,xl,l,m-plus,m,s-plus,s,xs,mi" quiet="true">
+          <run rule="CheckForClass" input="ms-font-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-fontSize-* -->
+        <foreachitem items="su,xxl,xlPlus,xl,l,mPlus,m,sPlus,s,xs,mi,68,42,32,28,24,20,18,16,14,12,10" quiet="true">
+          <run rule="CheckForClass" input="ms-fontSize-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-field-fontSize* -->
+        <foreachitem items="14,15,17,21,24,28,32,36,42,Small,Medium,Large,XLarge" quiet="true">
+          <run rule="CheckForClass" input="sp-field-fontSize@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-motion-* -->
+        <foreachitem items="fadeIn,fadeOut,scaleDownIn,scaleDownOut,slideLeftOut,slideRightOut,slideDownOut,slideUpOut,slideLeftIn,slideRightIn,slideDownIn,slideUpIn" quiet="true">
+          <run rule="CheckForClass" input="ms-motion-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .ms-* (animation classes) -->
+        <foreachitem items="slideRightIn10,slideRightIn20,slideRightIn40,slideRightIn400,slideRightOut40,slideRightOut400,slideLeftIn10,slideLeftIn20,slideLeftIn40,slideLeftIn400,slideLeftOut40,slideLeftOut400,slideUpIn10,slideUpIn20,slideDownIn10,slideDownIn20,slideUpOut10,slideUpOut20,slideDownOut10,slideDownOut20,scaleUpIn100,scaleUpOut103,scaleDownIn100,scaleDownOut98,rotateN90deg,rotate90deg,fadeIn100,fadeIn200,fadeIn400,fadeIn500,fadeOut100,fadeOut200,fadeOut400,fadeOut500,expandCollapse100,expandCollapse200,expandCollapse400" quiet="true">
+          <run rule="CheckForClass" input="ms-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-List-color* -->
+        <foreachitem items="0,1,2,3,4,5,6,7,8,9,10,11" quiet="true">
+          <run rule="CheckForClass" input="sp-List-color@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-backgroundColor-* -->
+        <foreachitem items="BgDarkRed,BgRed,BgOrange,BgBrown,BgGreen,BgTeal,BgDarkGreen,BgBlue,BgLavender,BgDarkBlue,BgDarkPurple,BgPurple,BgDarkPink,BgGray,BgCoral,BgDustRose,BgPeak,BgGold,BgMintGreen,BgCyan,BgSage,BgCornflowerBlue,BgLightPurple,BgLightBlue,BgViolet,BgMauve,BgLilac,BgLightGray,BgCoral30,BgDustRose30,BgPeach40,BgGold60,BgMintGreen30,BgCyan30,BgSage20,BgCornflower40,BgLightPurple30,BgLightBlue20,BgViolet40,BgMauve50,BgLilac30,BgLightGray30,DarkRedText,RedText,OrangeText,BrownText,GreenText,TealText,DarkGreenText,BlueText,LavenderText,DarkBlueText,DarkPurpleText,PurpleText,LightPurpleText,GrayText,WhiteText,BlackText,CoralFont,DustRoseFont,PeachFont,GoldFont,MintGreenFont,CyanFont,SageFont,CornflowerBlueFont,LightPurpleFont,LightBlueFont,VioletFont,MauveFont,LilacFont,LightGrayFont,WhiteFont,BlackFont,bodyBackground,bodyText,bodySubtext,bodyDivider,disabledBackground,disabledText,disabledSubtext,errorBackground,errorText,listBackground,listTextColor,listItemBackgroundChecked,warningBackground,successBackground,blockingBackground,themePrimary,themeSeconary,themeTertiary,themeLight,themeLighter,themeLighterAlt,themeDark,themeDarker,themeDarkAlt,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,black,blue,yellow,yellowLight,red,redDark,green,greenLight,blueLight,blueDark,purple,neutralBackground30,neutralBackground20,neutralBackground10,neutralBackground,blueBackground37,blueBackground27,blueBackground17,blueBackground07,successBackground50,successBackground40,successBackground30,warningBackground50,warningBackground40,warningBackground30,blockingBackground50,blockingBackground40,blockingBackground30,errorBackground50,errorBackground40,errorBackground30,noFill" quiet="true">
+          <run rule="CheckForClass" input="sp-css-backgroundColor-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-borderTop-* -->
+        <foreachitem items="neutralBorder,blueBorder,successBorder,warningBorder,blockingBorder,errorBorder" quiet="true">
+          <run rule="CheckForClass" input="sp-css-borderTop-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-borderRight-* -->
+        <foreachitem items="neutralTertiaryDashed" quiet="true">
+          <run rule="CheckForClass" input="sp-css-borderRight-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-css-color-*, .sp-css-borderColor-*, .sp-css-borderLeftColor-*, 
+             .sp-css-borderRightColor-*, .sp-css-borderTopColor-*, .sp-css-borderBottomColor-* -->
+        <foreachitem items="DarkRedText,RedText,OrangeText,BrownText,GreenText,TealText,DarkGreenText,BlueText,LavenderText,DarkBlueText,DarkPurpleText,PurpleText,LightPurpleText,GrayText,WhiteText,BlackText,CoralFont,DustRoseFont,PeachFont,GoldFont,MintGreenFont,CyanFont,SageFont,CornflowerBlueFont,LightPurpleFont,LightBlueFont,VioletFont,MauveFont,LilacFont,LightGrayFont,WhiteFont,BlackFont,bodyBackground,bodyText,bodySubtext,bodyDivider,disabledBackground,disabledText,disabledSubtext,errorBackground,errorText,listBackground,listTextColor,listItemBackgroundChecked,warningBackground,successBackground,blockingBackground,themeDarker,themeDark,themeDarkAlt,themePrimary,themeSecondary,themeTertiary,themeLight,themeLighter,themeLighterAlt,black,neutralDark,neutralPrimary,neutralPrimaryAlt,neutralSecondary,neutralTertiary,neutralTertiaryAlt,neutralQuaternary,neutralQuaternaryAlt,neutralLight,neutralLighter,neutralLighterAlt,white,blue,redDark,red,yellow,yellowLight,greenLight,green,blueLight,blueDark,purple" quiet="true">
+          <run rule="CheckForClass" input="sp-css-color-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderColor-@@Each@@--hover" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderLeftColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderRightColor-@@Each@@--hover" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderTopColor-@@Each@@" quiet="true"/>
+          <run rule="CheckForClass" input="sp-css-borderBottomColor-@@Each@@--hover" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-card-* -->
+        <foreachitem items="borderHighlight,personCallout,container,keyboard-focusable,defaultClickButton,subContainer,displayColumnContainer,previewColumnContainer,lastTextColumnContainer,label,content,userContent,boldText,highlightedContent,urlContent,formatterRef,imagePreviewBackground,imagePreviewBackground-shortened,userEmptyText,userContainer,userThumbnail,userOthers,userTitle,userCustomCard,lookupInlineValues,defaultImage,defaultImageOverlay,starRating,emptyFillStar,halfFillStar,ratingCount,bottomCommandBar,likes,heartIcon,multiline,container-noPadding,showOnHoverParent,showOnHoverChild,showOnHover,imagePreview,imagePreview-stretched,subContainer-borderRadius,imageContainer,imageContainer-shortened" quiet="true">
+          <run rule="CheckForClass" input="sp-card-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-row-* -->
+        <foreachitem items="card,listPadding,title,button" quiet="true">
+          <run rule="CheckForClass" input="sp-row-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-field-* -->
+        <foreachitem items="blue,blue17,blue27,blue37,bold,customFormatBackground-margin,customFormatter,dashedBorderRight,dataBars,editorBorder,iconLeftAligned,iconPadding,iconRightAligned,italic,neutral,neutral20,neutral30,quickAction,severity--blocked,severity--blocked30,severity--blocked40,severity--blocked50,severity--good,severity--good30,severity--good40,severity--good50,severity--low,severity--severeWarning,severity--severeWarning30,severity--severeWarning40,severity--severeWarning50,severity--warning,severity--warning30,severity--warning40,severity--warning50,strikeThrough,trending--down,trending--up,underline,underlineStrikeThrough" quiet="true">
+          <run rule="CheckForClass" input="sp-field-@@Each@@" quiet="true"/>
+        </foreachitem>
+
+        <!-- .sp-field-border*Regular, .sp-field-border*Semibold, .sp-field-border*Bold,
+             .sp-field-border*Dashed, .sp-field-border*Dotted -->
+        <foreachitem items="All,Bottom,Left,LeftRight,Right,Top,TopBottom" quiet="true">
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Regular" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Semibold" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Bold" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Dashed" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Dotted" quiet="true"/>
+          <run rule="CheckForClass" input="sp-field-border@@Each@@Solid" quiet="true"/>
+        </foreachitem>
+
+        <!-- Catch Alls (to attempt to catch missed assembled classes) -->
+        <run rule="CheckForClass" input="ms-fontColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-bgColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-borderColor-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontWeight-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-font-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-fontSize-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-motion-" quiet="true"/>
+        <run rule="CheckForClass" input="ms-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-List-color" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-backgroundColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderTop-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderRight-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-color-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderLeftColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderRightColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderTopColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-css-borderBottomColor-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-card-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-row-" quiet="true"/>
+        <run rule="CheckForClass" input="sp-field-" quiet="true"/>
+        
+        <!-- Misc Classes -->
+        <run rule="CheckForClass" input="itemHovered" quiet="true"/>
+        <run rule="CheckForClass" input="sp-customformatter-thumbnail" quiet="true"/>
+        <run rule="CheckForClass" input="ms-Tile-background" quiet="true"/>
+        
+        
+        <log name="☻" text="Finished with Analysis"/>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForToken">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of token in JSON -->
+          <filecontains path="@@FilePath@@" text="@@Input@@"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Token" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Token" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForOperator">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of operator in JSON -->
+          <or>
+            <filecontains path="@@FilePath@@" text="@@Input@@("/>
+            <filecontains path="@@FilePath@@" text="&quot;operand&quot;: &quot;@@Input@@&quot;"/>
+          </or>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Operator" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Operator" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForAction">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of action in JSON -->
+          <filecontains path="@@FilePath@@" text="&quot;action&quot;: &quot;@@Input@@&quot;"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Action" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Action" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForProperty">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of property in JSON -->
+          <filecontains path="@@FilePath@@" text="&quot;@@Input@@&quot;:"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Feature" text="Add @@Input@@" warn="true"/>
+          </if>
+          <if>
+            <!-- Make sure it's not in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')].value" comparison="matches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Feature" text="Remove @@Input@@" warn="true"/>
+          </if>
+        </if>
+      </conditions>
+    </rule>
+
+    <rule name="CheckForClass">
+      <tokens>
+        <token name="EscapedInput" value="$RXESCAPE(@@Input@@)"/>
+      </tokens>
+      <!-- Should not be called directly, relies on tokens coming higher level rules -->
+      <conditions>
+        <if>
+          <!-- Check for presence of class in JSON -->
+          <regexmatches path="@@FilePath@@" pattern="(?&lt;=[&quot; '])@@Input@@(?=[&quot; '])"/>
+          <if>
+            <!-- Make sure it's in sample.json -->
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')].value" comparison="notmatches" value="(?&lt;![-a-zA-Z])@@EscapedInput@@(?![-a-zA-Z])"/>
+            <log name="Class" text="Add @@Input@@" warn="true"/>
+          </if>
+          <!-- not suggesting to remove from sample.json as classes are often broken up -->
+        </if>
+      </conditions>
+    </rule>
+    
+    <rule name="ValidateSample" description="Verifies key elements of a list formatting sample">
+      <tokens>
+        <token name="SampleKey" value="$IF($STARTSWITH(@@Each@@,#@@),#$DIRECTORYNAME(@@StartingPath@@),#@@Each@@)"/>
+        <token name="FolderPath" value="$IF($STARTSWITH(@@ContainerPath@@,#@@),#@@StartingPath@@,#@@ContainerPath@@\@@Each@@)"/>
+        <token name="MainJsonPath" value="@@FolderPath@@\@@SampleKey@@.json"/>
+        <token name="READMEPath" value="@@FolderPath@@\README.md"/>
+        <token name="AssetsPath" value="@@FolderPath@@\assets"/>
+        <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="SampleUrl" value="https://github.com/pnp/list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@"/>
+        <token name="TelemetryTagOld">
+          <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
+        </token>
+        <token name="TelemetryTag">
+          <![CDATA[<img src="https://pnptelemetry.azurewebsites.net/list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
+        </token>
+        <token name="AuthorTable">
+          <![CDATA[Solution|Author(s)
+--------|---------
+@@SampleKey@@.json | []]>
+        </token>
+      </tokens>
+      <conditions>
+        <!-- Files/Folders all exist (with correct casing) -->
+        <log name="☺" text="Verifying all expected files are present (@@SampleKey@@)"/>
+        <only when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
+          <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
+          <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
+        </only>
+        <only when="$EQUALS(@@SampleType@@,#Form)">
+          <!-- Having a .json file with the same name is not required for forms since it is very common to have a header and a footer to make a full solution -->
+          <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)" warn="true"/>
+        </only>
+        <fileexists path="@@READMEPath@@" failuremessage="README not found! (@@SampleKey@@)"/>
+        <fileexists path="@@READMEPath@@" matchcase="true" warn="true"/>
+        <folderexists path="@@AssetsPath@@" failuremessage="assets folder missing! (@@SampleKey@@)"/>
+        <folderexists path="@@AssetsPath@@" matchcase="true" warn="true"/>
+        <fileexists path="@@SampleJsonPath@@" failuremessage="sample.json not found! (@@SampleKey@@)"/>
+        <fileexists path="@@SampleJsonPath@@" matchcase="true" warn="true"/>
+        <or name="Screenshot" failuremessage="Primary screenshot not found (@@SampleKey@@)! assets\screenshot.png (or gif)">
+          <!-- At least 1 screenshot (named screenshot) must exist as either a png or gif -->
+          <and>
+            <fileexists name="Screenshot png" path="@@AssetsPath@@\screenshot.png"/>
+            <fileexists name="Screenshot png" path="@@AssetsPath@@\screenshot.png" matchcase="true" warn="true"/>
+          </and>
+          <and>
+            <fileexists name="Screenshot gif" path="@@AssetsPath@@\screenshot.gif"/>
+            <fileexists name="Screenshot gif" path="@@AssetsPath@@\screenshot.gif" matchcase="true" warn="true"/>
+          </and>
+        </or>
+        <log name="☻" text="All expected files are present (@@SampleKey@@)"/>
+        
+        <!-- README Contents Validation -->
+        <log name="☺" text="Validating README... (@@SampleKey@@)"/>
+        <filecontains name="README Summary" path="@@READMEPath@@" text="## Summary" failuremessage="README missing Summary section (@@SampleKey@@)"/>
+        <or name="README Screenshot" failuremessage="Screenshot not correctly referenced in README (@@SampleKey@@) - should be '![screenshot of the sample](./assets/screenshot.png)' (can also be a .gif)">
+          <!-- Ensures at least the primary screenshot is shown -->
+          <filecontains name="README Screenshot png" path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.png)"/>
+          <filecontains name="README Screenshot gif" path="@@READMEPath@@" text="![screenshot of the sample](./assets/screenshot.gif)"/>
+        </or>
+        <only when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
+          <filecontains name="README VR" path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+          <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
+        </only>
+        <only when="$EQUALS(@@SampleType@@,#Form)">
+          <filecontains name="README FR" path="@@READMEPath@@" text="## Form requirements" failuremessage="README missing Form requirements section (@@SampleKey@@)"/>
+          <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README might have incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'" warn="true"/>
+        </only>
+        <filecontains name="README Sample" path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
+        <filecontains name="README Github Link" path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
+        <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
+        <filecontains name="README VH" path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
+        <filecontains name="Telemetry Tag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
+        <filecontains name="Telemetry Tag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@) - use '@@TelemetryTag@@'"/>
+        <log name="☻" text="README is Valid (@@SampleKey@@)"/>
+
+        <!-- sample.json Contents Validation -->
+        <log name="☺" text="Validating sample.json... (@@SampleKey@@)"/>
+        <filecontains name="Sample Not Empty" path="@@SampleJsonPath@@" text="{" failuremessage="Sample.json is invalid and likely empty (@@SampleKey@@)"/>
+        <jsonquery name="Sample Name" path="@@SampleJsonPath@@" query="$[0].name" value="pnp-list-formatting-@@SampleKey@@" matchcase="true" failuremessage="name mismatch in sample.json (@@SampleKey@@) - should be 'pnp-list-formatting-@@SampleKey@@'"/>
+        <jsonquery name="Sample Reponame" path="@@SampleJsonPath@@" query="$[0].reponame" value="@@SampleKey@@" matchcase="true" failuremessage="reponame mismatch in sample.json (@@SampleKey@@) - should be `@@SampleKey@@'"/>
+        <jsonquery name="Sample Source" path="@@SampleJsonPath@@" query="$[0].source" value="pnp" matchcase="true" failuremessage="source mismatch in sample.json (@@SampleKey@@) - should be 'pnp'"/>
+        <jsonquery name="Sample Title" path="@@SampleJsonPath@@" query="$[0].title" comparison="count" value="1" failuremessage="title missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Title Length" path="@@SampleJsonPath@@" query="$[0].title" comparison="length" max="60" />
+        <jsonquery name="Sample SD" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="count" value="1" failuremessage="shortDescription missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample SD Link" path="@@SampleJsonPath@@" query="$[0].shortDescription" comparison="notmatches" value="\[.*\]\(.*\)" failuremessage="shortDescription cannot contain markdown links (@@SampleKey@@)"/>
+        <jsonquery name="Sample Url" path="@@SampleJsonPath@@" query="$[0].url" value="@@SampleUrl@@" failuremessage="url mismatch in sample.json (@@SampleKey@@) - should be '@@SampleUrl@@'"/>
+        <jsonquery name="Sample LD" path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="count" min="1" failuremessage="longDescription missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample LD Link" path="@@SampleJsonPath@@" query="$[0].longDescription[*]" comparison="notmatches" value="\[.*\]\(.*\)" failuremessage="longDescription cannot contain markdown links (@@SampleKey@@)"/>
+        <jsonquery name="Sample Creation" path="@@SampleJsonPath@@" query="$[0].creationDateTime" comparison="count" value="1" failuremessage="creationDateTime missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Update" path="@@SampleJsonPath@@" query="$[0].updateDateTime" comparison="count" value="1" failuremessage="updateDateTime missing or blank in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Products" path="@@SampleJsonPath@@" query="$[0].products" comparison="count" value="1" failuremessage="products missing or blank in sample.json (@@SampleKey@@) - should include 'SharePoint' and 'Microsoft Lists'"/>
+        <jsonquery name="Sample Products SP" path="@@SampleJsonPath@@" query="$[0].products[?(@=='SharePoint')]" comparison="count" value="1" failuremessage="products missing 'SharePoint' in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Products ML" path="@@SampleJsonPath@@" query="$[0].products[?(@=='Microsoft Lists')]" comparison="count" value="1" failuremessage="products missing 'Microsoft Lists' in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Metadata" path="@@SampleJsonPath@@" query="$[0].metadata" comparison="count" value="1" failuremessage="metadata missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Type" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')]" comparison="count" value="1" matchcase="true" failuremessage="metadata LIST-SAMPLE-TYPE missing in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
+        <jsonquery name="Sample Type" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-SAMPLE-TYPE')].value" value="@@SampleType@@" matchcase="true" failuremessage="LIST-SAMPLE-TYPE mismatch in sample.json (@@SampleKey@@) - should be '@@SampleType@@'"/>
+        <jsonquery name="Sample Compatibility" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')]" comparison="count" value="1" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY missing in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019'"/>
+        <or name="Sample Compatibility" failuremessage="metadata SHAREPOINT-COMPATIBILITY invalid in sample.json (@@SampleKey@@) - should be some combination of 'SharePoint Online' and/or 'SharePoint 2019' (separate values with a comma and a space)">
+          <jsonquery name="Sample Compatibility SO" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online'"/>
+          <jsonquery name="Sample Compatibility S19" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019'"/>
+          <jsonquery name="Sample Compatibility All1" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint Online, SharePoint 2019" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint Online, SharePoint 2019'"/>
+          <jsonquery name="Sample Compatibility All2" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SHAREPOINT-COMPATIBILITY')].value" value="SharePoint 2019, SharePoint Online" matchcase="true" failuremessage="metadata SHAREPOINT-COMPATIBILITY not equal to 'SharePoint 2019, SharePoint Online'"/>
+        </or>
+        <jsonquery name="Sample Categories" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata SAMPLE-CATEGORIES missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Column Type" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='LIST-COLUMN-TYPE')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata LIST-COLUMN-TYPE missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Tokens" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-TOKENS')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-TOKENS missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Operators" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-OPERATORS')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-OPERATORS missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Actions" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-ACTIONS')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-ACTIONS missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Features" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='FORMATTING-FEATURES')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata FORMATTING-FEATURES missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Classes" path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='CLASSES')]" comparison="count" value="1" matchcase="true" warn="true" failuremessage="metadata CLASSES missing in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Thumbnail" path="@@SampleJsonPath@@" query="$[0].thumbnails[*]" comparison="count" min="1" failuremessage="At least one thumbnail entry is required in sample.json (@@SampleKey@@) - use "/>
+        <or name="Sample Thumbnail" failuremessage="First thumbnail entry in sample.json should be the primary screenshot (gif or png) referenced from raw.githubusercontent.com (@@SampleKey@@)">
+          <!-- First thumbnail should be the primary screenshot and uses the correct reference (raw.githubusercontent.com)-->
+          <jsonquery name="Sample Thumbnail png" path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.png"/>
+          <jsonquery name="Sample Thumbnail gif" path="@@SampleJsonPath@@" query="$[0].thumbnails[0].url" value="https://raw.githubusercontent.com/pnp/List-Formatting/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@/assets/screenshot.gif"/>
+        </or>
+        <jsonquery name="Sample Author" path="@@SampleJsonPath@@" query="$[0].authors[*]" comparison="count" min="1" failuremessage="At least one author entry is required in sample.json (@@SampleKey@@)"/>
+        <jsonquery name="Sample Author GH" path="@@SampleJsonPath@@" query="$[0].authors[0].gitHubAccount" comparison="count" value="1" failuremessage="A gitHubAccount is required for at least the first author (@@SampleKey@@)"/>
+        <jsonquery name="Sample Author Picture" path="@@SampleJsonPath@@" query="$[0].authors[0].pictureUrl" comparison="count" value="1" failuremessage="A pictureUrl is required for at least the first author (@@SampleKey@@) - use 'https://github.com/authorusername.png'"/>
+        <jsonquery name="Sample Author Picture" path="@@SampleJsonPath@@" query="$[0].authors[0].name" comparison="count" value="1" failuremessage="A name is required for at least the first author (@@SampleKey@@)"/>
+        <jsonquery name="Sample References" path="@@SampleJsonPath@@" query="$[0].references" comparison="count" value="1" failuremessage="references missing in sample.json (@@SampleKey@@)"/>
+        <log name="☻" text="sample.json is Valid (@@SampleKey@@)"/>
+
+        <!-- JSON file(s) validation -->
+        <foreachfile name="EachJSON" path="@@FolderPath@@" pattern="*.json">
+          <!-- $schema validation (and formatting of 2 spaces) -->
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$NOT($ENDSWITH(@@Each@@,#AST.json)))">
+            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchema@@" failuremessage="Column Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrl@@'"/>
+          </only>
+          <only when="$AND($EQUALS(@@SampleType@@,#Column),#$ENDSWITH(@@Each@@,#AST.json))">
+            <filecontains name="$schema" path="@@Each@@" text="@@ColumnSchemaAST@@" failuremessage="Column Formatting (AST) $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@) - use '@@ColumnSchemaUrlAST@@'"/>
+          </only>
+          <only when="$EQUALS(@@SampleType@@,#View)">
+            <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
+              <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema row" path="@@Each@@" text="@@RowSchema@@" failuremessage="Row Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema calendar" path="@@Each@@" text="@@CalendarSchema@@" failuremessage="Calendar (View) Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema board" path="@@Each@@" text="@@BoardSchema@@" failuremessage="Board (View) Formatting $schema not present/valid (@@Each@@)"/>
+            </or>
+          </only>
+          <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property (@@Each@@)"/>
+          <regexmatches name="Empty Object" path="@@Each@@" pattern=": {\s*}" not="true" warn="true" failuremessage="JSON has an empty object {} (@@Each@@)"/>
+          <regexmatches name="Empty Array" path="@@Each@@" pattern=": \[\s*\]" not="true" warn="true" failuremessage="JSON has an empty array [] (@@Each@@)"/>
+          <and name="Extra Space" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)">
+            <filecontains path="@@Each@@" text=" &quot;\r\n" not="true"/>
+            <filecontains path="@@Each@@" text=" &quot;,\r\n" not="true"/>
+          </and>
+          <regexmatches name="Extra Space" path="@@Each@@" pattern=": &quot;\s(?!&quot;)" not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
+
+          <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
+          <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
+          <filecontains path="@@Each@@" text="@@DebugMode2@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
+          <filecontains path="@@Each@@" text="@@DebugModeOff1@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
+          <filecontains path="@@Each@@" text="@@DebugModeOff2@@" not="true" warn="true" failuremessage="DebugMode found (disabled) (@@Each@@)"/>
+
+          <run rule="Analyze" quiet="true"/>
+        </foreachfile>
+        
+      </conditions>
+    </rule>
+
+    <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
+      <conditions>
+        <log name="☺" text="Validating Column Samples..."/>
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="300">
+          <run rule="ValidateSample"/>
+        </foreachfolder>
+        <log name="☻" text="Column Samples Validated!"/>
+        <log name="☻" text="-----------------------------------------"/>
+        
+        <log name="☺" text="Validating Form Samples..."/>
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="300">
+          <run rule="ValidateSample"/>
+        </foreachfolder>
+        <log name="☻" text="Form Samples Validated!"/>
+        <log name="☻" text="-----------------------------------------"/>
+      
+        <log name="☺" text="Validating View Samples..."/>
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="46">
+          <run rule="ValidateSample"/>
+        </foreachfolder>
+        <log name="☻" text="View Samples Validated!"/>
+      </conditions>
+    </rule>
+    
+  </rules>
+</inspection>

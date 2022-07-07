@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--This is the default configuration file where you can define one or more rules for Farrier to validate against-->
+<Farrier>
+  <tokens>
+    <token name="ROOTFOLDER" value="My Folder"/>
+  </tokens>
+  
+  <!--This is the starting point for your configuration. You can execute any rule, but the one marked as default will be run when no rule is specified-->
+  <Rule name="ValidateDirectory" default="true">
+    <Steps>
+      <FolderExists path="@@ROOTFOLDER" />
+      <MoveTo path="@@ROOTFOLDER"/>
+      <ForEachFolder id="ForEachSample">
+        <RunRule rule="SampleFolder">
+          <tokens>
+            <token name="SAMPLENAME" value="@@{ForEachSample:FOLDERNAME}@@"/>
+          </tokens>
+        </RunRule>
+      </ForEachFolder>
+    </Steps>
+  </Rule>
+
+  <Rule name="SampleFolder">
+    <inputTokens>
+      <inputToken name="SAMPLENAME"/>
+    </inputTokens>
+    
+    <Steps>
+      <SetToken name="SAMPLENAME" value="$LOWER(@@SAMPLENAME@@)"/>
+      <FolderExists path="@@SAMPLENAME@@" />
+      <MoveTo path="@@SAMPLENAME@@" />
+      <FileExists path="@@SAMPLENAME@@.json" onFalse="stop" falseMessage="Primary sample JSON not found (@@SAMPLENAME@@.json)" caseSensitive="false"/>
+      <FileExists path="@@SAMPLENAME@@.json" onFalse="warn" falseMessage="Primary sample JSON file name casing doesn't match folder" caseSensitive="true"/>
+    </Steps>
+  </Rule>
+  
+</Farrier>

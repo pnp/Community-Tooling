@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<MDLooper>
+  <tokens>
+    <token name="repo" value="https://github.com/SharePoint/sp-dev-list-formatting/tree/master/"/>
+    <token name="fun" value="Wowee! "/>
+    <token name="combo" value="@@fun@@it's @@Now@@"/>
+    <token name="upperfun" value="Big $UPPER($TRIM(@@fun@@)) Little $LOWER(@@fun@@) - done"/>
+
+    <token name="test" value="Hello Rabbit! "/>
+    <token name="num1" value="10"/>
+    <token name="num2" value="2"/>
+    <token name="upper" value="$UPPER(@@test@@)"/>
+    <token name="lower" value="$LOWER(@@test@@)"/>
+    <token name="trim" value="$TRIM(@@test@@)"/>
+    <token name="indexof" value="$INDEXOF(@@test@@,#Rabbit)"/>
+    <token name="lastindexof" value="$LASTINDEXOF(@@test@@,#b)"/>
+    <token name="length" value="$LENGTH(@@test@@)"/>
+    <token name="substring" value="$SUBSTRING(@@test@@,#4,#8)"/>
+    <token name="startswithT" value="$STARTSWITH(@@test@@,#Hell)"/>
+    <token name="startswithF" value="$STARTSWITH(@@test@@,#Rabbit)"/>
+    <token name="endswithT" value="$ENDSWITH(@@test@@,#! )"/>
+    <token name="endswithF" value="$ENDSWITH(@@test@@,#Rabbit)"/>
+    <token name="containsT" value="$CONTAINS(@@test@@,#ello)"/>
+    <token name="containsF" value="$CONTAINS(@@test@@,#Doggy)"/>
+    <token name="replace" value="$REPLACE(@@test@@,#Rabbit,#Bunny)"/>
+    <token name="formattednow" value="$FORMATDATE(@@Now@@,#HH:mm:ss)"/>
+    <token name="formatnumber" value="$FORMATNUMBER(@@num1@@,#P)"/>
+    <token name="add" value="$ADD(@@num1@@,#@@num2@@)"/>
+    <token name="subtract" value="$SUBTRACT(@@num1@@,#@@num2@@)"/>
+    <token name="multiply" value="$MULTIPLY(@@num1@@,#@@num2@@)"/>
+    <token name="divide" value="$DIVIDE(@@num1@@,#@@num2@@)"/>
+    <token name="mod" value="$MOD(@@num1@@,#@@num2@@)"/>
+    <token name="equals" value="$EQUALS(@@num1@@,#@@num2@@)"/>
+    <token name="gt" value="$GT(@@num1@@,#@@num2@@)"/>
+    <token name="gte" value="$GTE(@@num1@@,#@@num2@@)"/>
+    <token name="lt" value="$LT(@@num1@@,#@@num2@@)"/>
+    <token name="lte" value="$LTE(@@num1@@,#@@num2@@)"/>
+    <token name="isemptyT" value="$ISEMPTY()"/>
+    <token name="isemptyF" value="$ISEMPTY(@@test@@)"/>
+    <token name="orT" value="$OR(true,#false)"/>
+    <token name="orF" value="$OR(false,#false)"/>
+    <token name="andT" value="$AND(true,#true)"/>
+    <token name="andF" value="$AND(true,#false)"/>
+    <token name="whenT" value="$WHEN(true,#yep)"/>
+    <token name="whenF" value="$WHEN(false,#nope)"/>
+  </tokens>
+  <file output="author.md">
+    <section># Samples by Author (@@OutputFilename@@)
+
+Samples are listed by their _original_ creator. Later updates by additional contributors are not listed here.
+
+</section>
+    <loop csv="LFSamples.csv" orderBy="Name">
+      <item>
+        -  Item $ADD(@@ItemIndex@@,#1) of @@TotalItems@@: [@@[Name]@@](@@[Link]@@)
+      </item>
+    </loop>
+    <section>
+      
+    </section>
+    <loop csv="LFSamples.csv" orderBy="Name" orderDesc="true" groupBy="Author" groupOrder="value" groupDesc="true">
+      <groupStart>
+## Group $ADD(@@GroupIndex@@,#1) of @@TotalGroups@@: @@GroupValue@@
+</groupStart>
+      <item>- Item $ADD(@@ItemIndex@@,#1) of @@GroupSize@@: [@@[Name]@@](@@[Link]@@) $WHEN(@@IsFirstItem@@,#First!)$WHEN(@@IsLastItem@@,#Last!)
+</item>
+      <groupEnd>@@fun@@
+      </groupEnd>
+    </loop>
+    <section>
+&lt;img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/docs/groupings/author" /&gt;</section>
+  </file>
+</MDLooper>

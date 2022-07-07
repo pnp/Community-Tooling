@@ -1,0 +1,692 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema targetNamespace="https://pnp.github.io/inspection"
+    elementFormDefault="qualified"
+    xmlns="https://pnp.github.io/inspection"
+    xmlns:farrier="https://pnp.github.io/inspection"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+  <xsd:element name="inspection" type="farrier:inspection">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        Base element of an Inspection Configuration File
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="inspection">
+    <xsd:all>
+      <xsd:element name="tokens" type="farrier:tokens" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Contains 1 or more Root tokens that are available to ALL rules
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="rules" type="farrier:rules"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="tokens">
+    <xsd:sequence>
+      <xsd:element name="token" type="farrier:token" maxOccurs="unbounded" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="token">
+    <xsd:annotation>
+      <xsd:documentation>
+        A token is a name/value pair that is evaluated on the fly and can be used to store common variables/calculations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="farrier:NotEmpty" use="required">
+          <xsd:annotation>
+            <xsd:documentation>This will be used to reference the token later. You can reference tokens by surrounding the name with @@. If the name was Id then you would reference it with @@Id@@</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute type="xsd:string" name="value" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>The value (can reference previous tokens). You can also place values inside the element which is helpful when you need to use CDATA.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="rules">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more rules that can be used in an inspection. When not specified, the first rule defined is the default.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="rule" type="farrier:rule" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="rule">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines a set of conditions to evaluate as part of an inspection
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:all>
+      <xsd:element name="tokens" type="farrier:tokens" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Contains 1 or more tokens that are available to this rule and any rules it calls
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="conditions" type="farrier:conditions"/>
+    </xsd:all>
+    <xsd:attribute name="name" type="farrier:NotEmpty" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the rule (used in run conditions and to specify the rule to run)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute type="xsd:string" name="description" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Optional description of what this rule does</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="conditions">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more conditions to be evaluated
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:group ref="farrier:conditionItems" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:group name="conditionItems">
+    <xsd:choice>
+      <xsd:element name="log" type="farrier:logCondition"/>
+      <xsd:element name="run" type="farrier:runCondition"/>
+      <xsd:element name="only" type="farrier:onlyCondition"/>
+      <xsd:element name="and" type="farrier:andCondition"/>
+      <xsd:element name="or" type="farrier:orCondition"/>
+      <xsd:element name="foreachfolder" type="farrier:forEachFolderCondition"/>
+      <xsd:element name="foreachfile" type="farrier:forEachFileCondition"/>
+      <xsd:element name="jsonquery" type="farrier:jsonQueryCondition"/>
+      <xsd:element name="filecontains" type="farrier:fileContainsCondition"/>
+      <xsd:element name="fileexists" type="farrier:fileExistsCondition"/>
+      <xsd:element name="folderexists" type="farrier:folderExistsCondition"/>
+      <xsd:element name="if" type="farrier:ifCondition"/>
+      <xsd:element name="foreachitem" type="farrier:forEachItemCondition"/>
+      <xsd:element name="regexmatches" type="farrier:regexMatchesCondition"/>
+    </xsd:choice>
+  </xsd:group>
+
+
+  <xsd:complexType name="baseCondition">
+    <xsd:attribute name="name" type="farrier:NotEmpty" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name to use for a condition while logging. By default it will show the condition type when unspecified.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="warn" use="optional" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          Use to make a condition just be a warning on failure rather than an error
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="true">
+            <xsd:annotation>
+              <xsd:documentation>
+                Condition won't fail the rule when evaluates to false and will show up as a warning in the log
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="false">
+            <xsd:annotation>
+              <xsd:documentation>
+                Condition will fail the rule when evaluates to false and will show up as an error in the log
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="failuremessage" use="optional" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          Overrides default error messages. Useful for providing useful errors and providing mitigation steps
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="baseParentCondition">
+    <xsd:complexContent>
+      <xsd:extension base="farrier:baseCondition">
+        <xsd:sequence>
+          <xsd:group ref="farrier:conditionItems" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="skip" use="optional" type="farrier:IntOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Number of items to skip (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="limit" use="optional" type="farrier:IntOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Maximum number of items to process (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="logCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Logs a message during rule processing (does not affect results of parent conditions)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="text" use="required">
+          <xsd:annotation>
+            <xsd:documentation>
+              The text to output to the log (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="runCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Runs another rule in this same inspection configuration file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="rule" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The name of the rule to run (case sensitive, supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="input" use="optional" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>
+              Optional parameter to be passed as a token to the rule. Use @@Input@@ to access (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode for the target rule (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="fileContainsCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true if the specified text is found anywhere in the text-based file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The path of the text-based file to search within (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="matchcase" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, comparisons will require exact casing (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="text" use="required" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>
+              The text value to find in the file (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="not" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, reverses the results so that the condition returns false if the file contains the text (use for file should not contain conditions) (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="regexMatchesCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true if the specified pattern finds a match in the text-based file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The path of the text-based file to search within (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="pattern" use="required" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>
+              The pattern to use. Uses .NET default options but supports inline options in the form of (?imsx) or (?-imsx)
+              For instance, pattern matching is case-sensitive by default. To disable add (?i) to the beginning of your pattern (or group)
+              i = Case-Insensitive matching - default (?-i)
+              m = Multiline Mode - default (?-m)
+              s = Single-line Mode - default (?-s)
+              x = Ignore Pattern White Space - default (?-x)
+              (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="not" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, reverses the results so that the condition returns false if the specified pattern is found (use for file should not match the pattern conditions) (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="fileExistsCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true when a file is found and false when not
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              Relative path of the file (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="matchcase" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, filenames will require exact casing (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="folderExistsCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true when a folder is found and false when not
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              Relative path of the folder (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="matchcase" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, folder name will require exact casing (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="jsonQueryCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Executes and then compares a Json Query against a JSON file
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The path of the JSON file to query (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="matchcase" use="optional" default="false" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              When true, comparisons will require exact casing.
+              Does NOT apply with matches/notmatches comparisons - use inline options in pattern (?i) for case insensitive.
+              (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="comparison" use="optional" default="equals">
+          <xsd:annotation>
+            <xsd:documentation>
+              The type of comparison to perform
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="equals">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if the result of the query matches the value. If the query ends up with multiple results, only the first is used.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="notequals">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if the result of the query does NOT match the value. If the query ends up with multiple results, only the first is used.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="count">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if the number of non-blank matches returned matches the value, if value not supplied then the count will be evaluated against the min/max values. If min provided, count &lt; min returns false. If max provided, count > max returns false. If both provided, count must be within range. If neither provided AND value not provided, will return true.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="contains">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if any result of the query contains the value
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="notcontains">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if no result of the query contains the value
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="matches">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if any result of the query matches the pattern (value)
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="notmatches">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if no result of the query matches the pattern (value)
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+              <xsd:enumeration value="length">
+                <xsd:annotation>
+                  <xsd:documentation>
+                    Returns true if the string length of the first match returned matches the value, if value not supplied then the length will be evaluated against the min/max values. If min provided, length &lt; min returns false. If max provided, length > max returns false. If both provided, length must be within range. If neither provided AND value not provided, will return true.
+                  </xsd:documentation>
+                </xsd:annotation>
+              </xsd:enumeration>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="query" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The JSON Path query to use
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="value" use="optional" type="xsd:string">
+          <xsd:annotation>
+            <xsd:documentation>
+              The value to compare against.
+              Leave out when using comparison count with ranges (min/max) otherwise needs to match exact count.
+              Regex pattern when using comparison matches or notmatches. Use $RXESCAPE to wrap any tokens
+              Uses .NET default options for regular expressions but supports inline options in the form of (?imsx) or (?-imsx)
+              For instance, pattern matching is case-sensitive by default. To disable add (?i) to the beginning of your pattern (or group)
+              i = Case-Insensitive matching - default (?-i)
+              m = Multiline Mode - default (?-m)
+              s = Single-line Mode - default (?-s)
+              x = Ignore Pattern White Space - default (?-x)
+              (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="min" use="optional" type="farrier:IntOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              The minimum count value (inclusive) when using comparison count (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="max" use="optional" type="farrier:IntOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              The maximum count value (inclusive) when using comparison count (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="andCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true if all of the sub conditions evaluate to true (stops evaluating as soon as a single false condition is found)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseParentCondition"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="orCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Returns true if any of the subconditions are true (stops evaluating as soon as a single true condition is found)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseParentCondition"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:complexType name="onlyCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Runs child rules only if the when attribute evaluates to true. Otherwise, acts like an and condition (stops evaluating on first false)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="andCondition">
+        <xsd:attribute name="when" use="required" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              If true, sub conditions will be evaluated. If false, sub conditions will be ignored (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="forEachFolderCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Evaluates all sub conditions against EACH folder it finds (Available Tokens: @@Each@@ = folder name, @@ContainerPath@@ = folder path, @@ContainerName@@ = folder name)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseParentCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The parent directory to search within (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="pattern" use="optional" default="*" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The search pattern to match folder names. Use * to match all. (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode which removes the foreach progress items from the log  (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="forEachFileCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Evaluates all sub conditions against EACH file it finds (Available Tokens: @@Each@@ = file name with extension, @@ContainerPath@@ = parent folder path, @@ContainerName@@ = parent folder name, @@FilePath@@ = file path, @@FileExtension@@ = just the extension with no period, @@FileNoExtension@@ = file name without the extension )
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseParentCondition">
+        <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The parent directory to search within (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="pattern" use="optional" default="*" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The search pattern to match file names. Use * to match all. Use *.json to only retrieve json files, etc. (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode which removes the foreach progress items from the log  (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="forEachItemCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Evaluates all sub conditions against EACH item it finds (Available Tokens: @@Each@@ = The item, @@TotalItems@@ = Total number of items being processed (after skips and limits)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseParentCondition">
+        <xsd:attribute name="items" use="required" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              One or more items to process. Separate items with the specified separator (comma by default) (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="separator" use="optional" default="," type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              The separator between items - comma when unspecified (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="transform" use="optional" default="@@currentvalue@@" type="farrier:NotEmpty">
+          <xsd:annotation>
+            <xsd:documentation>
+              Optional post processing of items. To access the item value use @@currentvalue@@ (supports expressions)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="quiet" use="optional" type="farrier:BoolOrExpression">
+          <xsd:annotation>
+            <xsd:documentation>
+              Enables quiet mode which removes the foreach progress items from the log  (supports expressions, but must evaluate to true or false)
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="ifCondition">
+    <xsd:annotation>
+      <xsd:documentation>
+        Requires a minimum of 2 sub conditions. First condition will be the comparison. If it evaluates to true, the 2nd condition will be evaluated and returned. If false, the 3rd condition will be evaluated and returned. If a 3rd condition is not provided, then evaluates to true when first condition is false.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="baseCondition">
+        <xsd:sequence>
+          <xsd:group ref="farrier:conditionItems" minOccurs="1" maxOccurs="1"/>
+          <xsd:group ref="farrier:conditionItems" minOccurs="1" maxOccurs="1"/>
+          <xsd:group ref="farrier:conditionItems" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:simpleType name="NotEmpty">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="BoolOrExpression">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value=".*@@.*@@.*|true|false"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="IntOrExpression">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value=".*@@.*@@.*|[0-9]*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

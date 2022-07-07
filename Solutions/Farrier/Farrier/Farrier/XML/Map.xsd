@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema targetNamespace="https://pnp.github.io/map"
+    elementFormDefault="qualified"
+    xmlns="https://pnp.github.io/map"
+    xmlns:farrier="https://pnp.github.io/map"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+  <xsd:element name="map" type="farrier:map">
+    <xsd:annotation>
+      <xsd:documentation xml:lang="en">
+        Base element of an RoundUp Map Configuration File
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="map">
+    <xsd:all>
+      <xsd:element name="tokens" type="farrier:tokens" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Contains 1 or more Root tokens that are available to ALL columns
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="columns" type="farrier:columns" minOccurs="1"/>
+      <xsd:element name="orderby" type="farrier:orderby" minOccurs="0"/>
+    </xsd:all>
+  </xsd:complexType>
+
+  <xsd:complexType name="tokens">
+    <xsd:sequence>
+      <xsd:element name="token" type="farrier:token" maxOccurs="unbounded" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="token">
+    <xsd:annotation>
+      <xsd:documentation>
+        A token is a name/value pair that is evaluated on the fly and can be used to store common variables/calculations
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="farrier:NotEmpty" use="required">
+          <xsd:annotation>
+            <xsd:documentation>This will be used to reference the token later. You can reference tokens by surrounding the name with @@. If the name was Id then you would reference it with @@Id@@</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute type="xsd:string" name="value" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>The value (can reference previous tokens). You can also place values inside the element which is helpful when you need to use CDATA.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="columns">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more colum mappings that are used to generate the results.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="column" type="farrier:column" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="column">
+    <xsd:annotation>
+      <xsd:documentation>
+        Defines a mapping between a JSON query result and a CSV column
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="name" use="required" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the column to use in the final CSV (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="path" use="required" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          JSON Path query to retrieve values
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="transform" use="optional" default="@@currentvalue@@" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          Optional post processing of retrieved value(s). To access the value use @@currentvalue@@ (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="orderby">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more sortcolumns to determine how the final results are sorted. Sort columns will be evaluated in the order they appear.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="sortcolumn" type="farrier:sortcolumn" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="sortcolumn">
+    <xsd:annotation>
+      <xsd:documentation>
+        The column to sort by (use additional to add more sorts)
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="name" use="required" type="farrier:NotEmpty">
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the column defined in columns to sort by (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="direction" use="optional" default="ascending">
+      <xsd:annotation>
+        <xsd:documentation>
+          The direction to sort by (ascending when unspecified). Use ascending, descending, asc, or desc (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:pattern value=".*@@.*@@.*|ascending|asc|descending|desc"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:simpleType name="NotEmpty">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+</xsd:schema>
