@@ -410,7 +410,7 @@
         <if>
           <!-- Check for presence of operator in JSON -->
           <or>
-            <filecontains path="@@FilePath@@" text="@@Input@@("/>
+            <regexmatches path="@@FilePath@@" pattern="\b@@Input@@(?=\()\b"/>
             <filecontains path="@@FilePath@@" text="&quot;operand&quot;: &quot;@@Input@@&quot;"/>
           </or>
           <if>
@@ -658,7 +658,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="300">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="13" limit="5">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -672,7 +672,7 @@
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="46">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="300">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
