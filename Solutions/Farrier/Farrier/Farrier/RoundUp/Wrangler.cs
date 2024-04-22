@@ -268,7 +268,7 @@ namespace Farrier.RoundUp
             var row = dt.NewRow();
             string indent = "    ";
 
-            var content = File.ReadAllText(filePath);
+            var content = File.ReadAllText(filePath).Replace("\r\n", "\n").Replace('\r', '\n');
             if(String.IsNullOrEmpty(content))
             {
                 _log.Error($"{indent}Empty JSON File! Unable to pull details from {identifier}");

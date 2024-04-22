@@ -29,7 +29,7 @@ namespace Farrier.Models.Conditions
             if (File.Exists(path))
             {
                 var isNot = IsNot(tokens);
-                var contents = File.ReadAllText(path);
+                var contents = File.ReadAllText(path).Replace("\r\n", "\n").Replace('\r', '\n');
                 var pattern = tokens.DecodeString(rawPattern);
 
                 //No explicit options are used, inline options are supported
