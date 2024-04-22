@@ -113,7 +113,7 @@ namespace Farrier.RoundUp
 
                 var startingDirectory = new DirectoryInfo(_startpath);
                 var jsonFilePattern = Path.GetFileName(_jsonfilepattern);
-                var jsonFiles = startingDirectory.GetFiles(_jsonfilepattern, new EnumerationOptions() { RecurseSubdirectories = true });
+                var jsonFiles = startingDirectory.GetFiles(_jsonfilepattern, new EnumerationOptions() { RecurseSubdirectories = true }).OrderBy(f => f.Name).ToArray(); ;
                 
                 _log.Info($"  Found {jsonFiles.Length} JSON file{(jsonFiles.Length > 1 ? "s" : "")} to round up");
                 

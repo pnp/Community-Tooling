@@ -32,10 +32,10 @@ namespace Farrier
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
 
-                    //args = new string[] { "inspect", "-c", "Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"D:\Code\PnP\sp-dev-list-formatting\" };
+                    args = new string[] { "inspect", "-c", @"Samples\ListFormatting\LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"Z:\Code\PnP\list-formatting\" };
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --joinedfilename samples.json -o D:\Code\PnP\Community-Tooling\Solutions\Farrier\Farrier\Farrier\Samples\ListFormatting -f LFSamples.csv".Split();
                     //args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\ -f sp-field-border".Split();
-                    args = @"fromfile -f Samples/ListFormatting/Farrier.txt".Split();
+                    //args = @"fromfile -f Samples/ListFormatting/Farrier.txt".Split();
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())

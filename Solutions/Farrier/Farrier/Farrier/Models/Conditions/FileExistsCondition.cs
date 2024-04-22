@@ -5,6 +5,7 @@ using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -31,7 +32,7 @@ namespace Farrier.Models.Conditions
                 if(matchcase)
                 {
                     var origFilename = System.IO.Path.GetFileName(path);
-                    var files = Directory.GetFiles(System.IO.Path.GetDirectoryName(path));
+                    var files = Directory.GetFiles(System.IO.Path.GetDirectoryName(path)).OrderBy(f => Path.GetFileName(f)).ToArray();
                     foreach (var file in files)
                     {
                         var filename = System.IO.Path.GetFileName(file);

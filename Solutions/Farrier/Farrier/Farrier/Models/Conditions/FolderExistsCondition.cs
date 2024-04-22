@@ -5,6 +5,7 @@ using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -31,7 +32,7 @@ namespace Farrier.Models.Conditions
                 if(matchcase)
                 {
                     var origFoldername = new DirectoryInfo(path).Name;
-                    var folders = Directory.GetParent(path).GetDirectories();
+                    var folders = Directory.GetParent(path).GetDirectories().OrderBy(f => f.Name).ToArray();
                     foreach (var folder in folders)
                     {
                         var foldername = folder.Name;

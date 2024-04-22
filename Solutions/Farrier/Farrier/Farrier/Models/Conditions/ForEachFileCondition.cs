@@ -49,7 +49,7 @@ namespace Farrier.Models.Conditions
             bool success = true;
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(Pattern);
-            var files = directory.GetFiles(searchPattern);
+            var files = directory.GetFiles(searchPattern).OrderBy(f => f.Name).ToArray();
             if (skip > 0)
                 files = files.Skip(skip).ToArray();
             if (limit > 0 && files.Length > limit)
