@@ -97,6 +97,14 @@
             <log name="Category" text="Add Hover Cards" warn="true"/>
           </if>
         </if>
+
+        <!-- Suggests the Microsoft Teams category if teams is in the sample name-->
+        <only when="$CONTAINS(@@SampleKey@@,#teams)">
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Microsoft Teams" matchcase="true"/>
+            <log name="Column Type" text="Set to Microsoft Teams" warn="true"/>
+          </if>
+        </only>
         
         <only when="$EQUALS(@@SampleType@@,#View)">
           <!-- Suggests the Board category if the Board Schema or kanbanProps is used -->
@@ -658,14 +666,14 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="13" limit="5">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="157" limit="5">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="300">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="8" limit="5">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
