@@ -666,26 +666,34 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="157" limit="5">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="date-update-format*" skip="0" limit="5">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="8" limit="5">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="18" limit="5">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="300">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*pooo" skip="24" limit="5">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
       </conditions>
+
+      <suppressions>
+        
+        <!-- Column Sample: date-update-format: setValue to clear a field (2 json files) -->
+        <suppress conditionname="Empty Property" pathendswith="column-samples\date-update-format\date-update-format-years.json" />
+        <suppress conditionname="Empty Property" pathendswith="column-samples\date-update-format\date-update-format.json" />
+      </suppressions>
     </rule>
     
   </rules>
+  
 </inspection>

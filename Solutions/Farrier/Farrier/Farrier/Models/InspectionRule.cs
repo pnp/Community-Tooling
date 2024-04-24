@@ -5,6 +5,7 @@ using Farrier.Parser;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Models.Conditions;
+using System.Linq;
 
 namespace Farrier.Models
 {
@@ -13,7 +14,9 @@ namespace Farrier.Models
         private LogRouter _log;
         private XmlNode _tokensNode;
         private XmlNode _conditionsNode;
+        private XmlNode _suppressionsNode;
         private Dictionary<string, string> _tokensDictionary;
+        private List<Suppression> _suppressions;
         public List<Message> messages;
 
         public InspectionRule(string name, string description = "", LogRouter log = null)
@@ -27,6 +30,7 @@ namespace Farrier.Models
             Description = description;
 
             tokens = new TokenManager(new FunctionResolver(), log: _log);
+            _suppressions = new List<Suppression>();
             messages = new List<Message>();
         }
 
@@ -44,6 +48,7 @@ namespace Farrier.Models
 
             tokens = new TokenManager(rootTokens);
             messages = new List<Message>();
+            _suppressions = new List<Suppression>();
 
             _tokensNode = ruleNode.SelectSingleNode("f:tokens", nsmgr);
 
@@ -51,6 +56,21 @@ namespace Farrier.Models
             if(_conditionsNode == null || _conditionsNode.ChildNodes.Count <= 0)
             {
                _log.Warn($"No conditions found for rule: {this.Name}");
+            }
+
+            // Rule holds suppressions and evaluates them or maybe passes them on IsValid or something
+            // Need to pass them and add to them in run rule actions (additive, but scoped)
+            // Filters are AND conditions
+            // Probably add extra optional ones like path that are only evaluated when makes sense in the Isvalid
+            _suppressionsNode = ruleNode.SelectSingleNode("f:suppressions", nsmgr);
+            if(_suppressionsNode != null)
+            {
+                var suppressNodes = _suppressionsNode.SelectNodes("f:suppress", nsmgr);
+                foreach (XmlNode suppressNode in suppressNodes)
+                {
+                    _suppressions.Add(new Suppression(suppressNode));
+                }
+                _log.Info($"Added {_suppressions.Count} suppressions for rule: {this.Name}");
             }
         }
 
@@ -83,6 +103,9 @@ namespace Farrier.Models
                     tokens.AddTokens(_tokensDictionary, false, rootTokens, parentRule.tokens);
                 if (_tokensNode != null)
                     tokens.AddTokens(_tokensNode, false);
+
+                // Pass down any suppressions from parent rule
+                _suppressions.AddRange(parentRule._suppressions);
             }
             else
             {
@@ -148,6 +171,11 @@ namespace Farrier.Models
                         break;
                 }
             }
+        }
+
+        public List<Suppression> GetSuppressionsForCondition(BaseCondition condition)
+        {
+            return _suppressions.Where(s => s.ConditionName == condition.Name).ToList();
         }
 
         public string Name { get; }

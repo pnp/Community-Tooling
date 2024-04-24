@@ -25,7 +25,11 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            propertyMap.Add("path", path);
             if (File.Exists(path))
             {
                 var isNot = IsNot(tokens);
@@ -43,7 +47,7 @@ namespace Farrier.Models.Conditions
                     else
                     {
                         //Flipped response
-                        this.setFailureMessage(tokens, $"Pattern matched ({path})");
+                        this.setFailureMessage(tokens, $"Pattern matched ({path})", potentialSuppressions);
                         return false;
                     }
                 }
@@ -53,7 +57,7 @@ namespace Farrier.Models.Conditions
 
                     if(!isNot)
                     {
-                        this.setFailureMessage(tokens, $"Pattern not matched ({path})");
+                        this.setFailureMessage(tokens, $"Pattern not matched ({path})", potentialSuppressions);
                         return false;
                     }
                     else
@@ -66,7 +70,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}");
+                this.setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }

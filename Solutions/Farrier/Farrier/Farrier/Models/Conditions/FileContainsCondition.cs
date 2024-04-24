@@ -25,7 +25,13 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            propertyMap.Add("path", path);
+
+
             if (File.Exists(path))
             {
                 var isNot = IsNot(tokens);
@@ -41,7 +47,7 @@ namespace Farrier.Models.Conditions
                         //Invalid casing
                         if (!isNot)
                         {
-                            this.setFailureMessage(tokens, $"Text exists but casing does not match ({path})");
+                            this.setFailureMessage(tokens, $"Text exists but casing does not match ({path})", potentialSuppressions);
                             return false;
                         }
                         else
@@ -59,7 +65,7 @@ namespace Farrier.Models.Conditions
                         else
                         {
                             //Flipped response
-                            this.setFailureMessage(tokens, "Text found");
+                            this.setFailureMessage(tokens, "Text found", potentialSuppressions);
                             return false;
                         }
                     }
@@ -70,7 +76,7 @@ namespace Farrier.Models.Conditions
 
                     if(!isNot)
                     {
-                        this.setFailureMessage(tokens, $"Specified text not found in {path}");
+                        this.setFailureMessage(tokens, $"Specified text not found in {path}", potentialSuppressions);
                         return false;
                     }
                     else
@@ -83,7 +89,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}");
+                this.setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }

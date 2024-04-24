@@ -27,6 +27,9 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             var rName = tokens.DecodeString(rawRuleName);
             var input = tokens.DecodeString(rawInput);
             var quiet = tokens.DecodeString(rawQuiet) == "true";
@@ -37,7 +40,7 @@ namespace Farrier.Models.Conditions
             var result = runRule(rName, rtDictionary, prefix+1, parentRule, quiet);
             if(!result.Succeeded)
             {
-                this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed");
+                this.setFailureMessage(tokens, $"Child rule \"{rName}\" failed", potentialSuppressions);
             }
             messages.AddRange(result.messages);
             return result.Succeeded;

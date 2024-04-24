@@ -31,6 +31,9 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             if (_subConditions.Count == 0)
             {
                 return false;
@@ -87,7 +90,7 @@ namespace Farrier.Models.Conditions
                             {
                                 childMessages.Add(new Message(MessageLevel.error, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
                             }
-                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of item {transformedItem}");
+                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of item {transformedItem}", potentialSuppressions);
                             success = false;
                             break;
                         }

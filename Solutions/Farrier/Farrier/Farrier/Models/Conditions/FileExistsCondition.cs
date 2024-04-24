@@ -25,7 +25,11 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            propertyMap.Add("path", path);
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
             if (File.Exists(path))
             {
@@ -39,7 +43,7 @@ namespace Farrier.Models.Conditions
                         if(origFilename.Equals(filename,StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
                         {
                             //Invalid casing
-                            this.setFailureMessage(tokens, $"File exists but casing does not match (found {filename})");
+                            this.setFailureMessage(tokens, $"File exists but casing does not match (found {filename})", potentialSuppressions);
                             return false;
                         }
                     }
@@ -52,7 +56,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}");
+                this.setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }
