@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="7" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="16" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -698,6 +698,11 @@
         <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\custom-hover-card),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
         <!-- Column Sample: custom-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
         <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\custom-hover-card),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
+
+        <!-- Column Sample: date-range-rag: Remove Date: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove Date" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\date-range-rag\date-range-rag.json),#$ENDSWITH(@@FilePath@@,#column-samples\date-range-rag\date-range-ragAST.json))" />
+        <!-- Column Sample: date-range-rag: Remove floor: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove floor" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\date-range-rag\date-range-rag.json),#$ENDSWITH(@@FilePath@@,#column-samples\date-range-rag\date-range-ragAST.json))" />
       </suppressions>
     </rule>
     
