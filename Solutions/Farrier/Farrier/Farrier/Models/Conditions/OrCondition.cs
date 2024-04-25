@@ -52,7 +52,10 @@ namespace Farrier.Models.Conditions
                     if(condition.IsWarning)
                     {
                         //Log as a warning, but don't fail the condition
-                        childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix+1));
+                        if (!condition.SuppressFailureMessage)
+                        {
+                            childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
+                        }
                     }
                     else
                     {

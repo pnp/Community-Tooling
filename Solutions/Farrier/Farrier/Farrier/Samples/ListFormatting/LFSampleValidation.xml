@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="date-update-format*" skip="0" limit="5">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="7" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -691,6 +691,11 @@
         <!-- Column Sample: date-update-format: setValue to clear a field (2 json files) -->
         <suppress conditionname="Empty Property" pathendswith="column-samples\date-update-format\date-update-format-years.json" />
         <suppress conditionname="Empty Property" pathendswith="column-samples\date-update-format\date-update-format.json" />
+        
+        <!-- Column Sample: custom-hover-card: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\custom-hover-card\README.md"/>
+        <!-- Column Sample: custom-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" pathendswith="column-samples\custom-hover-card\custom-hover-card.json" message="Add ms-fontColor-"/>
       </suppressions>
     </rule>
     

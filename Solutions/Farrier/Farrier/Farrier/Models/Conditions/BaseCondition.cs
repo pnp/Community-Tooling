@@ -74,9 +74,19 @@ namespace Farrier.Models.Conditions
             propertyMap = new Dictionary<string, string>();
         }
 
+        public void Warn(string text, int prefix)
+        {
+            messages.Add(new Message(MessageLevel.warning, Name, text, prefix));
+        }
+
         public void Warn(TokenManager tokens, string text, int prefix)
         {
             messages.Add(new Message(MessageLevel.warning, Name, tokens.DecodeString(text), prefix));
+        }
+
+        public void Error(string text, int prefix)
+        {
+            messages.Add(new Message(MessageLevel.error, Name, text, prefix));
         }
 
         public void Error(TokenManager tokens, string text, int prefix)
@@ -89,6 +99,11 @@ namespace Farrier.Models.Conditions
             var msg = new Message(MessageLevel.error, Name, tokens.DecodeString(text), prefix);
             msg.Ex = ex;
             messages.Add(msg);
+        }
+
+        public void Info(string text, int prefix)
+        {
+            messages.Add(new Message(MessageLevel.info, Name, text, prefix));
         }
 
         public void Info(TokenManager tokens, string text, int prefix)
