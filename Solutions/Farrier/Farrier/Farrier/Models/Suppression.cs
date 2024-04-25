@@ -13,7 +13,7 @@ namespace Farrier.Models
     class Suppression
     {
         private Dictionary<string, string> _propertyMap;
-        private string _message;
+        private string _rawMessage;
         private string _rawMust;
 
         public Suppression(XmlNode suppressNode)
@@ -21,7 +21,7 @@ namespace Farrier.Models
             _propertyMap = new Dictionary<string, string>();
 
             ConditionName = XmlHelper.XmlAttributeToString(suppressNode.Attributes["conditionname"]);
-            _message = XmlHelper.XmlAttributeToString(suppressNode.Attributes["message"]);
+            _rawMessage = XmlHelper.XmlAttributeToString(suppressNode.Attributes["message"]);
             _rawMust = XmlHelper.XmlAttributeToString(suppressNode.Attributes["must"]);
 
             // Preapproved property values that may or may not be used by conditions (only added if they are specified)
@@ -40,6 +40,7 @@ namespace Farrier.Models
         public bool IsSuppressed(Dictionary<string, string> mappedProperties, TokenManager tokens, string message = "")
         {
             // If the message is different, it's not suppressed
+            string _message = tokens.DecodeString(_rawMessage);
             if (!String.IsNullOrEmpty(_message) && _message != message)
                 return false;
             

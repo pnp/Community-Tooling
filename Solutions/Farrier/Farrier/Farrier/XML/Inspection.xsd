@@ -129,7 +129,7 @@
     <xsd:attribute name="message" type="xsd:string" use="optional">
       <xsd:annotation>
         <xsd:documentation>
-          The EXACT message to suppress. If not specified or empty, the message won't be evaluated at all.
+          The EXACT message to suppress. If not specified or empty, the message won't be evaluated at all. (supports expressions)
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>

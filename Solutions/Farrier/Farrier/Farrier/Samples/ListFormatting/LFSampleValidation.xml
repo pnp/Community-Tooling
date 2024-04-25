@@ -696,6 +696,8 @@
         <suppress conditionname="README Twitter Link" pathendswith="column-samples\custom-hover-card\README.md"/>
         <!-- Column Sample: custom-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
         <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\custom-hover-card),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
+        <!-- Column Sample: custom-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\custom-hover-card),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
       </suppressions>
     </rule>
     
