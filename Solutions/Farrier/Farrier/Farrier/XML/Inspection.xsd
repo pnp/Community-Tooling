@@ -136,7 +136,14 @@
     <xsd:attribute name="pathendswith" type="farrier:NotEmpty" use="optional">
       <xsd:annotation>
         <xsd:documentation>
-          Matches the path of the condition if it ends with the specified value (not case-sensitive)
+          Matches the path of the condition if it ends with the specified value (not case-sensitive), convenience method (could be written as a must value)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="must" type="farrier:BoolOrExpression" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, used in conjunction with name/message/pathendswith to target suppression (supports expressions, but must evaluate to true or false)
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>

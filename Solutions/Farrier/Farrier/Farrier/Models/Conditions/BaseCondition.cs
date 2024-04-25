@@ -118,7 +118,7 @@ namespace Farrier.Models.Conditions
             {
                 message = tokens.DecodeString(failuremessageTemplate);
             }
-            if(!isSuppressed(message, potentialSuppressions))
+            if(!isSuppressed(message, potentialSuppressions, tokens))
             {
                 this.failuremessage = message;
                 this.suppressFailureMessage = false;
@@ -134,11 +134,11 @@ namespace Farrier.Models.Conditions
             return tokens.DecodeString(rawNot) == "true";
         }
 
-        protected bool isSuppressed(string message, List<Suppression> potentialSuppressions)
+        protected bool isSuppressed(string message, List<Suppression> potentialSuppressions, TokenManager tokens)
         {
             foreach (var suppression in potentialSuppressions)
             {
-                if (suppression.IsSuppressed(propertyMap, message))
+                if (suppression.IsSuppressed(propertyMap, tokens, message))
                 {
                     // Suppressed, no need to look at the rest
                     return true;

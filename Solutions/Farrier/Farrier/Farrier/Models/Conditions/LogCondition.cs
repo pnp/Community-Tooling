@@ -28,7 +28,7 @@ namespace Farrier.Models.Conditions
             var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
 
             var message = tokens.DecodeString(rawText);
-            if (isSuppressed(message, potentialSuppressions))
+            if (isSuppressed(message, potentialSuppressions, tokens))
             {
                 return true;
             }

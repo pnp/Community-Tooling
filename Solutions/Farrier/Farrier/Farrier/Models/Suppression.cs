@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Farrier.Helpers;
+using Farrier.Parser;
 
 namespace Farrier.Models
 {
@@ -13,14 +14,17 @@ namespace Farrier.Models
     {
         private Dictionary<string, string> _propertyMap;
         private string _message;
+        private string _rawMust;
+
         public Suppression(XmlNode suppressNode)
         {
             _propertyMap = new Dictionary<string, string>();
 
             ConditionName = XmlHelper.XmlAttributeToString(suppressNode.Attributes["conditionname"]);
             _message = XmlHelper.XmlAttributeToString(suppressNode.Attributes["message"]);
+            _rawMust = XmlHelper.XmlAttributeToString(suppressNode.Attributes["must"]);
 
-            // Preapprove values that may or may not be used by conditions (up to them)
+            // Preapproved property values that may or may not be used by conditions (only added if they are specified)
             addToMap(suppressNode, "path");
         }
 
@@ -33,7 +37,7 @@ namespace Farrier.Models
             }
         }
 
-        public bool IsSuppressed(Dictionary<string, string> mappedProperties, string message = "")
+        public bool IsSuppressed(Dictionary<string, string> mappedProperties, TokenManager tokens, string message = "")
         {
             // If the message is different, it's not suppressed
             if (!String.IsNullOrEmpty(_message) && _message != message)
@@ -48,6 +52,15 @@ namespace Farrier.Models
                 if (!mappedProperties[key].EndsWith(_propertyMap[key], StringComparison.CurrentCultureIgnoreCase))
                     return false;
             }
+
+            string decodedMust = String.IsNullOrEmpty(_rawMust) ? "true" : tokens.DecodeString(_rawMust);
+            if (decodedMust != "true" && decodedMust != "false")
+            {
+                throw new Exception($"Suppression must attribute must evaluate to 'true' or 'false' but got '{decodedMust}'");
+            }
+            bool must = decodedMust == "true";
+            if (!must)
+                return false;
 
             return true;
         }

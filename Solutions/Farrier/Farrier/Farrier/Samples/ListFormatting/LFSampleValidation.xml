@@ -695,7 +695,7 @@
         <!-- Column Sample: custom-hover-card: Twitter link missing: Author doesn't have a public twitter -->
         <suppress conditionname="README Twitter Link" pathendswith="column-samples\custom-hover-card\README.md"/>
         <!-- Column Sample: custom-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
-        <suppress conditionname="Class" pathendswith="column-samples\custom-hover-card\custom-hover-card.json" message="Add ms-fontColor-"/>
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\custom-hover-card),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
       </suppressions>
     </rule>
     
