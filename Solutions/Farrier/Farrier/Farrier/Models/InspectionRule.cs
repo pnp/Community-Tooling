@@ -17,6 +17,8 @@ namespace Farrier.Models
         private XmlNode _suppressionsNode;
         private Dictionary<string, string> _tokensDictionary;
         private List<Suppression> _suppressions;
+        private bool _didInheritFromParent = false;
+
         public List<Message> messages;
 
         public InspectionRule(string name, string description = "", LogRouter log = null)
@@ -104,8 +106,12 @@ namespace Farrier.Models
                 if (_tokensNode != null)
                     tokens.AddTokens(_tokensNode, false);
 
-                // Pass down any suppressions from parent rule
-                _suppressions.AddRange(parentRule._suppressions);
+                if (!_didInheritFromParent)
+                {
+                    // Pass down any suppressions from parent rule
+                    _suppressions.AddRange(parentRule._suppressions);
+                    _didInheritFromParent = true;
+                }
             }
             else
             {
