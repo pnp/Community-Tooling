@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="52" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="58" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -745,7 +745,24 @@
         <suppress conditionname="Action" message="Remove delete" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\generic-rowactions.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
         <suppress conditionname="Action" message="Remove editProps" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\delete.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\generic-rowactions.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
         
+        <!-- Column Sample: generic-scheduling-link: toString, Number, toLocaleTimeString, indexOf, substring, getDate, getMonth, getYear, padStart: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove Number" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove toLocaleTimeString" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove indexOf" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove getDate" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove getMonth" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
+        <suppress conditionname="Operator" message="Remove padStart" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
         
+        <!-- Column Sample: generic-share-to-teams-with-message: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\generic-share-to-teams-with-message\README.md"/>
+        
+        <!-- Column Sample: generic-star-icon: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\generic-star-icon\README.md"/>
+        
+      
       </suppressions>
     </rule>
     
