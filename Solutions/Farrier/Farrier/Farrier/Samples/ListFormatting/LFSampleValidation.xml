@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="20" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="33" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -719,6 +719,19 @@
         <suppress conditionname="Feature" message="Remove beakStyle" must="$ENDSWITH(@@FilePath@@,#column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json)" />
         <!-- Column Sample: filename-highlight-non-empty-folders: Remove directionalHint: In 1 of 2 samples -->
         <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json)" />
+        
+        <!-- Column Sample: generic-approval-status-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-approval-status-hover-card),#$EQUALS(@@Each@@,#generic-approval-status-hover-card.json))" />
+        <!-- Column Sample: generic-approval-status-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-approval-status-hover-card),#$EQUALS(@@Each@@,#generic-approval-status-hover-card.json))" />
+        
+        <!-- Column Sample: generic-filepicker: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="column-samples\generic-filepicker\generic-filepicker.json" />
+        
+        <!-- Column Sample: generic-gantt-chart: Remove loopIndex: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove loopIndex" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-gantt-chart\generic-gantt-chart.json)" />
+        <!-- Column Sample: generic-gantt-chart: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-gantt-chart\generic-gantt-chart.json)" />
         
         
       </suppressions>
