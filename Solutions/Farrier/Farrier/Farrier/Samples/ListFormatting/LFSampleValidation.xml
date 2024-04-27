@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="33" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="52" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -732,6 +732,18 @@
         <suppress conditionname="Operator" message="Remove loopIndex" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-gantt-chart\generic-gantt-chart.json)" />
         <!-- Column Sample: generic-gantt-chart: Remove forEach: In 1 of 2 samples -->
         <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-gantt-chart\generic-gantt-chart.json)" />
+        
+        <!-- Column Sample: generic-icon-overlay: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-icon-overlay),#$EQUALS(@@Each@@,#generic-icon-overlay-multiple.json))" />
+        <!-- Column Sample: generic-icon-overlay: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-icon-overlay),#$EQUALS(@@Each@@,#generic-icon-overlay.json))" />
+        
+        <!-- Column Sample: generic-rowactions: Actions across samples are always in 4 of 5 -->
+        <suppress conditionname="Action" message="Remove defaultClick" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\delete.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
+        <suppress conditionname="Action" message="Remove executeFlow" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\delete.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\generic-rowactions.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
+        <suppress conditionname="Action" message="Remove share" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\delete.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\generic-rowactions.json))" />
+        <suppress conditionname="Action" message="Remove delete" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\generic-rowactions.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
+        <suppress conditionname="Action" message="Remove editProps" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\delete.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\generic-rowactions.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
         
         
       </suppressions>
