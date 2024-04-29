@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="58" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="78" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -761,6 +761,32 @@
         
         <!-- Column Sample: generic-star-icon: Twitter link missing: Author doesn't have a public twitter -->
         <suppress conditionname="README Twitter Link" pathendswith="column-samples\generic-star-icon\README.md"/>
+        
+        <!-- Column Sample: generic-start-flow-conditionally: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-start-flow-conditionally),#$EQUALS(@@Each@@,#generic-start-flow-conditionally.json))" />
+        
+        <!-- Column Sample: generic-substring-status: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-substring-status),#$EQUALS(@@Each@@,#generic-substring-status.json))" />
+        
+        <!-- Column Sample: generic-yearly-gantt-chart: Remove @now: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-yearly-gantt-chart\generic-yearly-gantt-chart.json)" />
+        <!-- Column Sample: generic-yearly-gantt-chart: Remove floor: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove floor" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-yearly-gantt-chart\generic-yearly-gantt-chart.json)" />
+        
+        <!-- Column Sample: image-lightbox: Remove @window.innerHeight: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @window.innerHeight" must="$ENDSWITH(@@FilePath@@,#column-samples\image-lightbox\image-lightbox.json)" />
+        <!-- Column Sample: image-lightbox: Remove @window.innerWidth: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @window.innerWidth" must="$ENDSWITH(@@FilePath@@,#column-samples\image-lightbox\image-lightbox.json)" />
+        <!-- Column Sample: image-lightbox: Remove ceiling: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove ceiling" must="$ENDSWITH(@@FilePath@@,#column-samples\image-lightbox\image-lightbox.json)" />
+        
+        <!-- Column Sample: managed-metadata-tag: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#column-samples\managed-metadata-tag\managed-metadata-tag.json)" />
+        
+        <!-- Column Sample: managed-metadata-tag-icon: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#column-samples\managed-metadata-tag-icon\managed-metadata-tag-icon-multi-choice.json)" />
+        <!-- Column Sample: managed-metadata-tag-icon: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#column-samples\managed-metadata-tag-icon\managed-metadata-tag-icon.json)" />
         
       
       </suppressions>
