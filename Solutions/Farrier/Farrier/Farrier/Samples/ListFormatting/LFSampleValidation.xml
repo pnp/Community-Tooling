@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="124" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="143" limit="1">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -838,6 +838,23 @@
         <suppress conditionname="Operator" message="Remove appendTo" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json),#$ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me.json))" />
         <!-- Column Sample: person-assign-to-me: Remove indexOf: In 2 of 4 samples -->
         <suppress conditionname="Feature" message="Remove forEach" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json),#$ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me.json))" />
+        
+        <!-- Column Sample: person-hover-card: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\person-hover-card\README.md"/>
+      
+        <!-- Column Sample: person-teams-message-format: Remove getUserImage: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove getUserImage" must="$ENDSWITH(@@FilePath@@,#column-samples\person-teams-message-format\person-teams-message-format-name.json)" />
+        <!-- Column Sample: person-teams-message-format: Remove defaultHoverField: In 1 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove defaultHoverField" must="$ENDSWITH(@@FilePath@@,#column-samples\person-teams-message-format\person-teams-message-format-name.json)" />
+        
+        <!-- Column Sample: text-isbn-image: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-isbn-image\README.md"/>
+        
+        <!-- Column Sample: text-local-image: Remove @currentWeb: In 1 of 5 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-hardcoded-image.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-hardcoded-imageAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-relative-image.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-relative-imageAST.json))" />
+        
+        <!-- Column Sample: text-local-link: Remove @currentWeb: In 1 of 5 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-hardcoded-link.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-hardcoded-linkAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-relative-link.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-relative-linkAST.json))" />
         
       
       </suppressions>
