@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="143" limit="1">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="153" limit="10">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
@@ -855,6 +855,29 @@
         
         <!-- Column Sample: text-local-link: Remove @currentWeb: In 1 of 5 samples -->
         <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-hardcoded-link.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-hardcoded-linkAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-relative-link.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-relative-linkAST.json))" />
+        
+        <!-- Column Sample: text-phonenumber-teams-call: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-phonenumber-teams-call\README.md"/>
+        
+        <!-- Column Sample: text-qrcode: Remove customCardProps: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$ENDSWITH(@@FilePath@@,#column-samples\text-qrcode\text-qrcode.json)" />
+        <!-- Column Sample: text-qrcode: Remove directionalHint: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#column-samples\text-qrcode\text-qrcode.json)" />
+      
+        <!-- Column Sample: text-ryg-status-indicator: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-ryg-status-indicator\README.md"/>
+        
+        <!-- Column Sample: text-wrap-format: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-wrap-format\README.md"/>
+        
+        <!-- Column Sample: yesno-checkbox: Remove setValue: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\yesno-checkbox\yesno-checkboxAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
+        
+        <!-- Column Sample: yesno-checkmark-format: Twitter link missing: Author doesn't have a public twitter -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\yesno-checkmark-format\README.md"/>
+      
+        <!-- Column Sample: yesno-roundedfill-format: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#column-samples\yesno-roundedfill-format\yesno-azure-format.json)" />
         
       
       </suppressions>
