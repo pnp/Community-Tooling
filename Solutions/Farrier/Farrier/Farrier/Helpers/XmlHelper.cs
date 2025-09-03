@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -61,13 +62,13 @@ namespace Farrier.Helpers
             settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
             settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
             //settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
-            settings.Schemas.Add(schemaNamespace, schemaLocation);
+            settings.Schemas.Add(schemaNamespace, PathNormalizer.Normalize(schemaLocation));
             settings.ValidationEventHandler += (o, args) =>
             {
                 messages.Add($"{args.Message} (Line: {args.Exception.LineNumber}, Position: {args.Exception.LinePosition})");
             };
 
-            XmlReader reader = XmlReader.Create(xmlLocation, settings);
+            XmlReader reader = XmlReader.Create(PathNormalizer.Normalize(xmlLocation), settings);
             while (reader.Read()) ;
             return messages;
         }

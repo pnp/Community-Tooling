@@ -32,7 +32,8 @@ namespace Farrier
                 {
                     //args = @"forge -b Samples/ListFormatting/Playground.xml --listtokens".Split();
 
-                    args = new string[] { "inspect", "-c", @"Samples\ListFormatting\LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"Z:\Code\PnP\list-formatting\" };
+                    args = new string[] { "inspect", "-c", @"Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"/Users/chriskent/Code/pnp/List-Formatting/" };
+                    //args = new string[] { "inspect", "-c", @"Samples\ListFormatting\LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"Z:\Code\PnP\list-formatting\" };
                     //args = @"roundup -m Samples/ListFormatting/LFAssetMap.xml -s D:\Code\PnP\sp-dev-list-formatting -j sample.json --overwrite --pathdepth 3 --joinedfilename samples.json -o D:\Code\PnP\Community-Tooling\Solutions\Farrier\Farrier\Farrier\Samples\ListFormatting -f LFSamples.csv".Split();
                     //args = @"forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o D:\code\pnp\sp-dev-list-formatting\docs\ -f sp-field-border".Split();
                     //args = @"fromfile -f Samples/ListFormatting/Farrier.txt".Split();
@@ -81,16 +82,17 @@ namespace Farrier
 
             void RunFromFile(FromFileOptions options)
             {
+                var filePath = PathNormalizer.Normalize(options.File);
                 logger.Info("Running from file!");
-                log.Debug($"Param: file={options.File}");
+                log.Debug($"Param: file={filePath}");
 
-                if (!File.Exists(options.File))
+                if (!File.Exists(filePath))
                 {
-                    log.Error($"File not found at: {options.File}");
+                    log.Error($"File not found at: {filePath}");
                     return;
                 }
 
-                var commands = File.ReadAllLines(options.File);
+                var commands = File.ReadAllLines(filePath);
                 foreach (var command in commands)
                 {
                     if(!command.StartsWith('#'))
@@ -105,23 +107,25 @@ namespace Farrier
 
             void CopyFile(CopyFileOptions options)
             {
+                var filePath = PathNormalizer.Normalize(options.File);
+                var outputpath = PathNormalizer.Normalize(options.OutputPath);
                 logger.Info("Copying a file!");
-                log.Debug($"Param: file={options.File}");
-                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: file={filePath}");
+                log.Debug($"Param: outputpath={outputpath}");
                 log.Debug($"Param: overwrite={options.Overwrite}");
 
-                var source = new FileInfo(options.File);
+                var source = new FileInfo(filePath);
                 if (!source.Exists)
                 {
-                    log.Error($"File not found at: {options.File}");
+                    log.Error($"File not found at: {filePath}");
                     return;
                 }
-                if (!Directory.Exists(options.OutputPath))
+                if (!Directory.Exists(outputpath))
                 {
-                    log.Error($"Directory not found at: {options.OutputPath}");
+                    log.Error($"Directory not found at: {outputpath}");
                     return;
                 }
-                var destination = Path.Combine(options.OutputPath, source.Name);
+                var destination = Path.Combine(outputpath, source.Name);
                 if(File.Exists(destination) && !options.Overwrite)
                 {
                     log.Error($"File already exists at destination. Add overwrite option to do it anyway.");
@@ -133,19 +137,21 @@ namespace Farrier
 
             void RunInspect(InspectOptions options)
             {
+                var startingpath = PathNormalizer.Normalize(options.StartingPath);
+                var outputpath = PathNormalizer.Normalize(options.OutputPath);
                 logger.Info("Inspecting!");
                 log.Debug($"Param: ruleset={options.RuleSet}");
-                log.Debug($"Param: startingpath={options.StartingPath}");
+                log.Debug($"Param: startingpath={startingpath}");
                 log.Debug($"Param: rule={options.Rule}");
-                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: outputpath={outputpath}");
                 log.Debug($"Param: tokens={options.Tokens}");
                 log.Debug($"Param: listtokens={options.ListTokens}");
                 log.Debug($"Param: skipxmlvalidation={options.SkipXMLValidation}");
 
                 var i = new Inspector(options.RuleSet,
-                                      options.StartingPath,
+                                      startingpath,
                                       options.Rule,
-                                      options.OutputPath,
+                                      outputpath,
                                       TokenManager.IEnumerableToDictionary(options.Tokens),
                                       options.ListTokens,
                                       options.SkipXMLValidation,
@@ -155,32 +161,40 @@ namespace Farrier
 
             void RunForge(ForgeOptions options)
             {
+                var blueprint = PathNormalizer.Normalize(options.Blueprint);
+                var outputpath = PathNormalizer.Normalize(options.OutputPath);
+                var file = PathNormalizer.Normalize(options.File);
                 log.Info("Forging!");
-                log.Debug($"Param: blueprint={options.Blueprint}");
-                log.Debug($"Param: outputpath={options.OutputPath}");
+                log.Debug($"Param: blueprint={blueprint}");
+                log.Debug($"Param: outputpath={outputpath}");
                 log.Debug($"Param: tokens={options.Tokens}");
                 log.Debug($"Param: listtokens={options.ListTokens}");
                 log.Debug($"Param: skipxmlformattingfix={options.SkipXMLFormattingFix}");
                 log.Debug($"Param: skipxmlvalidation={options.SkipXMLValidation}");
-                log.Debug($"Param: file={options.File}");
+                log.Debug($"Param: file={file}");
 
-                var f = new Forger(options.Blueprint,
-                                   options.OutputPath,
+                var f = new Forger(blueprint,
+                                   outputpath,
                                    TokenManager.IEnumerableToDictionary(options.Tokens),
                                    options.ListTokens,
                                    options.SkipXMLFormattingFix,
                                    options.SkipXMLValidation,
                                    log);
-                f.Forge(options.File);
+                f.Forge(file);
             }
 
             void RunRoundUp(RoundUpOptions options)
             {
+                var map = PathNormalizer.Normalize(options.Map);
+                var outputpath = PathNormalizer.Normalize(options.OutputPath);
+                var startpath = PathNormalizer.Normalize(options.StartPath);
+                var outputfilename = PathNormalizer.Normalize(options.OutputFilename);
+                var joinedfilename = PathNormalizer.Normalize(options.JoinedFilename);
                 log.Info("Rounding Up!");
-                log.Debug($"Param: map={options.Map}");
-                log.Debug($"Param: outputpath={options.OutputPath}");
-                log.Debug($"Param: outputfilename={options.OutputFilename}");
-                log.Debug($"Param: startpath={options.StartPath}");
+                log.Debug($"Param: map={map}");
+                log.Debug($"Param: outputpath={outputpath}");
+                log.Debug($"Param: outputfilename={outputfilename}");
+                log.Debug($"Param: startpath={startpath}");
                 log.Debug($"Param: jsonfilepattern={options.JSONFilePattern}");
                 log.Debug($"Param: listjsonfiles={options.ListJSONFiles}");
                 log.Debug($"Param: tokens={options.Tokens}");
@@ -193,12 +207,12 @@ namespace Farrier
                 log.Debug($"Param: limit={options.Limit}");
                 log.Debug($"Param: pathdepth={options.PathDepth}");
                 log.Debug($"Param: skipxmlvalidation={options.SkipXMLValidation}");
-                log.Debug($"Param: joinedfilename={options.JoinedFilename}");
+                log.Debug($"Param: joinedfilename={joinedfilename}");
 
-                var w = new Wrangler(options.Map,
-                                     options.OutputPath,
-                                     options.OutputFilename,
-                                     options.StartPath,
+                var w = new Wrangler(map,
+                                     outputpath,
+                                     outputfilename,
+                                     startpath,
                                      options.JSONFilePattern,
                                      options.ListJSONFiles,
                                      TokenManager.IEnumerableToDictionary(options.Tokens),
@@ -211,7 +225,7 @@ namespace Farrier
                                      options.Limit,
                                      options.PathDepth,
                                      options.SkipXMLValidation,
-                                     options.JoinedFilename,
+                                     joinedfilename,
                                      log);
                 w.RoundUp();
             }
