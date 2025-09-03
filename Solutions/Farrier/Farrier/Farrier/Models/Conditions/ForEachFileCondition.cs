@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
@@ -20,7 +17,7 @@ namespace Farrier.Models.Conditions
         {
             Path = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
             Pattern = XmlHelper.XmlAttributeToString(conditionNode.Attributes["pattern"]);
-            if(String.IsNullOrEmpty(Pattern))
+            if(string.IsNullOrEmpty(Pattern))
             {
                 Pattern = "*";
             }
@@ -41,12 +38,12 @@ namespace Farrier.Models.Conditions
             int limit = ValidateLimit(tokens, "files", prefix);
             var quiet = tokens.DecodeString(rawQuiet) == "true";
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(Path));
+            var path = PathNormalizer.Normalize(System.IO.Path.Combine(startingpath, tokens.DecodeString(Path)));
             propertyMap.Add("path", path);
 
             if(!Directory.Exists(path))
             {
-                this.setFailureMessage(tokens, $"Unable to find the directory {path}", potentialSuppressions);
+                setFailureMessage(tokens, $"Unable to find the directory {path}", potentialSuppressions);
                 return false;
             }
 
@@ -99,7 +96,7 @@ namespace Farrier.Models.Conditions
                             {
                                 childMessages.Add(new Message(MessageLevel.error, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
                             }
-                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of file {file.FullName}", potentialSuppressions);
+                            setFailureMessage(tokens, $"Sub Condition failure during processing of file {file.FullName}", potentialSuppressions);
                             success = false;
                             break;
                         }
