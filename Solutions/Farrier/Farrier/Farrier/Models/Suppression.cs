@@ -33,7 +33,14 @@ namespace Farrier.Models
             var value = XmlHelper.XmlAttributeToString(suppressNode.Attributes[$"{key}endswith"]);
             if (!string.IsNullOrEmpty(value))
             {
-                _propertyMap.Add(key, value);
+                if (key == "path")
+                {
+                    _propertyMap.Add(key, PathNormalizer.Normalize(value));
+                }
+                else
+                {
+                    _propertyMap.Add(key, value);
+                }
             }
         }
 
