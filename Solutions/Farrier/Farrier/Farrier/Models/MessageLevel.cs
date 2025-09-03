@@ -8,6 +8,7 @@ namespace Farrier.Models
     {
         warning,
         error,
-        info
+        info,
+        trace
     }
 }

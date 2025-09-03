@@ -61,7 +61,7 @@ namespace Farrier.Models.Conditions
             foreach (var folder in folders)
             {
                 if (!quiet)
-                    childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
+                    childMessages.Add(new Message(MessageLevel.trace, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", folder.Name);

@@ -29,6 +29,11 @@ namespace Farrier.Models
             return new Message(MessageLevel.info, source, text, prefix);
         }
 
+        public static Message Trace(string source, string text, int prefix = 0)
+        {
+            return new Message(MessageLevel.trace, source, text, prefix);
+        }
+
         public string Source { get; set; }
         public string Text { get; set; }
         public MessageLevel Level { get; set; }

@@ -163,6 +163,9 @@ namespace Farrier.Models
                     case MessageLevel.warning:
                         _log.Warn(text, message.Prefix);
                         break;
+                    case MessageLevel.trace:
+                        _log.Trace(text, message.Prefix);
+                        break;
                     case MessageLevel.error:
                         if (!skipErrors)
                         {

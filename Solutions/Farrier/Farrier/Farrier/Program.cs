@@ -20,7 +20,8 @@ namespace Farrier
         private static LogRouter log = new LogRouter((e, s) => logger.Error(e, s),
                                         s => logger.Warn(s),
                                         s => logger.Info(s),
-                                        s => logger.Debug(s));
+                                        s => logger.Debug(s),
+                                        s => logger.Trace(s));
 
         static void Main(string[] args)
         {
