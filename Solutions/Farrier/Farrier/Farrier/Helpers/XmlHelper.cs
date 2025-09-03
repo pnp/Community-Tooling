@@ -76,11 +76,36 @@ namespace Farrier.Helpers
         public static string djb2(string text)
         {
             int r = 5381;
-            foreach(char c in text)
+            foreach (char c in text)
             {
                 r = (r * 33) + (int)c;
             }
             return r.ToString();
+        }
+
+        public static int CountChildrenRecursively(XmlNode node)
+        {
+            int count = 0;
+            if (node.HasChildNodes)
+            {
+                foreach (XmlNode child in node.ChildNodes)
+                {
+                    count++;
+                    count += CountChildrenRecursively(child);
+                }
+            }
+            return count;
+        }
+
+        // Only counts the children (not the nodes themselves)
+        public static int CountChildrenRecursively(XmlNodeList nodes)
+        {
+            int count = 0;
+            foreach (XmlNode node in nodes)
+            {
+                count += CountChildrenRecursively(node);
+            }
+            return count;
         }
     }
 }

@@ -100,7 +100,7 @@ namespace Farrier.Inspect
                 XmlNodeList ruleNodes = doc.SelectNodes("//f:rule", nsmgr);
                 if (ruleNodes != null && ruleNodes.Count > 0)
                 {
-                    _log.Info($"Processing {ruleNodes.Count} rules");
+                    _log.Info($"Processing {ruleNodes.Count} rules with {XmlHelper.CountChildrenRecursively(ruleNodes)} sub rules");
 
                     //Build the rules from the ruleset
                     _rules = new Dictionary<string, InspectionRule>();
