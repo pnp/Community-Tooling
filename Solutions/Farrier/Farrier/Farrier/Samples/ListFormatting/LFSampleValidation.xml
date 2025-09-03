@@ -508,7 +508,7 @@
         <token name="READMEPath" value="@@FolderPath@@\README.md"/>
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
-        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#column-samples),#Column,#$IF($CONTAINS(@@FolderPath@@,#form-samples),#Form,#View))"/>
         <token name="SampleUrl" value="https://github.com/pnp/list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@"/>
         <token name="TelemetryTagOld">
           <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
@@ -666,7 +666,7 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="153" limit="10">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="0" limit="10">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
