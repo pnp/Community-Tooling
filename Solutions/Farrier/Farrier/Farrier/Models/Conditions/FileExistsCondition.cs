@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
@@ -28,22 +26,22 @@ namespace Farrier.Models.Conditions
             propertyMap.Clear();
             var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
             propertyMap.Add("path", path);
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
             if (File.Exists(path))
             {
                 if(matchcase)
                 {
-                    var origFilename = System.IO.Path.GetFileName(path);
-                    var files = Directory.GetFiles(System.IO.Path.GetDirectoryName(path)).OrderBy(f => Path.GetFileName(f)).ToArray();
+                    var origFilename = Path.GetFileName(path);
+                    var files = Directory.GetFiles(Path.GetDirectoryName(path)).OrderBy(f => Path.GetFileName(f)).ToArray();
                     foreach (var file in files)
                     {
-                        var filename = System.IO.Path.GetFileName(file);
+                        var filename = Path.GetFileName(file);
                         if(origFilename.Equals(filename,StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
                         {
                             //Invalid casing
-                            this.setFailureMessage(tokens, $"File exists but casing does not match (found {filename})", potentialSuppressions);
+                            setFailureMessage(tokens, $"File exists but casing does not match (found {filename})", potentialSuppressions);
                             return false;
                         }
                     }
@@ -56,7 +54,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
+                setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }

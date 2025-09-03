@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
@@ -28,7 +26,7 @@ namespace Farrier.Models.Conditions
             propertyMap.Clear();
             var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
             propertyMap.Add("path", path);
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
             if (Directory.Exists(path))
@@ -43,7 +41,7 @@ namespace Farrier.Models.Conditions
                         if(origFoldername.Equals(foldername,StringComparison.CurrentCultureIgnoreCase) && !origFoldername.Equals(foldername))
                         {
                             //Invalid casing
-                            this.setFailureMessage(tokens, $"Folder exists but casing does not match (found {foldername})", potentialSuppressions);
+                            setFailureMessage(tokens, $"Folder exists but casing does not match (found {foldername})", potentialSuppressions);
                             return false;
                         }
                     }
@@ -56,7 +54,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"Folder not found at {path}", potentialSuppressions);
+                setFailureMessage(tokens, $"Folder not found at {path}", potentialSuppressions);
                 return false;
             }
         }
