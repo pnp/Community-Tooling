@@ -570,7 +570,7 @@
         </only>
         <filecontains name="README Sample" path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
         <filecontains name="README Github Link" path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
-        <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
+        <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" not="true" warn="true" failuremessage="README has Author Twitter link"/>
         <filecontains name="README VH" path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
         <filecontains name="Telemetry Tag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
         <filecontains name="Telemetry Tag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@) - use '@@TelemetryTag@@'"/>
@@ -688,8 +688,6 @@
 
       <suppressions>
         
-        <!-- Column Sample: custom-hover-card: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\custom-hover-card\README.md"/>
         <!-- Column Sample: custom-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
         <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\custom-hover-card),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
         <!-- Column Sample: custom-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
@@ -756,12 +754,6 @@
         <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
         <suppress conditionname="Operator" message="Remove padStart" must="$ENDSWITH(@@FilePath@@,#column-samples\generic-scheduling-link\generic-scheduling-link.json)" />
         
-        <!-- Column Sample: generic-share-to-teams-with-message: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\generic-share-to-teams-with-message\README.md"/>
-        
-        <!-- Column Sample: generic-star-icon: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\generic-star-icon\README.md"/>
-        
         <!-- Column Sample: generic-start-flow-conditionally: Add ms-fontColor: Classes are being dynamically assembled -->
         <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#column-samples\generic-start-flow-conditionally),#$EQUALS(@@Each@@,#generic-start-flow-conditionally.json))" />
         
@@ -794,8 +786,6 @@
         <!-- Column Sample: multi-choice-list: Remove loopIndex: In 1 of 2 samples -->
         <suppress conditionname="Operator" message="Remove loopIndex" must="$ENDSWITH(@@FilePath@@,#column-samples\multi-choice-list\multi-choice-list.json)" />
         
-        <!-- Column Sample: multi-choice-thumbnail: Twitter link missing: Author has chosen LinkedIn instead -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\multi-choice-thumbnail\README.md"/>
         <!-- Column Sample: multi-choice-thumbnail: setValue to clear a field -->
         <suppress conditionname="Empty Property" pathendswith="column-samples\multi-choice-thumbnail\multi-choice-thumbnail-advanced.json" />
         <!-- Column Sample: multi-choice-thumnbail: Remove @now: In 1 of 2 samples -->
@@ -804,9 +794,6 @@
         <suppress conditionname="Operator" message="Remove Number" must="$ENDSWITH(@@FilePath@@,#column-samples\multi-choice-thumbnail\multi-choice-thumbnail.json)" />
         <!-- Column Sample: multi-choice-thumbnail: Remove setValue: In 1 of 2 samples -->
         <suppress conditionname="Action" message="Remove setValue" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\multi-choice-thumbnail\multi-choice-thumbnail.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
-        
-        <!-- Column Sample: multi-person-favorite: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\multi-person-favorite\README.md"/>
         
         <!-- Column Sample: number-data-bar: Remove toString: In 1 of 4 samples -->
         <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\number-data-bar.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\number-data-barAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\percent-data-bar.json))" />
@@ -825,9 +812,6 @@
         <suppress conditionname="Operator" message="Remove cos" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\number-piechart\number-piechartAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\number-data-barAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\percent-data-bar.json))" />
         <!-- Column Sample: number-piechart: Remove sin: In 1 of 2 samples -->
         <suppress conditionname="Operator" message="Remove sin" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\number-piechart\number-piechartAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\number-data-barAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-data-bar\percent-data-bar.json))" />
-        
-        <!-- Column Sample: number-quiz-smiley-face: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\number-quiz-smiley-face\README.md"/>
       
         <!-- Column Sample: number-trending-icon: Remove toString: In 2 of 4 samples -->
         <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\number-trending-icon\number-trending-icon.json),#$ENDSWITH(@@FilePath@@,#column-samples\number-trending-icon\number-trending-iconAST.json))" />
@@ -838,17 +822,11 @@
         <suppress conditionname="Operator" message="Remove appendTo" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json),#$ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me.json))" />
         <!-- Column Sample: person-assign-to-me: Remove indexOf: In 2 of 4 samples -->
         <suppress conditionname="Feature" message="Remove forEach" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json),#$ENDSWITH(@@FilePath@@,#column-samples\person-assign-to-me\person-assign-to-me.json))" />
-        
-        <!-- Column Sample: person-hover-card: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\person-hover-card\README.md"/>
       
         <!-- Column Sample: person-teams-message-format: Remove getUserImage: In 1 of 3 samples -->
         <suppress conditionname="Operator" message="Remove getUserImage" must="$ENDSWITH(@@FilePath@@,#column-samples\person-teams-message-format\person-teams-message-format-name.json)" />
         <!-- Column Sample: person-teams-message-format: Remove defaultHoverField: In 1 of 3 samples -->
         <suppress conditionname="Feature" message="Remove defaultHoverField" must="$ENDSWITH(@@FilePath@@,#column-samples\person-teams-message-format\person-teams-message-format-name.json)" />
-        
-        <!-- Column Sample: text-isbn-image: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-isbn-image\README.md"/>
         
         <!-- Column Sample: text-local-image: Remove @currentWeb: In 1 of 5 samples -->
         <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-hardcoded-image.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-hardcoded-imageAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-relative-image.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-image\text-relative-imageAST.json))" />
@@ -856,25 +834,13 @@
         <!-- Column Sample: text-local-link: Remove @currentWeb: In 1 of 5 samples -->
         <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-hardcoded-link.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-hardcoded-linkAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-relative-link.json),#$ENDSWITH(@@FilePath@@,#column-samples\text-local-link\text-relative-linkAST.json))" />
         
-        <!-- Column Sample: text-phonenumber-teams-call: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-phonenumber-teams-call\README.md"/>
-        
         <!-- Column Sample: text-qrcode: Remove customCardProps: In 1 of 2 samples -->
         <suppress conditionname="Feature" message="Remove customCardProps" must="$ENDSWITH(@@FilePath@@,#column-samples\text-qrcode\text-qrcode.json)" />
         <!-- Column Sample: text-qrcode: Remove directionalHint: In 1 of 2 samples -->
         <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#column-samples\text-qrcode\text-qrcode.json)" />
-      
-        <!-- Column Sample: text-ryg-status-indicator: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-ryg-status-indicator\README.md"/>
-        
-        <!-- Column Sample: text-wrap-format: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\text-wrap-format\README.md"/>
         
         <!-- Column Sample: yesno-checkbox: Remove setValue: In 1 of 2 samples -->
         <suppress conditionname="Action" message="Remove setValue" must="$OR($ENDSWITH(@@FilePath@@,#column-samples\yesno-checkbox\yesno-checkboxAST.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\editProps.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\executeFlow.json),#$ENDSWITH(@@FilePath@@,#column-samples\generic-rowactions\share.json))" />
-        
-        <!-- Column Sample: yesno-checkmark-format: Twitter link missing: Author doesn't have a public twitter -->
-        <suppress conditionname="README Twitter Link" pathendswith="column-samples\yesno-checkmark-format\README.md"/>
       
         <!-- Column Sample: yesno-roundedfill-format: Remove length: In 1 of 2 samples -->
         <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#column-samples\yesno-roundedfill-format\yesno-azure-format.json)" />
