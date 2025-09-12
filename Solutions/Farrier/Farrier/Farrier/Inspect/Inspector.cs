@@ -100,14 +100,14 @@ namespace Farrier.Inspect
                 XmlNodeList ruleNodes = doc.SelectNodes("//f:rule", nsmgr);
                 if (ruleNodes != null && ruleNodes.Count > 0)
                 {
-                    _log.Info($"Processing {ruleNodes.Count} rules with {XmlHelper.CountChildrenRecursively(ruleNodes)} sub rules");
+                    _log.Info($"Processing {ruleNodes.Count} rules with {XmlHelper.CountChildrenRecursively(ruleNodes)} sub nodes");
 
                     //Build the rules from the ruleset
                     _rules = new Dictionary<string, InspectionRule>();
                     foreach (XmlNode ruleNode in ruleNodes)
                     {
                         var rule = new InspectionRule(_rootTokens, ruleNode, nsmgr, log: _log);
-                        if(String.IsNullOrEmpty(_rule))
+                        if(string.IsNullOrEmpty(_rule))
                         {
                             //When not specified, the first rule is used
                             _rule = rule.Name;

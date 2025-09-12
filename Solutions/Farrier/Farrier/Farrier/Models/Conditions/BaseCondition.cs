@@ -53,7 +53,7 @@ namespace Farrier.Models.Conditions
 
         protected BaseCondition(XmlNode conditionNode)
         {
-            this.type = conditionNode.LocalName.ToLower();
+            type = conditionNode.LocalName.ToLower();
 
             rawNot = XmlHelper.XmlAttributeToString(conditionNode.Attributes["not"]);
             Name = XmlHelper.XmlAttributeToString(conditionNode.Attributes["name"]);
@@ -67,8 +67,8 @@ namespace Farrier.Models.Conditions
                 OverriddenName = true;
             }
 
-            this.IsWarning = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["warn"]);
-            this.failuremessageTemplate = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
+            IsWarning = XmlHelper.XmlAttributeToBool(conditionNode.Attributes["warn"]);
+            failuremessageTemplate = XmlHelper.XmlAttributeToString(conditionNode.Attributes["failuremessage"]);
             ignoreResult = false;
             messages = new List<Message>();
             propertyMap = new Dictionary<string, string>();
@@ -114,18 +114,18 @@ namespace Farrier.Models.Conditions
         protected void setFailureMessage(TokenManager tokens, string text, List<Suppression> potentialSuppressions)
         {
             string message = text;
-            if (!String.IsNullOrEmpty(this.failuremessageTemplate))
+            if (!string.IsNullOrEmpty(failuremessageTemplate))
             {
                 message = tokens.DecodeString(failuremessageTemplate);
             }
             if(!isSuppressed(message, potentialSuppressions, tokens))
             {
-                this.failuremessage = message;
-                this.suppressFailureMessage = false;
+                failuremessage = message;
+                suppressFailureMessage = false;
             } else
             {
-                this.failuremessage = String.Empty;
-                this.suppressFailureMessage = true;
+                failuremessage = string.Empty;
+                suppressFailureMessage = true;
             }
         }
 
@@ -154,7 +154,7 @@ namespace Farrier.Models.Conditions
         public readonly bool IsWarning;
         protected string failuremessageTemplate;
         protected string failuremessage;
-        public string FailureMessage { get { return String.IsNullOrEmpty(this.failuremessage) ? $"Unspecified {(this.IsWarning ? "warning" : "error")} from {this.type} condition" : this.failuremessage; } }
+        public string FailureMessage { get { return string.IsNullOrEmpty(failuremessage) ? $"Unspecified {(IsWarning ? "warning" : "error")} from {type} condition" : failuremessage; } }
         protected bool suppressFailureMessage;
         public bool SuppressFailureMessage { get { return suppressFailureMessage; } }
 

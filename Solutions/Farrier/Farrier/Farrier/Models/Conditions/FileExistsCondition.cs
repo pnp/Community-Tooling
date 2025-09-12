@@ -29,16 +29,17 @@ namespace Farrier.Models.Conditions
             var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
             propertyMap.Add("path", path);
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
+
             if (File.Exists(path))
             {
-                if(matchcase)
+                if (matchcase)
                 {
                     var origFilename = Path.GetFileName(path);
                     var files = Directory.GetFiles(Path.GetDirectoryName(path)).OrderBy(f => Path.GetFileName(f)).ToArray();
                     foreach (var file in files)
                     {
                         var filename = Path.GetFileName(file);
-                        if(origFilename.Equals(filename,StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
+                        if (origFilename.Equals(filename, StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
                         {
                             //Invalid casing
                             setFailureMessage(tokens, $"File exists but casing does not match (found {filename})", potentialSuppressions);
