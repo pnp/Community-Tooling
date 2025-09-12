@@ -3,6 +3,7 @@ using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -39,13 +40,16 @@ namespace Farrier.Models.Conditions
                 if (contents.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
                 {
                     //Text is in the file (regardless of casing)
+                    int index = contents.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase);
+                    int lineNumber = contents.Substring(0, index).Count(c => c == '\n') + 1;
+                    tokens.NestToken("LineNumber", lineNumber.ToString());
 
                     if (matchcase && !contents.Contains(searchText))
                     {
                         //Invalid casing
                         if (!isNot)
                         {
-                            setFailureMessage(tokens, $"Text exists but casing does not match ({path})", potentialSuppressions);
+                            setFailureMessage(tokens, $"Text exists but casing does not match ({path})(line: {lineNumber})", potentialSuppressions);
                             return false;
                         }
                         else
@@ -56,14 +60,14 @@ namespace Farrier.Models.Conditions
                     }
                     else
                     {
-                        if(!isNot)
+                        if (!isNot)
                         {
                             return true;
                         }
                         else
                         {
                             //Flipped response
-                            setFailureMessage(tokens, "Text found", potentialSuppressions);
+                            setFailureMessage(tokens, $"Text found ({path})(line: {lineNumber})", potentialSuppressions);
                             return false;
                         }
                     }
