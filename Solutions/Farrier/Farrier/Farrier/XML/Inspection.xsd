@@ -126,6 +126,31 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute name="skip" use="optional" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, the condition check will be skipped entirely
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="true">
+            <xsd:annotation>
+              <xsd:documentation>
+                Condition won't be checked at all
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="false">
+            <xsd:annotation>
+              <xsd:documentation>
+                Condition will be checked as normal
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
     <xsd:attribute name="message" type="xsd:string" use="optional">
       <xsd:annotation>
         <xsd:documentation>

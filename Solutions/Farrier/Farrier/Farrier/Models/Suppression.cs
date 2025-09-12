@@ -15,6 +15,7 @@ namespace Farrier.Models
         private Dictionary<string, string> _propertyMap;
         private string _rawMessage;
         private string _rawMust;
+        private string _rawSkip;
 
         public Suppression(XmlNode suppressNode)
         {
@@ -23,6 +24,8 @@ namespace Farrier.Models
             ConditionName = XmlHelper.XmlAttributeToString(suppressNode.Attributes["conditionname"]);
             _rawMessage = XmlHelper.XmlAttributeToString(suppressNode.Attributes["message"]);
             _rawMust = XmlHelper.XmlAttributeToString(suppressNode.Attributes["must"]);
+            _rawSkip = XmlHelper.XmlAttributeToString(suppressNode.Attributes["skip"]);
+            Skip = !string.IsNullOrEmpty(_rawSkip) && _rawSkip == "true";
 
             // Preapproved property values that may or may not be used by conditions (only added if they are specified)
             addToMap(suppressNode, "path");
@@ -50,7 +53,7 @@ namespace Farrier.Models
             string _message = tokens.DecodeString(_rawMessage);
             if (!String.IsNullOrEmpty(_message) && _message != message)
                 return false;
-            
+
             foreach (var key in _propertyMap.Keys)
             {
                 // If they key is in the suppression, but not in the mapped properties, it's not suppressed (doesn't match)
@@ -74,5 +77,6 @@ namespace Farrier.Models
         }
 
         public string ConditionName { get; }
+        public bool Skip { get; }
     }
 }

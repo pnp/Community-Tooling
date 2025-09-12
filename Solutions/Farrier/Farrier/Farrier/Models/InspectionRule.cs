@@ -17,6 +17,7 @@ namespace Farrier.Models
         private XmlNode _suppressionsNode;
         private Dictionary<string, string> _tokensDictionary;
         private List<Suppression> _suppressions;
+        private List<Suppression> _skips;
         private bool _didInheritFromParent = false;
 
         public List<Message> messages;
@@ -33,6 +34,7 @@ namespace Farrier.Models
 
             tokens = new TokenManager(new FunctionResolver(), log: _log);
             _suppressions = new List<Suppression>();
+            _skips = new List<Suppression>();
             messages = new List<Message>();
         }
 
@@ -51,6 +53,7 @@ namespace Farrier.Models
             tokens = new TokenManager(rootTokens);
             messages = new List<Message>();
             _suppressions = new List<Suppression>();
+            _skips = new List<Suppression>();
 
             _tokensNode = ruleNode.SelectSingleNode("f:tokens", nsmgr);
 
@@ -65,14 +68,23 @@ namespace Farrier.Models
             // Filters are AND conditions
             // Probably add extra optional ones like path that are only evaluated when makes sense in the Isvalid
             _suppressionsNode = ruleNode.SelectSingleNode("f:suppressions", nsmgr);
-            if(_suppressionsNode != null)
+            if (_suppressionsNode != null)
             {
                 var suppressNodes = _suppressionsNode.SelectNodes("f:suppress", nsmgr);
                 foreach (XmlNode suppressNode in suppressNodes)
                 {
-                    _suppressions.Add(new Suppression(suppressNode));
+                    var suppression = new Suppression(suppressNode);
+                    if (suppression.Skip)
+                    {
+                        _skips.Add(suppression);
+                    }
+                    else
+                    {
+                        _suppressions.Add(suppression);
+                    }
                 }
                 _log.Info($"Added {_suppressions.Count} suppressions for rule: {this.Name}");
+                _log.Info($"Added {_skips.Count} skips for rule: {this.Name}");
             }
         }
 
@@ -108,8 +120,9 @@ namespace Farrier.Models
 
                 if (!_didInheritFromParent)
                 {
-                    // Pass down any suppressions from parent rule
+                    // Pass down any suppressions/skips from parent rule
                     _suppressions.AddRange(parentRule._suppressions);
+                    _skips.AddRange(parentRule._skips);
                     _didInheritFromParent = true;
                 }
             }
@@ -185,6 +198,11 @@ namespace Farrier.Models
         public List<Suppression> GetSuppressionsForCondition(BaseCondition condition)
         {
             return _suppressions.Where(s => s.ConditionName == condition.Name).ToList();
+        }
+
+        public List<Suppression> GetSkipsForCondition(BaseCondition condition)
+        {
+            return _skips.Where(s => s.ConditionName == condition.Name).ToList();
         }
 
         public string Name { get; }

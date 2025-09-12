@@ -41,6 +41,12 @@ namespace Farrier.Models.Conditions
 
             foreach (var condition in conditions)
             {
+                if (isSuppressed(string.Empty, parentRule.GetSkipsForCondition(condition), tokens))
+                {
+                    //Condition is skipped
+                    continue;
+                }
+
                 var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, startingpath);
                 childMessages.AddRange(condition.Messages);
 
