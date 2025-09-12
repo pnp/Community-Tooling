@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -28,7 +26,7 @@ namespace Farrier.Models.Conditions
             propertyMap.Clear();
             var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            var path = Path.Combine(startingpath, tokens.DecodeString(rawPath));
             propertyMap.Add("path", path);
             if (File.Exists(path))
             {
@@ -39,6 +37,9 @@ namespace Farrier.Models.Conditions
                 //No explicit options are used, inline options are supported
                 if (Regex.IsMatch(contents,pattern))
                 {
+                    var match = Regex.Match(contents, pattern);
+                    int lineNumber = contents.Substring(0, match.Index).Count(c => c == '\n') + 1;
+                    tokens.NestToken("LineNumber", lineNumber.ToString());
                     //Match
                     if (!isNot)
                     {
@@ -47,7 +48,7 @@ namespace Farrier.Models.Conditions
                     else
                     {
                         //Flipped response
-                        this.setFailureMessage(tokens, $"Pattern matched ({path})", potentialSuppressions);
+                        setFailureMessage(tokens, $"Pattern matched ({path})", potentialSuppressions);
                         return false;
                     }
                 }
@@ -57,7 +58,7 @@ namespace Farrier.Models.Conditions
 
                     if(!isNot)
                     {
-                        this.setFailureMessage(tokens, $"Pattern not matched ({path})", potentialSuppressions);
+                        setFailureMessage(tokens, $"Pattern not matched ({path})", potentialSuppressions);
                         return false;
                     }
                     else
@@ -70,7 +71,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
+                setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }
