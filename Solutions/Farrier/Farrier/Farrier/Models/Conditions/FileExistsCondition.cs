@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -24,21 +23,26 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
+            propertyMap.Add("path", path);
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
+
             if (File.Exists(path))
             {
-                if(matchcase)
+                if (matchcase)
                 {
-                    var origFilename = System.IO.Path.GetFileName(path);
-                    var files = Directory.GetFiles(System.IO.Path.GetDirectoryName(path));
+                    var origFilename = Path.GetFileName(path);
+                    var files = Directory.GetFiles(Path.GetDirectoryName(path)).OrderBy(f => Path.GetFileName(f)).ToArray();
                     foreach (var file in files)
                     {
-                        var filename = System.IO.Path.GetFileName(file);
-                        if(origFilename.Equals(filename,StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
+                        var filename = Path.GetFileName(file);
+                        if (origFilename.Equals(filename, StringComparison.CurrentCultureIgnoreCase) && !origFilename.Equals(filename))
                         {
                             //Invalid casing
-                            this.setFailureMessage(tokens, $"File exists but casing does not match (found {filename})");
+                            setFailureMessage(tokens, $"File exists but casing does not match (found {filename})", potentialSuppressions);
                             return false;
                         }
                     }
@@ -51,7 +55,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}");
+                setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }

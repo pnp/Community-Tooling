@@ -113,7 +113,7 @@ namespace Farrier.RoundUp
 
                 var startingDirectory = new DirectoryInfo(_startpath);
                 var jsonFilePattern = Path.GetFileName(_jsonfilepattern);
-                var jsonFiles = startingDirectory.GetFiles(_jsonfilepattern, new EnumerationOptions() { RecurseSubdirectories = true });
+                var jsonFiles = startingDirectory.GetFiles(_jsonfilepattern, new EnumerationOptions() { RecurseSubdirectories = true }).OrderBy(f => f.Name).ToArray(); ;
                 
                 _log.Info($"  Found {jsonFiles.Length} JSON file{(jsonFiles.Length > 1 ? "s" : "")} to round up");
                 
@@ -268,7 +268,7 @@ namespace Farrier.RoundUp
             var row = dt.NewRow();
             string indent = "    ";
 
-            var content = File.ReadAllText(filePath);
+            var content = File.ReadAllText(filePath).Replace("\r\n", "\n").Replace('\r', '\n');
             if(String.IsNullOrEmpty(content))
             {
                 _log.Error($"{indent}Empty JSON File! Unable to pull details from {identifier}");

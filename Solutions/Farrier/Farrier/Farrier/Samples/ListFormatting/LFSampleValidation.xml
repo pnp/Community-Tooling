@@ -46,7 +46,7 @@
         <token name="FilePath" value="@@MainJsonPath@@"/>
       </tokens>
       <conditions>
-        <log name="☺" text="Checking for recomendations for Metadata in sample.json..."/>
+        <log name="☺" text="Checking for recommendations for Metadata in sample.json..."/>
         <!-- Suggests the Icons category if iconName is used -->
         <if>
           <filecontains path="@@FilePath@@" text="&quot;iconName&quot;:"/>
@@ -97,6 +97,14 @@
             <log name="Category" text="Add Hover Cards" warn="true"/>
           </if>
         </if>
+
+        <!-- Suggests the Microsoft Teams category if teams is in the sample name-->
+        <only when="$CONTAINS(@@SampleKey@@,#teams)">
+          <if>
+            <jsonquery path="@@SampleJsonPath@@" query="$[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value" comparison="notcontains" value="Microsoft Teams" matchcase="true"/>
+            <log name="Category" text="Add Microsoft Teams" warn="true"/>
+          </if>
+        </only>
         
         <only when="$EQUALS(@@SampleType@@,#View)">
           <!-- Suggests the Board category if the Board Schema or kanbanProps is used -->
@@ -221,7 +229,7 @@
         </foreachitem>
 
         <!-- Checks for use of customRowActions -->
-        <foreachitem items="defaultClick,setValue,executeFlow,share,delete,editProps,openContextMenu" quiet="true">
+        <foreachitem items="defaultClick,setValue,executeFlow,share,delete,editProps,openContextMenu,comment,copyFile,copyLink,embed,moveFile,openApprovalDialog,previewFileAction" quiet="true">
           <run rule="CheckForAction" input="@@Each@@" quiet="true"/>
         </foreachitem>
 
@@ -410,7 +418,7 @@
         <if>
           <!-- Check for presence of operator in JSON -->
           <or>
-            <filecontains path="@@FilePath@@" text="@@Input@@("/>
+            <regexmatches path="@@FilePath@@" pattern="\b@@Input@@(?=\()\b"/>
             <filecontains path="@@FilePath@@" text="&quot;operand&quot;: &quot;@@Input@@&quot;"/>
           </or>
           <if>
@@ -500,7 +508,7 @@
         <token name="READMEPath" value="@@FolderPath@@\README.md"/>
         <token name="AssetsPath" value="@@FolderPath@@\assets"/>
         <token name="SampleJsonPath" value="@@AssetsPath@@\sample.json"/>
-        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#\column-samples\),#Column,#$IF($CONTAINS(@@FolderPath@@,#\form-samples\),#Form,#View))"/>
+        <token name="SampleType" value="$IF($CONTAINS(@@FolderPath@@,#column-samples),#Column,#$IF($CONTAINS(@@FolderPath@@,#form-samples),#Form,#View))"/>
         <token name="SampleUrl" value="https://github.com/pnp/list-formatting/tree/master/$LOWER(@@SampleType@@)-samples/@@SampleKey@@"/>
         <token name="TelemetryTagOld">
           <![CDATA[<img src="https://telemetry.sharepointpnp.com/sp-dev-list-formatting/$LOWER(@@SampleType@@)-samples/@@SampleKey@@" />]]>
@@ -517,7 +525,7 @@
       <conditions>
         <!-- Files/Folders all exist (with correct casing) -->
         <log name="☺" text="Verifying all expected files are present (@@SampleKey@@)"/>
-        <only when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
+        <only name="Primary JSON" when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
           <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
           <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
         </only>
@@ -554,6 +562,8 @@
         </or>
         <only when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
           <filecontains name="README VR" path="@@READMEPath@@" text="## View requirements" failuremessage="README missing View requirements section (@@SampleKey@@)"/>
+        </only>
+        <only name="README Author Container" when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
           <filecontains name="README Author" path="@@READMEPath@@" text="@@AuthorTable@@" failuremessage="README has incorrect Author Table or missing link (@@SampleKey@@) - Looking for '@@AuthorTable@@'"/>
         </only>
         <only when="$EQUALS(@@SampleType@@,#Form)">
@@ -562,7 +572,7 @@
         </only>
         <filecontains name="README Sample" path="@@READMEPath@@" text="## Sample" failuremessage="README missing Sample section (@@SampleKey@@)"/>
         <filecontains name="README Github Link" path="@@READMEPath@@" text="](https://github.com/" warn="true" failuremessage="README missing Author Github link"/>
-        <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" warn="true" failuremessage="README missing Author Twitter link"/>
+        <filecontains name="README Twitter Link" path="@@READMEPath@@" text="](https://twitter.com/" not="true" warn="true" failuremessage="README has Author Twitter link"/>
         <filecontains name="README VH" path="@@READMEPath@@" text="## Version history" failuremessage="README missing Version history section (@@SampleKey@@)"/>
         <filecontains name="Telemetry Tag" not="true" path="@@READMEPath@@" text="@@TelemetryTagOld@@" warn="true" failuremessage="Old Telemetry Tag in README (@@SampleKey@@) - Use https://pnptelemetry.azurewebsites.net/list-formatting/"/>
         <filecontains name="Telemetry Tag" path="@@READMEPath@@" text="@@TelemetryTag@@" matchcase="true" failuremessage="Telemetry Tag incorrect in README (@@SampleKey@@) - use '@@TelemetryTag@@'"/>
@@ -629,19 +639,19 @@
             <or name="$schema" failuremessage="View Formatting $schema declaration missing/invalid or formatting is off (2 spaces) (@@Each@@)">
               <filecontains name="$schema view" path="@@Each@@" text="@@ViewSchema@@" failuremessage="View Formatting $schema not present/valid (@@Each@@)"/>
               <filecontains name="$schema row" path="@@Each@@" text="@@RowSchema@@" failuremessage="Row Formatting $schema not present/valid (@@Each@@)"/>
-              <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@)"/>
+              <filecontains name="$schema tiles" path="@@Each@@" text="@@TilesSchema@@" failuremessage="Tiles (View) Formatting $schema not present/valid (@@Each@@) @@TilesSchema@@"/>
               <filecontains name="$schema calendar" path="@@Each@@" text="@@CalendarSchema@@" failuremessage="Calendar (View) Formatting $schema not present/valid (@@Each@@)"/>
               <filecontains name="$schema board" path="@@Each@@" text="@@BoardSchema@@" failuremessage="Board (View) Formatting $schema not present/valid (@@Each@@)"/>
             </or>
           </only>
-          <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property (@@Each@@)"/>
-          <regexmatches name="Empty Object" path="@@Each@@" pattern=": {\s*}" not="true" warn="true" failuremessage="JSON has an empty object {} (@@Each@@)"/>
-          <regexmatches name="Empty Array" path="@@Each@@" pattern=": \[\s*\]" not="true" warn="true" failuremessage="JSON has an empty array [] (@@Each@@)"/>
+          <filecontains name="Empty Property" path="@@Each@@" text=": &quot;&quot;" not="true" warn="true" failuremessage="JSON has an empty property (@@Each@@, line: @@LineNumber@@)"/>
+          <regexmatches name="Empty Object" path="@@Each@@" pattern=": {\s*}" not="true" warn="true" failuremessage="JSON has an empty object {} (@@Each@@, line: @@LineNumber@@)"/>
+          <regexmatches name="Empty Array" path="@@Each@@" pattern=": \[\s*\]" not="true" warn="true" failuremessage="JSON has an empty array [] (@@Each@@, line: @@LineNumber@@)"/>
           <and name="Extra Space" warn="true" failuremessage="There appears to be extra space on the end of a JSON property (@@Each@@)">
             <filecontains path="@@Each@@" text=" &quot;\r\n" not="true"/>
             <filecontains path="@@Each@@" text=" &quot;,\r\n" not="true"/>
           </and>
-          <regexmatches name="Extra Space" path="@@Each@@" pattern=": &quot;\s(?!&quot;)" not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@)"/>
+          <regexmatches name="Extra Space" path="@@Each@@" pattern=": &quot;\s(?!&quot;)" not="true" warn="true" failuremessage="There appears to be extra space at the beginning of a JSON property (@@Each@@, line: @@LineNumber@@)"/>
 
           <!-- debugMode validation (should NOT be true, and generally best to leave out) -->
           <filecontains path="@@Each@@" text="@@DebugMode1@@" not="true" failuremessage="DebugMode enabled (@@Each@@)"/>
@@ -658,26 +668,560 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="300">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="200" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="300">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="20" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="46">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="10" limit="30">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
       </conditions>
+
+      <suppressions>
+
+        <!-- Column Sample: approval-status-icon-color: Remove openApprovalDialog: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove openApprovalDialog" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\approval-status-icon-color\approval-status-icon-color.json))" />
+
+        <!-- Column Sample: custom-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\custom-hover-card)),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
+        <!-- Column Sample: custom-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\custom-hover-card)),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
+
+        <!-- Column Sample: date-page-a-day-calendar: Remove toString: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove Number: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove Number" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove floor: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove floor" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove substring: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove getYear: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove getYear" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove forEach: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove @now: In 2 of 3 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar.json)))" />
+
+        <!-- Column Sample: date-range-rag: Remove Date: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove Date" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-range-rag\date-range-rag.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-range-rag\date-range-ragAST.json)))" />
+        <!-- Column Sample: date-range-rag: Remove floor: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove floor" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-range-rag\date-range-rag.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-range-rag\date-range-ragAST.json)))" />
+
+        <!-- Column Sample: date-update-format: setValue to clear a field (2 json files) -->
+        <suppress conditionname="Empty Property" pathendswith="column-samples\date-update-format\date-update-format-years.json" />
+        <suppress conditionname="Empty Property" pathendswith="column-samples\date-update-format\date-update-format.json" />
+      
+        <!-- Column Sample: file-thumbnail: Remove customCardProps: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\file-thumbnail\file-thumbnail.json))" />
+        <!-- Column Sample: file-thumbnail: Remove directionalHint: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\file-thumbnail\file-thumbnail.json))" />
+
+        <!-- Column Sample: filename-highlight-non-empty-folders: Remove share: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove share" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json))" />
+        <!-- Column Sample: filename-highlight-non-empty-folders: Remove openContextMenu: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove openContextMenu" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json))" />
+        <!-- Column Sample: filename-highlight-non-empty-folders: Remove customCardProps: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json))" />
+        <!-- Column Sample: filename-highlight-non-empty-folders: Remove beakStyle: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove beakStyle" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json))" />
+        <!-- Column Sample: filename-highlight-non-empty-folders: Remove directionalHint: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\filename-highlight-non-empty-folders\filename-highlight-non-empty-folders.json))" />
+
+        <!-- Column Sample: generic-approval-status-hover-card: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\generic-approval-status-hover-card)),#$EQUALS(@@Each@@,#generic-approval-status-hover-card.json))" />
+        <!-- Column Sample: generic-approval-status-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\generic-approval-status-hover-card)),#$EQUALS(@@Each@@,#generic-approval-status-hover-card.json))" />
+
+        <!-- Column Sample: generic-context-menu: Remove @currentWeb: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-context-menu\generic-context-menu-minimal.json))" />
+        <!-- Column Sample: generic-context-menu: Remove substring: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-context-menu\generic-context-menu-minimal.json))" />
+        <!-- Column Sample: generic-context-menu: Remove lastIndexOf: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove lastIndexOf" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-context-menu\generic-context-menu-minimal.json))" />
+        <!-- Column Sample: generic-context-menu: Remove executeFlow: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove executeFlow" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-context-menu\generic-context-menu-minimal.json))" />
+        <!-- Column Sample: generic-context-menu: Remove delete: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove delete" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-context-menu\generic-context-menu.json))" />
+
+        <!-- Column Sample: generic-filepicker: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="column-samples\generic-filepicker\generic-filepicker.json" />
+        
+        <!-- Column Sample: generic-gantt-chart: Remove loopIndex: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove loopIndex" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-gantt-chart\generic-gantt-chart.json))" />
+        <!-- Column Sample: generic-gantt-chart: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-gantt-chart\generic-gantt-chart.json))" />
+
+        <!-- Column Sample: generic-icon-overlay: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\generic-icon-overlay)),#$EQUALS(@@Each@@,#generic-icon-overlay-multiple.json))" />
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\generic-icon-overlay)),#$EQUALS(@@Each@@,#generic-icon-overlay.json))" />
+
+        <!-- Column Sample: generic-rowactions: Actions across samples are always in 13 of 14 -->
+        <suppress conditionname="Action" message="Remove comment" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove copyFile" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove copyLink" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove defaultClick" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove delete" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove editProps" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove embed" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove executeFlow" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove moveFile" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove openApprovalDialog" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove openContextMenu" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove previewFileAction" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove setValue" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+        <suppress conditionname="Action" message="Remove share" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\moveFile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)))" />
+        <!-- Column Sample: generic-rowactions: Remove @currentWeb: in 2 of 14 -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\comment.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\copyLink.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\delete.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\embed.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\generic-rowactions.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openApprovalDialog.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\openContextMenu.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\previewFileAction.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\setValue.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+
+        <!-- Column Sample: generic-scheduling-link: toString, Number, toLocaleTimeString, indexOf, substring, getDate, getMonth, getYear, padStart: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove Number" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove toLocaleTimeString" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove indexOf" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove getDate" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove getMonth" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+        <suppress conditionname="Operator" message="Remove padStart" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-scheduling-link\generic-scheduling-link.json))" />
+
+        <!-- Column Sample: generic-start-flow-conditionally: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\generic-start-flow-conditionally)),#$EQUALS(@@Each@@,#generic-start-flow-conditionally.json))" />
+
+        <!-- Column Sample: generic-substring-status: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\generic-substring-status)),#$EQUALS(@@Each@@,#generic-substring-status.json))" />
+
+        <!-- Column Sample: generic-yearly-gantt-chart: Remove @now: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-yearly-gantt-chart\generic-yearly-gantt-chart.json))" />
+        <!-- Column Sample: generic-yearly-gantt-chart: Remove floor: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove floor" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-yearly-gantt-chart\generic-yearly-gantt-chart.json))" />
+        <!-- Column Sample: generic-yearly-gantt-chart: Remove toLocaleDateString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toLocaleDateString" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-yearly-gantt-chart\generic-yearly-gantt-chart.json))" />
+
+        <!-- Column Sample: image-lightbox: Remove @window.innerHeight: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @window.innerHeight" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\image-lightbox\image-lightbox.json))" />
+        <!-- Column Sample: image-lightbox: Remove @window.innerWidth: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @window.innerWidth" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\image-lightbox\image-lightbox.json))" />
+        <!-- Column Sample: image-lightbox: Remove ceiling: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove ceiling" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\image-lightbox\image-lightbox.json))" />
+
+        <!-- Column Sample: managed-metadata-tag: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\managed-metadata-tag\managed-metadata-tag.json))" />
+        
+        <!-- Column Sample: managed-metadata-tag-icon: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\managed-metadata-tag-icon\managed-metadata-tag-icon-multi-choice.json))" />
+        <!-- Column Sample: managed-metadata-tag-icon: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\managed-metadata-tag-icon\managed-metadata-tag-icon.json))" />
+        
+        <!-- Column Sample: multi-choice-icons: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\multi-choice-icons)),#$EQUALS(@@Each@@,#multi-choice-icons.json))" />
+
+        <!-- Column Sample: multi-choice-list: Remove loopIndex: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove loopIndex" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\multi-choice-list\multi-choice-list.json))" />
+
+        <!-- Column Sample: multi-choice-thumbnail: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="column-samples\multi-choice-thumbnail\multi-choice-thumbnail-advanced.json" />
+        <!-- Column Sample: multi-choice-thumnbail: Remove @now: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\multi-choice-thumbnail\multi-choice-thumbnail.json))" />
+        <!-- Column Sample: multi-choice-thumbnail: Remove Number: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove Number" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\multi-choice-thumbnail\multi-choice-thumbnail.json))" />
+        <!-- Column Sample: multi-choice-thumbnail: Remove setValue: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\multi-choice-thumbnail\multi-choice-thumbnail.json))" />
+
+        <!-- Column Sample: multi-choice-workcategory-pill: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\multi-choice-workcategory-pill\text-column-workcategory-pill.json))" />
+
+        <!-- Column Sample: number-data-bar: Remove toString: In 1 of 4 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\number-data-bar.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\number-data-barAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\percent-data-bar.json)))" />
+        
+        <!-- Column Sample: number-doughnut-chart: Remove customCardProps: In 1 of 4 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-doughnut-chart\number-doughnut-chart-percent-only.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-doughnut-chart\number-doughnut-chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-doughnut-chart\number-doughnut-chart-compact.json)))" />
+        <!-- Column Sample: number-doughnut-chart: Remove directionalHint: In 1 of 4 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-doughnut-chart\number-doughnut-chart-percent-only.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-doughnut-chart\number-doughnut-chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-doughnut-chart\number-doughnut-chart-compact.json)))" />
+      
+        <!-- Column Sample: number-icon-progressbar: Github link missing: Author doesn't have a github account -->
+        <suppress conditionname="README Github Link" pathendswith="column-samples\number-icon-progressbar\README.md"/>
+        <!-- Column Sample: number-icon-progressbar: Twitter link allowed: Author doesn't have a github account -->
+        <suppress conditionname="README Twitter Link" pathendswith="column-samples\number-icon-progressbar\README.md"/>
+        <!-- Column Sample: number-icon-progressbar: Add ms-fontColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\number-icon-progressbar)),#$EQUALS(@@Each@@,#$PATH(number-icon-progressbar.json)))" />
+        
+        <!-- Column Sample: number-piechart: Remove cos: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove cos" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-piechart\number-piechartAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\number-data-barAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\percent-data-bar.json)))" />
+        <!-- Column Sample: number-piechart: Remove sin: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove sin" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-piechart\number-piechartAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\number-data-barAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-data-bar\percent-data-bar.json)))" />
+
+        <!-- Column Sample: number-trending-icon: Remove toString: In 2 of 4 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-trending-icon\number-trending-icon.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\number-trending-icon\number-trending-iconAST.json)))" />
+        
+        <!-- Column Sample: person-assign-to-me: Remove indexOf: In 2 of 4 samples -->
+        <suppress conditionname="Operator" message="Remove indexOf" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-assign-to-me\person-assign-to-me.json)))" />
+        <!-- Column Sample: person-assign-to-me: Remove appendTo: In 2 of 4 samples -->
+        <suppress conditionname="Operator" message="Remove appendTo" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-assign-to-me\person-assign-to-me.json)))" />
+        <!-- Column Sample: person-assign-to-me: Remove indexOf: In 2 of 4 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-assign-to-me\person-assign-to-me-highlight-single.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-assign-to-me\person-assign-to-me.json)))" />
+
+        <!-- Column Sample: person-teams-message-format: Remove getUserImage: In 1 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove getUserImage" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-teams-message-format\person-teams-message-format-name.json))" />
+        <!-- Column Sample: person-teams-message-format: Remove defaultHoverField: In 1 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove defaultHoverField" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\person-teams-message-format\person-teams-message-format-name.json))" />
+
+        <!-- Column Sample: text-local-image: Remove @currentWeb: In 1 of 5 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-image\text-hardcoded-image.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-image\text-hardcoded-imageAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-image\text-relative-image.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-image\text-relative-imageAST.json)))" />
+
+        <!-- Column Sample: text-local-link: Remove @currentWeb: In 1 of 5 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-link\text-hardcoded-link.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-link\text-hardcoded-linkAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-link\text-relative-link.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-local-link\text-relative-linkAST.json)))" />
+
+        <!-- Column Sample: text-qrcode: Remove customCardProps: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-qrcode\text-qrcode.json))" />
+        <!-- Column Sample: text-qrcode: Remove directionalHint: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\text-qrcode\text-qrcode.json))" />
+
+        <!-- Column Sample: yesno-checkbox: Remove setValue: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\yesno-checkbox\yesno-checkboxAST.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\editProps.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\executeFlow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\generic-rowactions\share.json)))" />
+
+        <!-- Column Sample: yesno-roundedfill-format: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\yesno-roundedfill-format\yesno-azure-format.json))" />
+        
+
+        <!-- Form Sample: status-header-footer: Remove @now: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$ENDSWITH(@@FilePath@@,#$PATH(form-samples\status-header-footer\status-header.json))" />
+        <!-- Form Sample: status-header-footer: Remove getYear: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#$PATH(form-samples\status-header-footer\status-header.json))" />
+
+        <!-- View Sample: board-tags: Remove @currentWeb: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove substring: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove getDate: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getDate" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove getMonth: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getMonth" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove getYear: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove lastIndexOf: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove lastIndexOf" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove replace: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove replace" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove editProps: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove editProps" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove embed: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove embed" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove defaultClick: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove defaultClick" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags.json))" />
+
+        <!-- View Sample: budget-tracker: Remove @currentWeb: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @currentWeb" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\budget-tracker\budget-tracker-activity-milestone.json))" />
+        <!-- View Sample: budget-tracker: Remove @window.innerWidth: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @window.innerWidth" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\budget-tracker\budget-tracker-activity-milestone.json))" />
+        <!-- View Sample: budget-tracker: Extra Space is part of AST operation: In 1 of 2 samples -->
+        <suppress conditionname="Extra Space" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\budget-tracker\budget-tracker.json))" />
+        <!-- View Sample: budget-tracker: Remove hideSelection: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove hideSelection" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\budget-tracker\budget-tracker.json))" />
+
+        <!-- View Sample: bulletin-board: Remove share: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove share" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\bulletin-board\bulletin-board.json))" />
+        <!-- View Sample: bulletin-board: Remove delete: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove delete" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\bulletin-board\bulletin-board.json))" />
+
+        <!-- View Sample: color-picker: Remove toLowerCase: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove toLowerCase" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\color-picker\color-picker-12sections-palette.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\color-picker\color-picker-basic-palette.json)))" />
+        <!-- View Sample: color-picker: Remove indexOf: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove indexOf" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\color-picker\color-picker-12sections-palette.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\color-picker\color-picker-basic-palette.json)))" />
+        <!-- View Sample: color-picker: Remove lastIndexOf: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove lastIndexOf" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\color-picker\color-picker-12sections-palette.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\color-picker\color-picker-basic-palette.json)))" />
+
+        <!-- View Sample: content-navigator: Remove hideColumnHeader: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove hideColumnHeader" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\content-navigator\content-navigator-links.json))" />
+        <!-- View Sample: content-navigator: Remove rowFormatter: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\content-navigator\content-navigator-links.json))" />
+        <!-- View Sample: content-navigator: Remove fillHorizontally: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove fillHorizontally" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\content-navigator\content-navigator.json))" />
+
+        <!-- View Sample: custom-charts: This is a series of samples and so a primary sample doesn't really apply -->
+        <suppress skip="true" conditionname="Primary JSON" must="$ENDSWITH(@@Each@@,#custom-charts)" />
+        <suppress skip="true" conditionname="README Author Container" must="$ENDSWITH(@@Each@@,#custom-charts)" />
+        <!-- View Sample: custom-charts: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Bar-Chart-H.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Bar-Chart-V-Large.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Bar-Chart-V.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Doughnut-Chart-P.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Doughnut-Chart-PV.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Pie-Chart-Large.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Pie-Chart.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Stacked-Bars-Chart-Large.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\custom-charts\Stacked-Bars-Chart.json" />
+        <!-- View Sample: custom-charts: Remove toString: In 7 of 12 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-H.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove cos: In 6 of 12 samples -->
+        <suppress conditionname="Operator" message="Remove cos" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-H.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove sin: In 6 of 12 samples -->
+        <suppress conditionname="Operator" message="Remove sin" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-H.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove substring: In 6 of 12 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-H.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Bar-Chart-V.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Stacked-Bars-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove setValue: In 3 of 12 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove customCardProps: In 3 of 12 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove beakStyle: In 3 of 12 samples -->
+        <suppress conditionname="Feature" message="Remove beakStyle" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)))" />
+        <!-- View Sample: custom-charts: Remove directionalHint: In 3 of 12 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart-Large.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Line-Chart.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\custom-charts\Radar-Chart.json)))" />
+
+        <!-- View Sample: custom-hover-card: Add ms-fontColor/ms-borderColor: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\custom-hover-card)),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
+        <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\custom-hover-card)),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
+
+        <!-- View Sample: discussion-board: Remove getDate: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getDate" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove getMonth: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getMonth" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove getYear: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove getUserImage: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getUserImage" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove appendTo: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove appendTo" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove removeFrom: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove removeFrom" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove defaultClick: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove defaultClick" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove share: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove share" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove delete: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove delete" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove inlineEditField: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove inlineEditField" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove columnFormatterReference: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove columnFormatterReference" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove defaultHoverField: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove defaultHoverField" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board-timeline-format.json))" />
+        <!-- View Sample: discussion-board: Remove @rowIndex: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @rowIndex" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board.json))" />
+        <!-- View Sample: discussion-board: Remove toLocaleDateString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toLocaleDateString" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board.json))" />
+        <!-- View Sample: discussion-board: Remove toUpperCase: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toUpperCase" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\discussion-board\discussion-board.json))" />
+
+        <!-- View Sample: document-library-gallery-card: Extra Space is part of label assembly -->
+        <suppress conditionname="Extra Space" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\document-library-gallery-card\document-library-gallery-card.json))" />
+
+        <!-- View Sample: emoji-reactions: Remove toString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\emoji-reactions\emoji-reactions.json))" />
+        <!-- View Sample: emoji-reactions: Remove Number: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove Number" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\emoji-reactions\emoji-reactions.json))" />
+        <!-- View Sample: emoji-reactions: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\emoji-reactions\emoji-reactions.json))" />
+        <!-- View Sample: emoji-reactions: Remove substring: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\emoji-reactions\emoji-reactions.json))" />
+        <!-- View Sample: emoji-reactions: Remove lastIndexOf: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove lastIndexOf" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\emoji-reactions\emoji-reactions.json))" />
+
+        <!-- View Sample: employee-onboarding-steps: Add sp-css-backgroundColor-: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add sp-css-backgroundColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\employee-onboarding-steps)),#$EQUALS(@@Each@@,#employee-onboarding-steps.json))" />
+
+        <!-- View Sample: event-tiles: Remove toString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove loopIndex: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove loopIndex" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove join: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove join" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove defaultHoverField: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove defaultHoverField" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove customCardProps: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove directionalHint: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove directionalHint" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+        <!-- View Sample: event-tiles: Remove rowFormatter: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\event-tiles\event-tiles-only.json))" />
+
+        <!-- View Sample: faq-grouped: Remove rowFormatter: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\faq-grouped\faq-grouped.json))" />
+
+        <!-- View Sample: faqs: Remove toLowerCase: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toLowerCase" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\faqs\faqs.json))" />
+        <!-- View Sample: faqs: Remove indexOf: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove indexOf" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\faqs\faqs.json))" />
+        <!-- View Sample: faqs: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\faqs\faqs.json))" />
+        <!-- View Sample: faqs: Remove substring: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\faqs\faqs.json))" />
+
+        <!-- View Sample: generic-numeric-average-comparison: Extra Space is part of label assembly -->
+        <suppress conditionname="Extra Space" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\generic-numeric-average-comparison\generic-numeric-average-comparison.json))" />
+
+        <!-- View Sample: glossary-dynamicfilter-view: Remove rowFormatter: In 1 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\glossary-dynamicfilter-view\glossary-filter-background.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\glossary-dynamicfilter-view\glossary-filter.json)))" />
+        <!-- View Sample: glossary-dynamicfilter-view: Remove fillHorizontally: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove fillHorizontally" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\glossary-dynamicfilter-view\glossary-dynamicfilter-view.json))" />
+        <!-- View Sample: glossary-dynamicfilter-view: Remove hideSelection: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove hideSelection" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\glossary-dynamicfilter-view\glossary-filter-background.json))" />
+
+        <!-- View Sample: group-header-color-itemcount: Extra Space is part of label assembly -->
+        <suppress conditionname="Extra Space" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\group-header-color-itemcount\group-header-color-itemcount.json))" />
+
+        <!-- View Sample: group-header-remove-column-name: Remove defaultClick: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove defaultClick" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\group-header-remove-column-name\group-header-remove-column-name.json))" />
+
+        <!-- View Sample: image-grid: Remove hideSelection: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove hideSelection" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\image-grid\image-grid-horizontally.json))" />
+        <!-- View Sample: image-grid: Remove hideColumnHeader: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove hideColumnHeader" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\image-grid\image-grid-horizontally.json))" />
+        <!-- View Sample: image-grid: Remove rowFormatter: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\image-grid\image-grid-horizontally.json))" />
+
+        <!-- View Sample: payments: setValue to clear a field: In 1 of 4 samples -->
+        <suppress conditionname="Empty Property" pathendswith="view-samples\payments\payments.json" />
+        <!-- View Sample: payments: Remove @rowIndex: In 3 of 4 samples -->
+        <suppress conditionname="Token" message="Remove @rowIndex" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-grouped.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments.json)))" />
+        <!-- View Sample: payments: Remove toUpperCase: In 3 of 4 samples -->
+        <suppress conditionname="Operator" message="Remove toUpperCase" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-grouped.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments.json)))" />
+        <!-- View Sample: payments: Remove @group.count: In 3 of 4 samples -->
+        <suppress conditionname="Token" message="Remove @group.count" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments.json)))" />
+        <!-- View Sample: payments: Remove @group.columnDisplayName: In 3 of 4 samples -->
+        <suppress conditionname="Token" message="Remove @group.columnDisplayName" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments.json)))" />
+        <!-- View Sample: payments: Remove groupProps: In 3 of 4 samples -->
+        <suppress conditionname="Feature" message="Remove groupProps" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments.json)))" />
+        <!-- View Sample: payments: Remove headerFormatter: In 3 of 4 samples -->
+        <suppress conditionname="Feature" message="Remove headerFormatter" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments.json)))" />
+        <!-- View Sample: payments: Remove hideFooter: In 2 of 4 samples -->
+        <suppress conditionname="Feature" message="Remove hideFooter" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-mobile.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json)))" />
+        <!-- View Sample: payments: Remove Date: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove Date" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json))" />
+        <!-- View Sample: payments: Remove defaultClick: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove defaultClick" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json))" />
+        <!-- View Sample: payments: Remove setValue: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json))" />
+        <!-- View Sample: payments: Remove delete: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove delete" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\payments\payments-timeline-format.json))" />
+
+        <!-- View Sample: product-catalog: Remove @window.innerWidth: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @window.innerWidth" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\product-catalog\product-catalog-library.json))" />
+        <!-- View Sample: product-catalog: Remove toString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\product-catalog\product-catalog.json))" />
+
+        <!-- View Sample: project-gantt-chart: Add ms-fontColor-: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\project-gantt-chart)),#$EQUALS(@@Each@@,#project-gantt-chart.json))" />
+        <!-- View Sample: project-gantt-chart: Add ms-bgColor-: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-bgColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\project-gantt-chart)),#$EQUALS(@@Each@@,#project-gantt-chart.json))" />
+
+        <!-- View Sample: resource-catalog: Extra Space is part of label assembly -->
+        <suppress conditionname="Extra Space" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\resource-catalog\resource-catalog.json))" />
+
+        <!-- View Sample: roll-dice: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="view-samples\roll-dice\roll-dice.json" />
+
+        <!-- View Sample: search-within-tags: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="view-samples\search-within-tags\search-within-tags.json" />
+
+        <!-- View Sample: shopping-cart: Extra Space is part of label assembly -->
+        <suppress conditionname="Extra Space" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\shopping-cart\shopping-cart.json))" />
+
+        <!-- View Sample: stat-comparison-chart: Remove @rowIndex: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @rowIndex" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\stat-comparison-chart\stat-comparison-chart-without-images.json))" />
+
+        <!-- View Sample: student-class-learning-tracker: Remove @me: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @me" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove @now: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove @group.count: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @group.count" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove length: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove length" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove padStart: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove padStart" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove toLocaleString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toLocaleString" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove toLocaleDateString: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove toLocaleDateString" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove getDate: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getDate" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove getMonth: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getMonth" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove getYear: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove getUserImage: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getUserImage" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove setValue: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove executeFlow: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove executeFlow" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove share: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove share" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove editProps: In 1 of 2 samples -->
+        <suppress conditionname="Action" message="Remove editProps" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove forEach: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove hideSelection: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove hideSelection" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove hideColumnHeader: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove hideColumnHeader" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove rowFormatter: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove groupProps: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove groupProps" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove headerFormatter: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove headerFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove inlineEditField: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove inlineEditField" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+        <!-- View Sample: student-class-learning-tracker: Remove defaultHoverField: In 1 of 2 samples -->
+        <suppress conditionname="Feature" message="Remove defaultHoverField" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\student-class-learning-tracker\student-class-learning-tracker-calendar.json))" />
+
+        <!-- View Sample: team-poll: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="view-samples\team-poll\team-poll-configuration.json" />
+        <!-- View Sample: team-poll: Remove @rowIndex: In 2 of 3 samples -->
+        <suppress conditionname="Token" message="Remove @rowIndex" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-configuration.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json)))" />
+        <!-- View Sample: team-poll: Remove @group.count: In 2 of 3 samples -->
+        <suppress conditionname="Token" message="Remove @group.count" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-configuration.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)))" />
+        <!-- View Sample: team-poll: Remove indexOf: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove indexOf" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-configuration.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)))" />
+        <!-- View Sample: team-poll: Remove substring: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove substring" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-configuration.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)))" />
+        <!-- View Sample: team-poll: Remove groupProps: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove groupProps" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-configuration.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)))" />
+        <!-- View Sample: team-poll: Remove forEach: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json)))" />
+        <!-- View Sample: team-poll: Remove inlineEditField: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove inlineEditField" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json)))" />
+        <!-- View Sample: team-poll: Remove customCardProps: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove customCardProps" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json)))" />
+        <!-- View Sample: team-poll: Remove beakStyle: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove beakStyle" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json)))" />
+        <!-- View Sample: team-poll: Remove headerFormatter: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove headerFormatter" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-configuration.json)),#$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll-response.json)))" />
+        <!-- View Sample: team-poll: Remove rowFormatter: In 1 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove rowFormatter" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json))" />
+        <!-- View Sample: team-poll: Remove setValue: In 1 of 3 samples -->
+        <suppress conditionname="Action" message="Remove setValue" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\team-poll\team-poll.json))" />
+        <!-- View Sample: team-poll: Add ms-bgColor-: Classes are being dynamically assembled: In 2 of 3 samples -->
+        <suppress conditionname="Class" message="Add ms-bgColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\team-poll)),#$OR($EQUALS(@@Each@@,#team-poll-configuration.json),#$EQUALS(@@Each@@,#team-poll.json)))" />
+        <!-- View Sample: project-gantt-chart: Add ms-fontColor-: Classes are being dynamically assembled -->
+        <suppress conditionname="Class" message="Add ms-fontColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(view-samples\team-poll)),#$EQUALS(@@Each@@,#team-poll-configuration.json))" />
+
+        <!-- View Sample: tic-tac-toe: setValue to clear a field -->
+        <suppress conditionname="Empty Property" pathendswith="view-samples\tic-tac-toe\tic-tac-toe.json" />
+        <suppress conditionname="Empty Property" pathendswith="view-samples\tic-tac-toe\tic-tac-toe-arrows.json" />
+
+        <!-- View Sample: timeline: Remove @rowIndex: In 1 of 2 samples -->
+        <suppress conditionname="Token" message="Remove @rowIndex" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\timeline\timeline.json))" />
+
+      </suppressions>
     </rule>
     
   </rules>
+  
 </inspection>

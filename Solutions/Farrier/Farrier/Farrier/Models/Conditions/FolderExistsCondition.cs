@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -24,21 +23,25 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
+            propertyMap.Add("path", path);
             var matchcase = tokens.DecodeString(rawMatchCase) == "true";
             if (Directory.Exists(path))
             {
                 if(matchcase)
                 {
                     var origFoldername = new DirectoryInfo(path).Name;
-                    var folders = Directory.GetParent(path).GetDirectories();
+                    var folders = Directory.GetParent(path).GetDirectories().OrderBy(f => f.Name).ToArray();
                     foreach (var folder in folders)
                     {
                         var foldername = folder.Name;
                         if(origFoldername.Equals(foldername,StringComparison.CurrentCultureIgnoreCase) && !origFoldername.Equals(foldername))
                         {
                             //Invalid casing
-                            this.setFailureMessage(tokens, $"Folder exists but casing does not match (found {foldername})");
+                            setFailureMessage(tokens, $"Folder exists but casing does not match (found {foldername})", potentialSuppressions);
                             return false;
                         }
                     }
@@ -51,7 +54,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"Folder not found at {path}");
+                setFailureMessage(tokens, $"Folder not found at {path}", potentialSuppressions);
                 return false;
             }
         }

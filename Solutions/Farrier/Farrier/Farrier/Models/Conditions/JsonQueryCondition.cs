@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
@@ -25,7 +23,7 @@ namespace Farrier.Models.Conditions
             rawValue = XmlHelper.XmlAttributeToString(conditionNode.Attributes["value"]);
             Query = XmlHelper.XmlAttributeToString(conditionNode.Attributes["query"]);
             rawComparison = XmlHelper.XmlAttributeToString(conditionNode.Attributes["comparison"]);
-            if(String.IsNullOrEmpty(rawComparison))
+            if(string.IsNullOrEmpty(rawComparison))
             {
                 rawComparison = "equals";
             }
@@ -36,23 +34,27 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             var comparison = tokens.DecodeString(rawComparison);
             if (comparison != "equals" && comparison != "notequals" && comparison != "count" && comparison != "contains" && comparison != "notcontains" && comparison != "matches" && comparison != "notmatches" && comparison != "length")
             {
-                this.setFailureMessage(tokens, $"Invalid Json Query comparison value ({comparison})");
+                setFailureMessage(tokens, $"Invalid Json Query comparison value ({comparison})", potentialSuppressions);
                 return false;
             }
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
+            propertyMap.Add("path", path);
             if (File.Exists(path))
             {
                 JsonPath parsedPath;
                 if(JsonPath.TryParse(Query, out parsedPath))
                 {
-                    var content = File.ReadAllText(path);
-                    if(String.IsNullOrEmpty(content))
+                    var content = File.ReadAllText(path).Replace("\r\n", "\n").Replace('\r', '\n');
+                    if(string.IsNullOrEmpty(content))
                     {
-                        this.setFailureMessage(tokens, $"Can't query inside an empty document! (path: {path})");
+                        setFailureMessage(tokens, $"Can't query inside an empty document! (path: {path})", potentialSuppressions);
                         return false;
                     }
                     JsonDocument doc;
@@ -67,9 +69,9 @@ namespace Farrier.Models.Conditions
                     }
 
                     var queryValue = parsedPath.Evaluate(doc.RootElement);
-                    if(!String.IsNullOrEmpty(queryValue.Error))
+                    if(!string.IsNullOrEmpty(queryValue.Error))
                     {
-                        this.setFailureMessage(tokens, $"Error processing Json Query: {queryValue.Error}");
+                        setFailureMessage(tokens, $"Error processing Json Query: {queryValue.Error}", potentialSuppressions);
                         return false;
                     }
                     else
@@ -83,20 +85,20 @@ namespace Farrier.Models.Conditions
                                 //Remove blank string results
                                 foreach (var match in queryValue.Matches)
                                 {
-                                    if(match.Value.ValueKind == JsonValueKind.String && String.IsNullOrEmpty(match.Value.GetString()))
+                                    if(match.Value.ValueKind == JsonValueKind.String && string.IsNullOrEmpty(match.Value.GetString()))
                                         count -= 1;
                                 }
-                                if (!String.IsNullOrEmpty(rawValue))
+                                if (!string.IsNullOrEmpty(rawValue))
                                 {
                                     int numValue;
                                     if (!int.TryParse(rawValue, out numValue))
                                     {
-                                        this.setFailureMessage(tokens, $"If value is included when comparison count, it must be a number ({rawValue})");
+                                        setFailureMessage(tokens, $"If value is included when comparison count, it must be a number ({rawValue})", potentialSuppressions);
                                         return false;
                                     }
                                     if (numValue != count)
                                     {
-                                        this.setFailureMessage(tokens, $"Query result count is not equal (got {count} expected {numValue})");
+                                        setFailureMessage(tokens, $"Query result count is not equal (got {count} expected {numValue})", potentialSuppressions);
                                         return false;
                                     }
                                     else
@@ -108,17 +110,17 @@ namespace Farrier.Models.Conditions
                                 {
                                     bool minOK = false;
                                     bool maxOK = false;
-                                    if (!String.IsNullOrEmpty(rawMin))
+                                    if (!string.IsNullOrEmpty(rawMin))
                                     {
                                         int min;
                                         if (!int.TryParse(rawMin, out min))
                                         {
-                                            this.setFailureMessage(tokens, $"If min is included when comparison count, it must be a number ({rawMin})");
+                                            setFailureMessage(tokens, $"If min is included when comparison count, it must be a number ({rawMin})", potentialSuppressions);
                                             return false;
                                         }
                                         if (min > count)
                                         {
-                                            this.setFailureMessage(tokens, $"Query result count is under min (got {count} min {min})");
+                                            setFailureMessage(tokens, $"Query result count is under min (got {count} min {min})", potentialSuppressions);
                                             return false;
                                         }
                                         else
@@ -131,17 +133,17 @@ namespace Farrier.Models.Conditions
                                         minOK = true;
                                     }
 
-                                    if (!String.IsNullOrEmpty(rawMax))
+                                    if (!string.IsNullOrEmpty(rawMax))
                                     {
                                         int max;
                                         if (!int.TryParse(rawMax, out max))
                                         {
-                                            this.setFailureMessage(tokens, $"If max is included when comparison count, it must be a number ({rawMax})");
+                                            setFailureMessage(tokens, $"If max is included when comparison count, it must be a number ({rawMax})", potentialSuppressions);
                                             return false;
                                         }
                                         if (max < count)
                                         {
-                                            this.setFailureMessage(tokens, $"Query result count is over max (got {count} max {max})");
+                                            setFailureMessage(tokens, $"Query result count is over max (got {count} max {max})", potentialSuppressions);
                                             return false;
                                         }
                                         else
@@ -160,7 +162,7 @@ namespace Farrier.Models.Conditions
                                     }
                                     else
                                     {
-                                        this.setFailureMessage(tokens, $"Query result count out of range ({count})");
+                                        setFailureMessage(tokens, $"Query result count out of range ({count})", potentialSuppressions);
                                         return false;
                                     }
                                 }
@@ -168,7 +170,7 @@ namespace Farrier.Models.Conditions
                             case "notcontains":
                                 if (comparison == "contains" && queryValue.Matches.Count == 0)
                                 {
-                                    this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
+                                    setFailureMessage(tokens, $"Query found no matches, so nothing to compare against", potentialSuppressions);
                                     return false;
                                 }
                                 var contains = false;
@@ -193,22 +195,22 @@ namespace Farrier.Models.Conditions
                                     return true;
                                 else
                                 {
-                                    this.setFailureMessage(tokens, $"Pattern {(comparison == "matches" ? "doesn't match" : "matches")} query result");
+                                    setFailureMessage(tokens, $"Pattern {(comparison == "matches" ? "doesn't match" : "matches")} query result", potentialSuppressions);
                                     return false;
                                 }
                             case "length":
                                 var length = queryValue.Matches.Count > 0 ? queryValue.Matches[0].Value.ToString().Length : 0;
-                                if (!String.IsNullOrEmpty(rawValue))
+                                if (!string.IsNullOrEmpty(rawValue))
                                 {
                                     int numValue;
                                     if (!int.TryParse(rawValue, out numValue))
                                     {
-                                        this.setFailureMessage(tokens, $"If value is included when comparison length, it must be a number ({rawValue})");
+                                        setFailureMessage(tokens, $"If value is included when comparison length, it must be a number ({rawValue})", potentialSuppressions);
                                         return false;
                                     }
                                     if (numValue != length)
                                     {
-                                        this.setFailureMessage(tokens, $"Query result length is not equal (got {length} expected {numValue})");
+                                        setFailureMessage(tokens, $"Query result length is not equal (got {length} expected {numValue})", potentialSuppressions);
                                         return false;
                                     }
                                     else
@@ -220,17 +222,17 @@ namespace Farrier.Models.Conditions
                                 {
                                     bool minOK = false;
                                     bool maxOK = false;
-                                    if (!String.IsNullOrEmpty(rawMin))
+                                    if (!string.IsNullOrEmpty(rawMin))
                                     {
                                         int min;
                                         if (!int.TryParse(rawMin, out min))
                                         {
-                                            this.setFailureMessage(tokens, $"If min is included when comparison length, it must be a number ({rawMin})");
+                                            setFailureMessage(tokens, $"If min is included when comparison length, it must be a number ({rawMin})", potentialSuppressions);
                                             return false;
                                         }
                                         if (min > length)
                                         {
-                                            this.setFailureMessage(tokens, $"Query result length is under min (got {length} min {min})");
+                                            setFailureMessage(tokens, $"Query result length is under min (got {length} min {min})", potentialSuppressions);
                                             return false;
                                         }
                                         else
@@ -243,17 +245,17 @@ namespace Farrier.Models.Conditions
                                         minOK = true;
                                     }
 
-                                    if (!String.IsNullOrEmpty(rawMax))
+                                    if (!string.IsNullOrEmpty(rawMax))
                                     {
                                         int max;
                                         if (!int.TryParse(rawMax, out max))
                                         {
-                                            this.setFailureMessage(tokens, $"If max is included when comparison length, it must be a number ({rawMax})");
+                                            setFailureMessage(tokens, $"If max is included when comparison length, it must be a number ({rawMax})", potentialSuppressions);
                                             return false;
                                         }
                                         if (max < length)
                                         {
-                                            this.setFailureMessage(tokens, $"Query result length is over max (got {length} max {max})");
+                                            setFailureMessage(tokens, $"Query result length is over max (got {length} max {max})", potentialSuppressions);
                                             return false;
                                         }
                                         else
@@ -272,7 +274,7 @@ namespace Farrier.Models.Conditions
                                     }
                                     else
                                     {
-                                        this.setFailureMessage(tokens, $"Query result length out of range ({length})");
+                                        setFailureMessage(tokens, $"Query result length out of range ({length})", potentialSuppressions);
                                         return false;
                                     }
                                 }
@@ -282,7 +284,7 @@ namespace Farrier.Models.Conditions
                                 {
                                     if(comparison == "equals")
                                     {
-                                        this.setFailureMessage(tokens, $"Query found no matches, so nothing to compare against");
+                                        setFailureMessage(tokens, $"Query found no matches, so nothing to compare against", potentialSuppressions);
                                         return false;
                                     }
                                     return true; //notequals
@@ -295,7 +297,7 @@ namespace Farrier.Models.Conditions
                                         if (comparison == "equals")
                                         {
                                             //Invalid casing
-                                            this.setFailureMessage(tokens, $"Value found but casing does not match (Result: {queryResult})");
+                                            setFailureMessage(tokens, $"Value found but casing does not match (Result: {queryResult})", potentialSuppressions);
                                             return false;
                                         }
                                         return true; //notequals
@@ -312,7 +314,7 @@ namespace Farrier.Models.Conditions
                                 {
                                     if (comparison == "equals")
                                     {
-                                        this.setFailureMessage(tokens, $"Queried Value does not match (Result: '{queryResult}', Expected: '{value}')");
+                                        setFailureMessage(tokens, $"Queried Value does not match (Result: '{queryResult}', Expected: '{value}')", potentialSuppressions);
                                         return false;
                                     }
                                     return true; //notequals
@@ -323,13 +325,13 @@ namespace Farrier.Models.Conditions
                 else
                 {
                     //Invalid query
-                    this.setFailureMessage(tokens, "Invalid Json Query");
+                    setFailureMessage(tokens, "Invalid Json Query", potentialSuppressions);
                     return false;
                 }
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}");
+                setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }

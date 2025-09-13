@@ -24,10 +24,19 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
+            var message = tokens.DecodeString(rawText);
+            if (isSuppressed(message, potentialSuppressions, tokens))
+            {
+                return true;
+            }
+
             if (!IsWarning)
-                Info(tokens, rawText, prefix);
+                Info(message, prefix);
             else
-                Warn(tokens, rawText, prefix);
+                Warn(message, prefix);
             return true;
         }
 

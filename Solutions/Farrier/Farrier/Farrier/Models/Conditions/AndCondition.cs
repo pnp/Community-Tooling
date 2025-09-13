@@ -41,6 +41,12 @@ namespace Farrier.Models.Conditions
 
             foreach (var condition in conditions)
             {
+                if (isSuppressed(string.Empty, parentRule.GetSkipsForCondition(condition), tokens))
+                {
+                    //Condition is skipped
+                    continue;
+                }
+
                 var result = condition.IsValid(tokens, runRule, parentRule, prefix+1, startingpath);
                 childMessages.AddRange(condition.Messages);
 
@@ -52,7 +58,10 @@ namespace Farrier.Models.Conditions
                     if(condition.IsWarning)
                     {
                         //Log as a warning, but don't fail the condition
-                        childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix+1));
+                        if (!condition.SuppressFailureMessage)
+                        {
+                            childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
+                        }
                     }
                     else
                     {

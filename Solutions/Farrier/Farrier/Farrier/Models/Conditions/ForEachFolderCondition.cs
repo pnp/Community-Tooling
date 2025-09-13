@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
@@ -20,7 +17,7 @@ namespace Farrier.Models.Conditions
         {
             rawPath = XmlHelper.XmlAttributeToString(conditionNode.Attributes["path"]);
             rawPattern = XmlHelper.XmlAttributeToString(conditionNode.Attributes["pattern"]);
-            if(String.IsNullOrEmpty(rawPattern))
+            if(string.IsNullOrEmpty(rawPattern))
             {
                 rawPattern = "*";
             }
@@ -29,6 +26,9 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule, InspectionRule parentRule, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
             if (_subConditions.Count == 0)
             {
                 return false;
@@ -38,18 +38,19 @@ namespace Farrier.Models.Conditions
             int limit = ValidateLimit(tokens, "folders", prefix);
             var quiet = tokens.DecodeString(rawQuiet) == "true";
 
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
+            propertyMap.Add("path", path);
 
             if(!Directory.Exists(path))
             {
-                this.setFailureMessage(tokens, $"Unable to find the directory {path}");
+                setFailureMessage(tokens, $"Unable to find the directory {path}", potentialSuppressions);
                 return false;
             }
 
             bool success = true;
             var directory = new DirectoryInfo(path);
             var searchPattern = tokens.DecodeString(rawPattern);
-            var folders = directory.GetDirectories(searchPattern);
+            var folders = directory.GetDirectories(searchPattern).OrderBy(f => f.Name).ToArray();
             if (skip > 0)
                 folders = folders.Skip(skip).ToArray();
             if (limit > 0 && folders.Length > limit)
@@ -60,7 +61,7 @@ namespace Farrier.Models.Conditions
             foreach (var folder in folders)
             {
                 if (!quiet)
-                    childMessages.Add(new Message(MessageLevel.info, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
+                    childMessages.Add(new Message(MessageLevel.trace, Name, $"Folder ({currentfolder}/{totalfolders}): {folder.Name}", prefix));
 
                 var foreachTokens = new TokenManager(tokens);
                 foreachTokens.NestToken("Each", folder.Name);
@@ -80,7 +81,10 @@ namespace Farrier.Models.Conditions
                         if (condition.IsWarning)
                         {
                             //Log a warning, but don't fail the condition
-                            childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix+1));
+                            if (!condition.SuppressFailureMessage)
+                            {
+                                childMessages.Add(new Message(MessageLevel.warning, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix + 1));
+                            }
                         }
                         else
                         {
@@ -89,7 +93,7 @@ namespace Farrier.Models.Conditions
                             {
                                 childMessages.Add(new Message(MessageLevel.error, condition.Name, tokens.DecodeString(condition.FailureMessage), prefix+1));
                             }
-                            this.setFailureMessage(tokens, $"Sub Condition failure during processing of folder {folder.FullName}");
+                            setFailureMessage(tokens, $"Sub Condition failure during processing of folder {folder.FullName}", potentialSuppressions);
                             success = false;
                             break;
                         }

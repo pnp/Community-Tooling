@@ -57,7 +57,10 @@ namespace Farrier.Models.Conditions
             {
                 if(childCondition.IsWarning)
                 {
-                    messages.Add(new Message(MessageLevel.warning, childCondition.Name, tokens.DecodeString(childCondition.FailureMessage), prefix + 1));
+                    if (!childCondition.SuppressFailureMessage)
+                    {
+                        messages.Add(new Message(MessageLevel.warning, childCondition.Name, tokens.DecodeString(childCondition.FailureMessage), prefix + 1));
+                    }
                 }
                 else
                 {

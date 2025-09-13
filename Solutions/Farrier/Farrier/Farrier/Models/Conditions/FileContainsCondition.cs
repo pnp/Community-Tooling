@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Farrier.Helpers;
 using Farrier.Parser;
 using System.IO;
+using System.Linq;
 
 namespace Farrier.Models.Conditions
 {
@@ -25,23 +24,32 @@ namespace Farrier.Models.Conditions
         public override bool IsValid(TokenManager tokens, DelRunRule runRule = null, InspectionRule parentRule = null, int prefix = 0, string startingpath = "")
         {
             messages.Clear();
-            var path = System.IO.Path.Combine(startingpath, tokens.DecodeString(rawPath));
+            propertyMap.Clear();
+            var potentialSuppressions = parentRule.GetSuppressionsForCondition(this);
+
+            var path = PathNormalizer.Normalize(Path.Combine(startingpath, tokens.DecodeString(rawPath)));
+            propertyMap.Add("path", path);
+
+
             if (File.Exists(path))
             {
                 var isNot = IsNot(tokens);
-                var contents = File.ReadAllText(path);
+                var contents = File.ReadAllText(path).Replace("\r\n", "\n").Replace('\r', '\n');
                 var searchText = tokens.DecodeString(rawText).Replace("\\r", "\r").Replace("\\n","\n");
                 var matchcase = tokens.DecodeString(rawMatchCase) == "true";
                 if (contents.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
                 {
                     //Text is in the file (regardless of casing)
+                    int index = contents.IndexOf(searchText, StringComparison.CurrentCultureIgnoreCase);
+                    int lineNumber = contents.Substring(0, index).Count(c => c == '\n') + 1;
+                    tokens.NestToken("LineNumber", lineNumber.ToString());
 
                     if (matchcase && !contents.Contains(searchText))
                     {
                         //Invalid casing
                         if (!isNot)
                         {
-                            this.setFailureMessage(tokens, $"Text exists but casing does not match ({path})");
+                            setFailureMessage(tokens, $"Text exists but casing does not match ({path})(line: {lineNumber})", potentialSuppressions);
                             return false;
                         }
                         else
@@ -52,14 +60,14 @@ namespace Farrier.Models.Conditions
                     }
                     else
                     {
-                        if(!isNot)
+                        if (!isNot)
                         {
                             return true;
                         }
                         else
                         {
                             //Flipped response
-                            this.setFailureMessage(tokens, "Text found");
+                            setFailureMessage(tokens, $"Text found ({path})(line: {lineNumber})", potentialSuppressions);
                             return false;
                         }
                     }
@@ -70,7 +78,7 @@ namespace Farrier.Models.Conditions
 
                     if(!isNot)
                     {
-                        this.setFailureMessage(tokens, $"Specified text not found in {path}");
+                        setFailureMessage(tokens, $"Specified text not found in {path}", potentialSuppressions);
                         return false;
                     }
                     else
@@ -83,7 +91,7 @@ namespace Farrier.Models.Conditions
             }
             else
             {
-                this.setFailureMessage(tokens, $"File not found at {path}");
+                setFailureMessage(tokens, $"File not found at {path}", potentialSuppressions);
                 return false;
             }
         }

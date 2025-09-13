@@ -80,6 +80,13 @@
         </xsd:annotation>
       </xsd:element>
       <xsd:element name="conditions" type="farrier:conditions"/>
+      <xsd:element name="suppressions" type="farrier:suppressions" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Contains 1 or more warning/error suppression rules
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
     </xsd:all>
     <xsd:attribute name="name" type="farrier:NotEmpty" use="required">
       <xsd:annotation>
@@ -91,6 +98,78 @@
     <xsd:attribute type="xsd:string" name="description" use="optional">
       <xsd:annotation>
         <xsd:documentation>Optional description of what this rule does</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="suppressions">
+    <xsd:annotation>
+      <xsd:documentation>
+        Contains 1 or more suppression rules
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="suppress" type="farrier:suppress" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="suppress">
+    <xsd:annotation>
+      <xsd:documentation>
+        Target a condition within this rule (and its children) to suppress warnings or errors. You can target the exact message by specifying the message attribute. Other properties can be targeted by using the endswith attributes such as pathendswith
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="conditionname" type="farrier:NotEmpty" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The condition name to suppress. Must match exactly the name attribute of the condition.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="skip" use="optional" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, the condition check will be skipped entirely
+        </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="true">
+            <xsd:annotation>
+              <xsd:documentation>
+                Condition won't be checked at all
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="false">
+            <xsd:annotation>
+              <xsd:documentation>
+                Condition will be checked as normal
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="message" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          The EXACT message to suppress. If not specified or empty, the message won't be evaluated at all. (supports expressions)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="pathendswith" type="farrier:NotEmpty" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Matches the path of the condition if it ends with the specified value (not case-sensitive), convenience method (could be written as a must value)
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="must" type="farrier:BoolOrExpression" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          When true, used in conjunction with name/message/pathendswith to target suppression (supports expressions, but must evaluate to true or false)
+        </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
   </xsd:complexType>

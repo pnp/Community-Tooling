@@ -10,8 +10,9 @@ namespace Farrier.Helpers
         private Action<string> _logWarn;
         private Action<string> _logInfo;
         private Action<string> _logDebug;
+        private Action<string> _logTrace;
 
-        public LogRouter(Action<Exception, string> logError = null, Action<string> logWarning = null, Action<string> logInfo = null, Action<string> logDebug = null)
+        public LogRouter(Action<Exception, string> logError = null, Action<string> logWarning = null, Action<string> logInfo = null, Action<string> logDebug = null, Action<string> logTrace = null)
         {
             if (logError == null)
                 _logError = (e, s) => { };
@@ -32,6 +33,11 @@ namespace Farrier.Helpers
                 _logDebug = s => { };
             else
                 _logDebug = logDebug;
+
+            if (logTrace == null)
+                _logTrace = s => { };
+            else
+                _logTrace = logTrace;
         }
 
         public void Error(Exception ex, string message, int prefix = 0)
@@ -52,6 +58,11 @@ namespace Farrier.Helpers
         public void Debug(string message, int prefix = 0)
         {
             _logDebug(_getPrefix(prefix) + message);
+        }
+
+        public void Trace(string message, int prefix = 0)
+        {
+            _logTrace(_getPrefix(prefix) + message);
         }
 
         public void Warn(string message, int prefix = 0)
