@@ -668,21 +668,21 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="270" limit="10">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="200" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="15" limit="5">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="20" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="150" limit="10">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="10" limit="30">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
@@ -698,18 +698,20 @@
         <!-- Column Sample: custom-hover-card: Add ms-borderColor: Classes are being dynamically assembled -->
         <suppress conditionname="Class" message="Add ms-borderColor-" must="$AND($ENDSWITH(@@ContainerPath@@,#$PATH(column-samples\custom-hover-card)),#$EQUALS(@@Each@@,#custom-hover-card.json))" />
 
-        <!-- Column Sample: date-page-a-day-calendar: Remove toString: In 1 of 2 samples -->
-        <suppress conditionname="Operator" message="Remove toString" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
-        <!-- Column Sample: date-page-a-day-calendar: Remove Number: In 1 of 2 samples -->
-        <suppress conditionname="Operator" message="Remove Number" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
-        <!-- Column Sample: date-page-a-day-calendar: Remove floor: In 1 of 2 samples -->
-        <suppress conditionname="Operator" message="Remove floor" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
-        <!-- Column Sample: date-page-a-day-calendar: Remove substring: In 1 of 2 samples -->
+        <!-- Column Sample: date-page-a-day-calendar: Remove toString: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove Number: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove Number" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove floor: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove floor" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove substring: In 1 of 3 samples -->
         <suppress conditionname="Operator" message="Remove substring" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
-        <!-- Column Sample: date-page-a-day-calendar: Remove getYear: In 1 of 2 samples -->
-        <suppress conditionname="Operator" message="Remove getYear" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
-        <!-- Column Sample: date-page-a-day-calendar: Remove forEach: In 1 of 2 samples -->
-        <suppress conditionname="Feature" message="Remove forEach" must="$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove getYear: In 2 of 3 samples -->
+        <suppress conditionname="Operator" message="Remove getYear" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove forEach: In 2 of 3 samples -->
+        <suppress conditionname="Feature" message="Remove forEach" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-color.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove @now: In 2 of 3 samples -->
+        <suppress conditionname="Token" message="Remove @now" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-rounded.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar.json)))" />
 
         <!-- Column Sample: date-range-rag: Remove Date: In 1 of 3 samples -->
         <suppress conditionname="Operator" message="Remove Date" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-range-rag\date-range-rag.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-range-rag\date-range-ragAST.json)))" />

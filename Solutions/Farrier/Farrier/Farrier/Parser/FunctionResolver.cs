@@ -21,12 +21,13 @@ namespace Farrier.Parser
         {
             FUNCPATTERN = pattern;
             PARAMSTART = paramstart;
-            if(escapes != null)
+            if (escapes != null)
                 ESCAPES = escapes;
             else
             {
                 ESCAPES = new Dictionary<string, string>();
                 ESCAPES.Add("!}!", ")");
+                ESCAPES.Add("!{!", "(");
             }
 
             if (log == null)
