@@ -17,7 +17,7 @@
             transform="$WHEN($CONTAINS(@@currentvalue@@,#2019),#Y)"/>
     
     <!-- Actions, Operators, Categories, Tokens, & ColumnTypes 
-         can be multiple so replaces commas (and commans with space) with pipe -->
+         can be multiple so replaces commas (and commas with space) with pipe -->
     <column name="Categories"
             path="$.[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value"
             transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
