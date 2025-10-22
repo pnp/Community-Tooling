@@ -10,11 +10,18 @@
     <token name="iconFormFormat" value=":fontawesome-solid-file-lines:"/>
     <token name="iconContributionOpportunity" value=":fontawesome-solid-lightbulb:"/>
     
+    <token name="groupIcon-action-comment" value=":fontawesome-solid-commenting:"/>
+    <token name="groupIcon-action-copyFile" value=":fontawesome-solid-clone:"/>
+    <token name="groupIcon-action-copyLink" value=":fontawesome-solid-clipboard:"/>
     <token name="groupIcon-action-defaultClick" value=":fontawesome-solid-hand-pointer:"/>
     <token name="groupIcon-action-delete" value=":fontawesome-solid-trash-can:"/>
     <token name="groupIcon-action-editProps" value=":fontawesome-solid-pen:"/>
+    <token name="groupIcon-action-embed" value=":fontawesome-solid-umbrella:"/>
     <token name="groupIcon-action-executeFlow" value=":fontawesome-solid-code-fork:"/>
+    <token name="groupIcon-action-moveFile" value=":fontawesome-solid-truck:"/>
+    <token name="groupIcon-action-openApprovalDialog" value=":fontawesome-solid-thumbs-up:"/>
     <token name="groupIcon-action-openContextMenu" value=":fontawesome-solid-ellipsis:"/>
+    <token name="groupIcon-action-previewFileAction" value=":fontawesome-solid-file-image:"/>
     <token name="groupIcon-action-share" value=":fontawesome-solid-share-from-square:"/>
     <token name="groupIcon-action-setValue" value=":fontawesome-solid-keyboard:"/>
     
@@ -44,7 +51,7 @@
     <token name="groupIcon-class-motion-expand" value=":fontawesome-solid-expand:"/>
 
     <token name="groupIcon-class-sp-card-boldText" value=":fontawesome-solid-bold:"/>
-    <token name="groupIcon-class-sp-card-borderHighlight" value=":fontawesome-solid-vector-square:"/>
+    <token name="groupIcon-class-sp-card-borderHighlight" value=":fontawesome-solid-square:"/>
     <token name="groupIcon-class-sp-card-bottomCommandBar" value=":fontawesome-solid-ellipsis:"/>
     <token name="groupIcon-class-sp-card-container" value=":fontawesome-solid-square:"/>
     <token name="groupIcon-class-sp-card-container-noPadding" value=":fontawesome-solid-square-person-confined:"/>
@@ -141,6 +148,7 @@
     <token name="groupIcon-operator-floor" value=":fontawesome-solid-down-long:"/>
     <token name="groupIcon-operator-getDate" value=":fontawesome-solid-calendar-week:"/>
     <token name="groupIcon-operator-getMonth" value=":fontawesome-solid-calendar-days:"/>
+    <token name="groupIcon-operator-getThumbnailImage" value=":fontawesome-solid-image:"/>
     <token name="groupIcon-operator-getUserImage" value=":fontawesome-solid-id-card-clip:"/>
     <token name="groupIcon-operator-getYear" value=":fontawesome-solid-calendar-check:"/>
     <token name="groupIcon-operator-indexOf" value=":fontawesome-solid-magnifying-glass:"/>
@@ -154,9 +162,12 @@
     <token name="groupIcon-operator-pow" value=":fontawesome-solid-superscript:"/>
     <token name="groupIcon-operator-removeFrom" value=":fontawesome-solid-circle-minus:"/>
     <token name="groupIcon-operator-replace" value=":fontawesome-solid-plug:"/>
+    <token name="groupIcon-operator-replaceAll" value=":fontawesome-solid-search-plus:"/>
     <token name="groupIcon-operator-sin" value=":fontawesome-solid-book-skull:"/>
+    <token name="groupIcon-operator-split" value=":fontawesome-solid-th-large:"/>
     <token name="groupIcon-operator-startsWith" value=":fontawesome-solid-magnifying-glass-location:"/>
     <token name="groupIcon-operator-substring" value=":fontawesome-solid-scissors:"/>
+    <token name="groupIcon-operator-toDateString" value=":fontawesome-solid-calendar:"/>
     <token name="groupIcon-operator-toLocaleDateString" value=":fontawesome-solid-hourglass-start:"/>
     <token name="groupIcon-operator-toLocaleString" value=":fontawesome-solid-hourglass:"/>
     <token name="groupIcon-operator-toLocaleTimeString" value=":fontawesome-solid-hourglass-end:"/>
@@ -164,23 +175,44 @@
     <token name="groupIcon-operator-toString" value=":fontawesome-solid-signature:"/>
     <token name="groupIcon-operator-toUpperCase" value=":fontawesome-solid-cake-candles:"/>
     
-    <token name="groupIcon-category-icons" value=":fontawesome-solid-circle-radiation:"/>
-    
+    <token name="groupIcon-category-Board" value=":fontawesome-solid-map:"/>
+    <token name="groupIcon-category-Charts" value=":fontawesome-solid-pie-chart:"/>
+    <token name="groupIcon-category-CommandBar Customization" value=":fontawesome-solid-sitemap:"/>
+    <token name="groupIcon-category-Document Library" value=":fontawesome-solid-folder:"/>
+    <token name="groupIcon-category-Emoji" value=":fontawesome-solid-smile:"/>
+    <token name="groupIcon-category-Frequently Asked Questions" value=":fontawesome-solid-question-circle:"/>
+    <token name="groupIcon-category-Gallery" value=":fontawesome-solid-address-card:"/>
+    <token name="groupIcon-category-Grouped" value=":fontawesome-solid-cubes:"/>
+    <token name="groupIcon-category-Hover Cards" value=":fontawesome-solid-flag:"/>
+    <token name="groupIcon-category-Icons" value=":fontawesome-solid-bicycle:"/>
+    <token name="groupIcon-category-Image" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-category-Inline Editing" value=":fontawesome-solid-pencil:"/>
+    <token name="groupIcon-category-Microsoft Teams" value=":fontawesome-solid-users:"/>
+    <token name="groupIcon-category-Power Apps" value=":fontawesome-solid-ticket:"/>
+    <token name="groupIcon-category-Power Automate" value=":fontawesome-solid-code-fork:"/>
+    <token name="groupIcon-category-Provisioning" value=":fontawesome-solid-gift:"/>
+    <token name="groupIcon-category-Randomization" value=":fontawesome-solid-random:"/>
+    <token name="groupIcon-category-Severity" value=":fontawesome-solid-exclamation-circle:"/>
+    <token name="groupIcon-category-Status / Progress" value=":fontawesome-solid-percent:"/>
+    <token name="groupIcon-category-SVG" value=":fontawesome-solid-rocket:"/>
+
+    <token name="groupIcon-token-@aggregates" value=":fontawesome-solid-calculator:"/>
+    <token name="groupIcon-token-@columnAggregate.columnDisplayName" value=":fontawesome-solid-tag:"/>
+    <token name="groupIcon-token-@columnAggregate.type" value=":fontawesome-solid-cube:"/>
+    <token name="groupIcon-token-@columnAggregate.value" value=":fontawesome-solid-percent:"/>
     <token name="groupIcon-token-@currentWeb" value=":fontawesome-solid-location-dot:"/>
+    <token name="groupIcon-token-@group.columnDisplayName" value=":fontawesome-solid-tags:"/>
+    <token name="groupIcon-token-@group.count" value=":fontawesome-solid-hashtag:"/>
+    <token name="groupIcon-token-@group.fieldData" value=":fontawesome-solid-bolt:"/>
+    <token name="groupIcon-token-@isSelected" value=":fontawesome-solid-check-square:"/>
     <token name="groupIcon-token-@lcid" value=":fontawesome-solid-language:"/>
     <token name="groupIcon-token-@me" value=":fontawesome-solid-person-falling:"/>
     <token name="groupIcon-token-@now" value=":fontawesome-solid-clock:"/>
     <token name="groupIcon-token-@rowIndex" value=":fontawesome-solid-arrow-down-1-9:"/>
     <token name="groupIcon-token-@thumbnail" value=":fontawesome-solid-image:"/>
+    <token name="groupIcon-token-@UIlcid" value=":fontawesome-solid-language:"/>
     <token name="groupIcon-token-@window.innerHeight" value=":fontawesome-solid-arrows-up-down:"/>
     <token name="groupIcon-token-@window.innerWidth" value=":fontawesome-solid-arrows-left-right:"/>
-    <token name="groupIcon-token-@aggregates" value=":fontawesome-solid-image:"/>
-    <token name="groupIcon-token-@columnAggregate.columnDisplayName" value=":fontawesome-solid-image:"/>
-    <token name="groupIcon-token-@columnAggregate.type" value=":fontawesome-solid-image:"/>
-    <token name="groupIcon-token-@columnAggregate.value" value=":fontawesome-solid-image:"/>
-    <token name="groupIcon-token-@group.columnDisplayName" value=":fontawesome-solid-image:"/>
-    <token name="groupIcon-token-@group.count" value=":fontawesome-solid-image:"/>
-    <token name="groupIcon-token-@group.fieldData" value=":fontawesome-solid-image:"/>
     
     <token name="groupIcon-columntype-Approval Status" value=":fontawesome-solid-circle-check:"/>
     <token name="groupIcon-columntype-Average Rating" value=":fontawesome-solid-star-half-stroke:"/>
@@ -232,8 +264,8 @@
     </template>
     
     <template name="GroupIcon_action">@@groupIcon-action-@@GroupValue@@@@</template>
-    <template name="GroupIcon_author">$IF($EQUALS(@@[AuthorGH]@@,#[NA]),#@@groupIcon-author@@{title="No GitHub account provided"},#[![@@[AuthorGH]@@](https://github.com/@@[AuthorGH]@@.png?size=24!}!](https://github.com/@@[AuthorGH]@@!}!{.authorImage title="@@[AuthorGH]@@" target="_blank"})</template>
-    <template name="GroupIcon_category">@@groupIcon-category-icons@@</template>
+    <template name="GroupIcon_author">$IF($EQUALS($VALUEFROMSPLIT(@@[AuthorGH]@@,#|,#@@[GroupSplitIndex]@@),#[NA]),#@@groupIcon-author@@{title="No GitHub account provided"},#[![$VALUEFROMSPLIT(@@[AuthorGH]@@,#|,#@@[GroupSplitIndex]@@)](https://github.com/$VALUEFROMSPLIT(@@[AuthorGH]@@,#|,#@@[GroupSplitIndex]@@).png?size=24!}!](https://github.com/$VALUEFROMSPLIT(@@[AuthorGH]@@,#|,#@@[GroupSplitIndex]@@)!}!{.authorImage title="$VALUEFROMSPLIT(@@[AuthorGH]@@,#|,#@@[GroupSplitIndex]@@)" target="_blank"})</template>
+    <template name="GroupIcon_category">@@groupIcon-category-@@GroupValue@@@@</template>
     <template name="GroupIcon_columntype">@@groupIcon-columntype-@@GroupValue@@@@</template>
     <template name="GroupIcon_feature">@@groupIcon-feature-@@GroupValue@@@@</template>
     <template name="GroupIcon_operator">@@groupIcon-operator-@@GroupValue@@@@</template>
@@ -352,7 +384,7 @@
       <section>
         #Samples by Author
 
-        Samples are grouped by their _original_ creator. Later updates by additional contributors are not listed here. Expand to see the related samples.
+        Samples are grouped by their creator. Samples with multiple authors will be listed under each. Expand to see the related samples.
 
       </section>
       <section template="ExpandCollapseAll"/>

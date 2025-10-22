@@ -36,7 +36,7 @@ namespace Farrier
                     //args = new string[] { "inspect", "-c", @"Samples/ListFormatting/LFSampleValidation.xml", "-r", "ValidateSamples", "-s", @"/Users/chriskent/Code/pnp/List-Formatting/" };
 
                     // List Formatting CSV & samples.json creation
-                    //args = new string[] { "roundup", "-m", @"Samples/ListFormatting/LFAssetMap.xml", "-s", @"/Users/chriskent/Code/pnp/List-Formatting/", "-j", "sample.json", "--overwrite", "--pathdepth", "3", "--joinedfilename", "samples.json", "-o", @"/Users/chriskent/Code/pnp/Community-Tooling/Solutions/Farrier/Farrier/Farrier/Samples/ListFormatting", "-f", "LFSamples.csv" };
+                    //args = new string[] { "roundup", "-m", @"Samples/ListFormatting/LFAssetMap.xml", "-s", @"/Users/chriskent/Code/pnp/List-Formatting/", "-j", "sample.json", "--overwrite", "--pathdepth", "3", "--joinedfilename", "samples.json", "-o", @"Samples/ListFormatting", "-f", "LFSamples.csv" };
 
                     // Copy the samples.json to the List-Formatting repo
                     //args = new string[] { "copyfile", "-f", @"Samples/ListFormatting/samples.json", "-o", @"/Users/chriskent/Code/pnp/List-Formatting/", "--overwrite" };
@@ -45,7 +45,7 @@ namespace Farrier
                     //args = new string[] { "forge", "-b", @"Samples/ListFormatting/LFForgeBlueprint.xml", "--listtokens", "-o", @"/Users/chriskent/Code/pnp/List-Formatting/docs/" };
 
                     // Run the List Formatting roundup, copyfile, and forget using a command file
-                    //args = new string[] { "fromfile", "-f", @"Samples/ListFormatting/Farrier.txt" };
+                    args = new string[] { "fromfile", "-f", @"Samples/ListFormatting/Farrier.txt" };
                 }
 
                 CommandLine.Parser.Default.ParseArguments(args, LoadVerbs())

@@ -224,7 +224,7 @@
         </only>
 
         <!-- Basic operators like arithmetic and comparsion are excluded -->
-        <foreachitem items="toLowerCase,toString,Number,Date,cos,sin,abs,loopIndex,toLocaleString,toLocaleDateString,toLocaleTimeString,indexOf,join,length,floor,ceiling,pow,substring,getDate,getMonth,getYear,toUpperCase,lastIndexOf,startsWith,endsWith,replace,padStart,padEnd,getUserImage,addDays,addMinutes,appendTo,removeFrom" quiet="true">
+        <foreachitem items="toLowerCase,toString,Number,Date,cos,sin,abs,loopIndex,toLocaleString,toLocaleDateString,toLocaleTimeString,indexOf,join,length,floor,ceiling,pow,substring,getDate,getMonth,getYear,toUpperCase,lastIndexOf,startsWith,endsWith,replace,padStart,padEnd,getUserImage,addDays,addMinutes,appendTo,removeFrom,getThumbnailImage,toDateString" quiet="true">
           <run rule="CheckForOperator" input="@@Each@@" quiet="true"/>
         </foreachitem>
 
