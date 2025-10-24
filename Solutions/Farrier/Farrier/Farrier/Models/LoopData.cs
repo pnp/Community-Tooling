@@ -64,8 +64,14 @@ namespace Farrier.Models
                                         if (foundGroupValues.Length > 1)
                                         {
                                             killRows.Add(row); //Remove this row
+                                            var splitIndexColumnName = "GroupSplitIndex";
                                             for (int r = 0; r < foundGroupValues.Length; r++)
                                             {
+                                                if (!Data.Columns.Contains(splitIndexColumnName))
+                                                {
+                                                    Data.Columns.Add(splitIndexColumnName, typeof(int));
+                                                }
+
                                                 //Map split values into clones of original row
                                                 var newRow = Data.NewRow();
                                                 foreach (DataColumn col in Data.Columns)
@@ -73,6 +79,7 @@ namespace Farrier.Models
                                                     newRow[col] = row[col];
                                                 }
                                                 newRow[groupBy] = foundGroupValues[r];
+                                                newRow[splitIndexColumnName] = r;
                                                 newRows.Add(newRow);
                                             }
                                         }

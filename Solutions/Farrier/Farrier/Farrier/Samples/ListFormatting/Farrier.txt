@@ -1,3 +1,3 @@
-﻿roundup -m Samples/ListFormatting/LFAssetMap.xml -s /Users/chriskent/Code/pnp/List-Formatting/ -j sample.json --overwrite --pathdepth 3 --joinedfilename samples.json -o /Users/chriskent/Code/pnp/Community-Tooling/Solutions/Farrier/Farrier/Farrier/Samples/ListFormatting -f LFSamples.csv
+﻿roundup -m Samples/ListFormatting/LFAssetMap.xml -s /Users/chriskent/Code/pnp/List-Formatting/ -j sample.json --overwrite --pathdepth 3 --joinedfilename samples.json -o Samples/ListFormatting -f LFSamples.csv
 copyfile -f Samples/ListFormatting/samples.json -o /Users/chriskent/Code/pnp/List-Formatting/ --overwrite
 forge -b Samples/ListFormatting/LFForgeBlueprint.xml --listtokens -o /Users/chriskent/Code/pnp/List-Formatting/docs/

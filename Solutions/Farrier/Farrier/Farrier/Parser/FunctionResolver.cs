@@ -17,7 +17,7 @@ namespace Farrier.Parser
 
         private LogRouter _log;
 
-        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|PROPER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|IN|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE|PATH)\\(", string paramstart = ",#", Dictionary<string,string> escapes = null, LogRouter log = null)
+        public FunctionResolver(string pattern = "\\$(UPPER|LOWER|PROPER|TRIM|INDEXOF|LASTINDEXOF|LENGTH|SUBSTRING|STARTSWITH|ENDSWITH|CONTAINS|IN|REPLACE|FORMATDATE|FORMATNUMBER|ADD|SUBTRACT|MULTIPLY|DIVIDE|MOD|EQUALS|GT|GTE|LT|LTE|AND|OR|NOT|ISEMPTY|WHEN|IF|DIRECTORYNAME|FILENAME|FILEEXTENSION|RXESCAPE|PATH|VALUEFROMSPLIT)\\(", string paramstart = ",#", Dictionary<string,string> escapes = null, LogRouter log = null)
         {
             FUNCPATTERN = pattern;
             PARAMSTART = paramstart;
@@ -227,6 +227,22 @@ namespace Farrier.Parser
                         return Regex.Escape(innards);
                     case "PATH":
                         return PathNormalizer.Normalize(innards);
+                    case "VALUEFROMSPLIT":
+                        var vfsP = functionParameters(keyword, innards, 3);
+                        if (string.IsNullOrEmpty(vfsP[2])) // No index provided, return full value
+                            return vfsP[0];
+                        if(int.TryParse(vfsP[2], out int index))
+                        {
+                            if (vfsP[0].Length <= 0 || vfsP[1].Length <= 0)
+                                throw new Exception(keyword + " requires the first two parameters to be non-empty strings!");
+                            var splits = vfsP[0].Split(vfsP[1]);
+                            if (index < 0 || index >= splits.Length)
+                                return String.Empty;
+                            return splits[index];
+                        } else
+                        {
+                            throw new Exception(keyword + " requires the 3rd parameter to be an integer!");
+                        }
                     default:
                         throw new Exception("Unknown function: " + keyword);
                 }

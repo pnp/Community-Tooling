@@ -7,7 +7,7 @@
     <column name="Title" path="$[0].title"/>
     <column name="Link" path="$[0].url"/>
     <column name="Author" path="$.[0].authors.[*].name"/>
-    <column name="AuthorGH" path="$.[0].authors.[0].gitHubAccount"/>
+    <column name="AuthorGH" path="$.[0].authors.[*].gitHubAccount"/>
     <column name="ScreenshotUrl" path="$.[0].thumbnails[0].url"/>
     <column name="Description" path="$.[0].shortDescription"/>
 
@@ -17,7 +17,7 @@
             transform="$WHEN($CONTAINS(@@currentvalue@@,#2019),#Y)"/>
     
     <!-- Actions, Operators, Categories, Tokens, & ColumnTypes 
-         can be multiple so replaces commas (and commans with space) with pipe -->
+         can be multiple so replaces commas (and commas with space) with pipe -->
     <column name="Categories"
             path="$.[0].metadata.[?(@.key=='SAMPLE-CATEGORIES')].value"
             transform="$REPLACE($REPLACE(@@currentvalue@@,#, ,#|),#,,#|)"/>
