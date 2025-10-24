@@ -292,7 +292,7 @@
     </template>
 
     <template name="SampleItem">
-      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Title]@@](@@[Link]@@){target=_blank title="@@[Name]@@ (@@[Type]@@): $REPLACE(@@[Description]@@,#`,#)"}
+      - $IF($EQUALS(@@[Type]@@,#View),#@@iconViewFormat@@{.viewIcon title="View Format"},#$IF($EQUALS(@@[Type]@@,#Column),#@@iconColumnFormat@@{.columnIcon title="Column Format"},#@@iconFormFormat@@{.formIcon title="Form Format"})) [@@[Title]@@](@@[Link]@@){target=_blank title="@@[Name]@@ (@@[Type]@@): $REPLACE(@@[Description]@@,#`,#)" data-screenshot="@@[ScreenshotUrl]@@"}
     </template>
 
     <template name="Telemetry">
