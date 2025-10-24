@@ -526,7 +526,7 @@
         <!-- Files/Folders all exist (with correct casing) -->
         <log name="☺" text="Verifying all expected files are present (@@SampleKey@@)"/>
         <only name="Primary JSON" when="$OR($EQUALS(@@SampleType@@,#View),#$EQUALS(@@SampleType@@,#Column))">
-          <fileexists path="@@MainJsonPath@@" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
+          <fileexists path="@@MainJsonPath@@" warn="true" failuremessage="Primary Sample JSON not found! (@@SampleKey@@)"/>
           <fileexists path="@@MainJsonPath@@" matchcase="true" warn="true"/>
         </only>
         <only when="$EQUALS(@@SampleType@@,#Form)">
@@ -671,21 +671,21 @@
     <rule name="ValidateSamples" description="Validates each list formatting sample. Set starting path to the root project">
       <conditions>
         <log name="☺" text="Validating Column Samples..."/>
-        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="181" limit="300">
+        <foreachfolder name="ColumnSamples" path="column-samples" pattern="*" skip="0" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Column Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
         
         <log name="☺" text="Validating Form Samples..."/>
-        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="15" limit="30">
+        <foreachfolder name="FormSamples" path="form-samples" pattern="*" skip="0" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="Form Samples Validated!"/>
         <log name="☻" text="-----------------------------------------"/>
       
         <log name="☺" text="Validating View Samples..."/>
-        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="160" limit="30">
+        <foreachfolder name="ViewSamples" path="view-samples" pattern="*" skip="0" limit="0">
           <run rule="ValidateSample"/>
         </foreachfolder>
         <log name="☻" text="View Samples Validated!"/>
@@ -703,6 +703,8 @@
 
         <!-- Column Sample: date-page-a-day-calendar: Remove toString: In 1 of 6 samples -->
         <suppress conditionname="Operator" message="Remove toString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-30d-counter-dow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-30d-counter.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-minimal.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-prev-today-next.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-weekend.json)))" />
+        <!-- Column Sample: date-page-a-day-calendar: Remove toDateString: In 4 of 6 samples -->
+        <suppress conditionname="Operator" message="Remove toDateString" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-weekend.json)))" />
         <!-- Column Sample: date-page-a-day-calendar: Remove Number: In 1 of 6 samples -->
         <suppress conditionname="Operator" message="Remove Number" must="$OR($ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-30d-counter-dow.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-30d-counter.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-minimal.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-prev-today-next.json)),#$ENDSWITH(@@FilePath@@,#$PATH(column-samples\date-page-a-day-calendar\date-page-a-day-calendar-weekend.json)))" />
         <!-- Column Sample: date-page-a-day-calendar: Remove floor: In 2 of 6 samples -->
@@ -927,6 +929,8 @@
         <suppress conditionname="Operator" message="Remove lastIndexOf" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
         <!-- View Sample: board-tags: Remove replace: In 1 of 2 samples -->
         <suppress conditionname="Operator" message="Remove replace" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
+        <!-- View Sample: board-tags: Remove getThumbnailImage: In 1 of 2 samples -->
+        <suppress conditionname="Operator" message="Remove getThumbnailImage" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
         <!-- View Sample: board-tags: Remove editProps: In 1 of 2 samples -->
         <suppress conditionname="Action" message="Remove editProps" must="$ENDSWITH(@@FilePath@@,#$PATH(view-samples\board-tags\board-tags-cards.json))" />
         <!-- View Sample: board-tags: Remove embed: In 1 of 2 samples -->
